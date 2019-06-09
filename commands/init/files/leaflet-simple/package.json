@@ -1,0 +1,31 @@
+{
+  "name": "__TITLE__",
+  "version": "0.1.0",
+  "description": "A simple express app for building Leaflet maps.",
+  "private": true,
+  "scripts": {
+    "start": "node server/app.js",
+    "start:dev": "webpack-dev-server --open --hot --mode development",
+    "build": "NODE_ENV=production webpack --mode production",
+    "pretest": "NODE_ENV=test PORT=8888 node server/app.js &",
+    "test": "ava **/*_test.js --verbose",
+    "posttest": "pkill --signal SIGINT leaflet-simple"
+  },
+  "keywords": ["express", "leaflet", "map", "gis"],
+  "author": "Andy Bettisworth <andy@accreu.com>",
+  "license": "MIT",
+  "babel": {
+    "presets": [
+      "@babel/preset-env",
+      "@babel/preset-react"
+    ]
+  },
+  "ava": {
+    "babel": {
+      "testOptions": {
+        "babelrc": false,
+        "configFile": false
+      }
+    }
+  }
+}

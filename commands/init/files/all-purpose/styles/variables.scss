@@ -1,0 +1,86 @@
+/**
+ * Reboot
+ */
+
+$font-family-base:  Helvetica Neue, Helvetica, Arial, sans-serif;
+$font-size-base:    100%;
+$font-weight-base:  400;
+$line-height-base:  1.5;
+$body-bg:           #fff;
+$body-color:        #212529;
+$h1-font-size: 2.5rem;
+$h2-font-size: 2rem;
+$h3-font-size: 1.75rem;
+$h4-font-size: 1.5rem;
+$h5-font-size: 1.25rem;
+$h6-font-size: 1rem;
+$headings-margin-bottom: 0.5rem;
+$headings-font-family: inherit;
+$headings-font-weight: 500;
+$headings-line-height: 1.2;
+$headings-color: inherit;
+
+/**
+ * Border radius
+ */
+
+$rounded-0: 0px;
+$rounded-1: 1px;
+$rounded-2: 2px;
+$rounded-3: 5px;
+$rounded-4: 10px;
+$rounded-5: 15px;
+
+/*
+  Grid
+*/
+
+$gutter: 30px;
+$grid-column-count: 12;
+$grid-breakpoints: (
+  "sm": 576px,
+  "md": 768px,
+  "lg": 992px,
+  "xl": 1200px
+);
+$grid-breakpoint-sm: 576px;
+$grid-breakpoint-md: 768px;
+$grid-breakpoint-lg: 992px;
+$grid-breakpoint-xl: 1200px;
+$container-max-width-sm: 540px;
+$container-max-width-md: 720px;
+$container-max-width-lg: 960px;
+$container-max-width-xl: 1140px;
+
+/*
+  Spacing
+*/
+
+$padding-sizes: (
+  0px,
+  0.25rem,
+  0.5rem,
+  1rem,
+  1.5rem,
+  3rem,
+);
+$margin-sizes: (
+  0px,
+  0.25rem,
+  0.5rem,
+  1rem,
+  1.5rem,
+  3rem,
+);
+
+/**
+ * Colors
+ */
+
+$color-default: black;
+$color-success: green;
+$color-secondary: grey;
+$color-primary: blue;
+$color-info: light-blue;
+$color-warning: orange;
+$color-danger: red;

@@ -1,0 +1,15 @@
+{
+  "name": "__TITLE__",
+  "version": "0.1.0",
+  "description": "A sandbox for SQLite code.",
+  "private": true,
+  "scripts": {
+    "start": "node index.js",
+    "start:dev": "nodemon server/app.js",
+    "test": "ava **/*_test.js --verbose",
+    "test:watch": "ava **/*_test.js --verbose --watch"
+  },
+  "keywords": ["express", "db", "sql", "database", "sqlite"],
+  "author": "Andy Bettisworth <andy@accreu.com>",
+  "license": "MIT"
+}

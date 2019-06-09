@@ -1,0 +1,14 @@
+{
+  "name": "__TITLE__",
+  "version": "0.1.0",
+  "description": "A simple GraphQL API.",
+  "private": true,
+  "scripts": {
+    "start": "node server/app.js",
+    "start:dev": "nodemon server/app.js",
+    "test": "jest"
+  },
+  "keywords": ["express", "graphql", "graphql-js", "schema", "api"],
+  "author": "Andy Bettisworth <andy@accreu.com>",
+  "license": "MIT"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "__TITLE__",
+  "version": "0.1.0",
+  "description": "An express app using turbolinks.",
+  "private": true,
+  "scripts": {
+    "start": "node config/app.js",
+    "start:dev": "nodemon server/app.js",
+    "pretest": "NODE_ENV=test PORT=8888 node config/app.js &",
+    "test": "ava **/*_test.js --verbose",
+    "posttest": "pkill --signal SIGINT express-turbo"
+  },
+  "keywords": ["express", "turbolinks"],
+  "author": "Andy Bettisworth <andy@accreu.com>",
+  "license": "MIT"
+}

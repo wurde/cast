@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Error</title>
+  <%- include(views + '/shared/_head.html.ejs') %>
+</head>
+<body>
+  <%- include(views + '/shared/_js_required_warning.html.ejs') %>
+
+  <header>
+    <a href="/?lang=en">
+      <h2>__TITLE__</h2>
+    </a>
+  </header>
+
+  <main>
+    <section>
+      <h1><%= error.status %></h1>
+
+      <p>
+        We apologize but something's gone wrong - an old link, a bad link, or some little glitch.
+      </p>
+
+      <p>
+        Would you like to:
+        <a href="javascript: history.go(-1)">Go back</a>
+        or
+        <a href="/">go to the landing page?</a>
+      </p>
+
+      <% if (error.stack) { %>
+        <pre class="p-3 text-left"><%= error.stack %></pre>
+      <% } %>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "__TITLE__",
+  "version": "0.1.0",
+  "description": "A sandbox for LESS code.",
+  "private": true,
+  "scripts": {
+    "start": "live-server",
+    "build": "less-watch-compiler --run-once less public/css index.less",
+    "build:watch": "less-watch-compiler less public/css index.less",
+    "build:minify": "less-watch-compiler --run-once --less-args compress=true less public/css index.less",
+    "test": "ava **/*_test.js --verbose",
+    "test:watch": "ava **/*_test.js --verbose --watch"
+  },
+  "keywords": ["less", "css", "style", "stylesheet"],
+  "author": "Andy Bettisworth <andy@accreu.com>",
+  "license": "MIT"
+}

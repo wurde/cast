@@ -1,0 +1,75 @@
+/**
+ * Reboot styles
+ * Description: A CSS reboot of base styles.
+ */
+
+/**
+ * Ensure `width` is not affected by `padding` or `border`.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/**
+ * Body section styles
+ *
+ * 1. Remove the margin in all browsers.
+ * 2. Change the default font family in all browsers.
+ * 3. Assumes the browser default, typically `16px`.
+ */
+
+body {
+  margin: 0; // 1
+  font-family: $font-family-base; // 2
+  font-size: $font-size-base; // 3
+  font-weight: $font-weight-base;
+  line-height: $line-height-base;
+  background-color: $body-bg;
+  color: $body-color;
+  text-align: left;
+  direction: ltr;
+}
+
+/**
+ * Heading styles
+ *
+ * 1. Remove top margins from headings.
+ */
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  margin-top: 0; // 1
+  margin-bottom: $headings-margin-bottom;
+  font-family: $headings-font-family;
+  font-weight: $headings-font-weight;
+  line-height: $headings-line-height;
+  color: $headings-color;
+}
+
+h1, .h1 { font-size: $h1-font-size; }
+h2, .h2 { font-size: $h2-font-size; }
+h3, .h3 { font-size: $h3-font-size; }
+h4, .h4 { font-size: $h4-font-size; }
+h5, .h5 { font-size: $h5-font-size; }
+h6, .h6 { font-size: $h6-font-size; }
+
+/**
+ * Paragraph styles
+ */
+
+p {
+  padding-bottom: 10px;
+}
+
+/**
+ * Always hide an element with the `hidden` HTML attribute.
+ * Needed for proper display in IE 10.
+ */
+
+.hidden,
+[hidden] {
+  display: none !important;
+}

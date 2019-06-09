@@ -1,0 +1,49 @@
+/**
+ * Spacing styles.
+ * Description: Margin and padding properties.
+ */
+
+/*
+  Padding classes
+*/
+
+.p-auto { padding: auto; }
+.py-auto { padding-top: auto; padding-bottom: auto; }
+.px-auto { padding-right: auto; padding-left: auto; }
+.pt-auto { padding-top: auto; }
+.pb-auto { padding-bottom: auto; }
+.pr-auto { padding-right: auto; }
+.pl-auto { padding-left: auto; }
+
+@for $i from 1 to length($padding-sizes) {
+  .p-#{($i - 1)} { padding: nth($padding-sizes, $i) !important; }
+  .py-#{($i - 1)} { padding-top: nth($padding-sizes, $i) !important; padding-bottom: nth($padding-sizes, $i) !important; }
+  .px-#{($i - 1)} { padding-right: nth($padding-sizes, $i) !important; padding-left: nth($padding-sizes, $i) !important; }
+  .pt-#{($i - 1)} { padding-top: nth($padding-sizes, $i) !important; }
+  .pb-#{($i - 1)} { padding-bottom: nth($padding-sizes, $i) !important; }
+  .pr-#{($i - 1)} { padding-right: nth($padding-sizes, $i) !important; }
+  .pl-#{($i - 1)} { padding-left: nth($padding-sizes, $i) !important; }
+}
+
+/*
+  Margin classes
+*/
+
+.m-auto { margin: auto; }
+.my-auto { margin-top: auto; margin-bottom: auto; }
+.mx-auto { margin-right: auto; margin-left: auto; }
+.mt-auto { margin-top: auto; }
+.mb-auto { margin-bottom: auto; }
+.mr-auto { margin-right: auto; }
+.ml-auto { margin-left: auto; }
+
+
+@for $i from 1 to length($margin-sizes) {
+  .m-#{($i - 1)} { margin: nth($margin-sizes, $i) !important; }
+  .my-#{($i - 1)} { margin-top: nth($margin-sizes, $i) !important; margin-bottom: nth($margin-sizes, $i) !important; }
+  .mx-#{($i - 1)} { margin-right: nth($margin-sizes, $i) !important; margin-left: nth($margin-sizes, $i) !important; }
+  .mt-#{($i - 1)} { margin-top: nth($margin-sizes, $i) !important; }
+  .mb-#{($i - 1)} { margin-bottom: nth($margin-sizes, $i) !important; }
+  .mr-#{($i - 1)} { margin-right: nth($margin-sizes, $i) !important; }
+  .ml-#{($i - 1)} { margin-left: nth($margin-sizes, $i) !important; }
+}
