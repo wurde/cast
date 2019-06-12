@@ -26,14 +26,23 @@ function gitcommit() {
 
   if (result.status === 0) {
     prompt.message = ''
+    prompt.description = ''
 
-    prompt.get({
+    prompt.get([{
       name: 'message',
       description: colors.white.bold('Message'),
       required: true
-    }, (err, result) => {
-      child_process.spawnSync('git', ['commit', '-m', result.message], config)
-    })
+    }, {
+      name: 'description',
+      description: colors.white.bold('Description (be as detailed as possible)')
+    }], (err, result) => {
+        const args = ['commit', '-m', result.message]
+
+        if (result.description) { args.concat(['-m', result.description]) }
+
+        child_process.spawnSync('git', args, config)
+      }
+    )
   }
 }
 
