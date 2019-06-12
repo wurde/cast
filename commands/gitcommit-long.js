@@ -36,9 +36,9 @@ function gitcommit() {
       name: 'description',
       description: colors.white.bold('Description (be as detailed as possible)')
     }], (err, result) => {
-        const args = ['commit', '-m', result.message]
+        let args = ['commit', '-m', result.message]
 
-        if (result.description) { args.concat(['-m', result.description]) }
+        if (result.description) { args = args.concat(['-m', result.description]) }
 
         child_process.spawnSync('git', args, config)
       }
