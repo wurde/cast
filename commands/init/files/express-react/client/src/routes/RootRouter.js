@@ -1,29 +1,15 @@
-'use strict'
-
 /**
  * Dependencies
  */
 
-const React = require('react')
-const react_router_dom = require('react-router-dom')
-const components = require('./components/index')
-
-/**
- * Constants
- */
-
-const lazy = React.lazy
-const Suspense = React.Suspense
-const Route = react_router_dom.Route
-const Redirect = react_router_dom.Redirect
-const LandingPage = components.LandingPage
-const HomePage = components.HomePage
+import React, { Suspense, lazy } from 'react'
+import { Route, Redirect } from 'react-router-dom'
 
 /**
  * Lazy load dependencies
  */
 
-const components = lazy(() => require('../components/index'))
+const { Landing, Home } = lazy(() => require('../views/index'))
 
 /**
  * Define component
@@ -43,4 +29,4 @@ function RootRouter() {
  * Export component
  */
 
-module.exports = RootRouter
+export default RootRouter

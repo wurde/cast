@@ -1,9 +1,15 @@
-'use strict'
-
 /**
- * Export router components
+ * Dependencies
  */
 
-module.exports = {
-  RootRouter: require('./RootRouter'),
+import RootRouter from './RootRouter'
+import UsersRouter from './UsersRouter'
+
+/**
+ * Export routers
+ */
+
+export {
+  RootRouter,
+  UsersRouter,
 }

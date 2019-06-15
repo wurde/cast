@@ -1,28 +1,15 @@
-'use strict'
-
 /**
  * Dependencies
  */
 
-const React = require('react')
-const react_router_dom = require('react-router-dom')
-
-/**
- * Constants
- */
-
-const lazy = React.lazy
-const Suspense = React.Suspense
-const Route = react_router_dom.Route
-const Redirect = react_router_dom.Redirect
-const SigninPage = components.SigninPage
-const SignupPage = components.SignupPage
+import React, { Suspense, lazy } from 'react'
+import { Route, Redirect } from 'react-router-dom'
 
 /**
  * Lazy load dependencies
  */
 
-const components = lazy(() => require('../components/index'))
+const { Signin, Signup } = lazy(() => require('../views/index'))
 
 /**
  * Define component
@@ -41,4 +28,4 @@ function UsersRouter({ mount }) {
  * Define component
  */
 
-module.exports = UsersRouter
+export default UsersRouter

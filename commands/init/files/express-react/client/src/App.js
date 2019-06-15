@@ -1,24 +1,16 @@
-'use strict'
-
 /**
  * Dependencies
  */
 
-const React = require('react')
-const routes = require('./routes/index')
-const react_router_dom = require('react-router-dom')
-
-/**
- * Constants
- */
-
-const BrowserRouter = react_router_dom.BrowserRouter
+import React from 'react'
+import { BrowserRouter } from 'react-router-dom'
+import { RootRouter, UsersRouter } from './routes/index'
 
 /**
  * Import component styles
  */
 
-require('./App.scss')
+import './App.scss'
 
 /**
  * Define component
@@ -27,8 +19,8 @@ require('./App.scss')
 function App() {
   return (
     <BrowserRouter>
-      <routes.RootRouter mount="/" />
-      <routes.UsersRouter mount="/users" />
+      <RootRouter mount="/" />
+      <UsersRouter mount="/users" />
     </BrowserRouter>
   )
 }
@@ -37,4 +29,4 @@ function App() {
  * Export component
  */
 
-module.exports = App
+export default App
