@@ -1,9 +1,13 @@
-'use strict'
-
 /**
- * Export component queries
+ * Dependencies
  */
 
-module.exports = {
-  ContentQuery: require('./ContentQuery'),
+import ContentQuery from 'ContentQuery'
+
+/**
+ * Export queries
+ */
+
+export {
+  ContentQuery,
 }

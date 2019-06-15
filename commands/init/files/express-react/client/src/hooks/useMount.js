@@ -1,10 +1,8 @@
-'use strict'
-
 /**
  * Dependencies
  */
 
-const React = require('react')
+import React from 'react'
 
 /**
  * Define hook
@@ -18,4 +16,4 @@ const useMount = (fn, state=[]) => {
  * Define hook
  */
 
-module.exports = useMount
+export default useMount

@@ -1,16 +1,8 @@
-'use strict'
-
 /**
  * Dependencies
  */
 
-const React = require('react')
-
-/**
- * Constants
- */
-
-const useState = React.useState
+import React, { useState } from 'react'
 
 /**
  * Define hook
@@ -30,4 +22,4 @@ const useInput = defaultValue => {
  * Export hook
  */
 
-module.exports = useInput
+export default useInput

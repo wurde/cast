@@ -1,19 +1,13 @@
-'use strict'
-
 /**
  * Dependencies
  */
 
-const relay_runtime = 'relay-runtime'
-
-/**
- * Constants
- */
-
-const Environment = relay_runtime.Environment
-const Network = relay_runtime.Network
-const RecordSource = relay_runtime.RecordSource
-const Store = relay_runtime.Store
+import {
+  Environment,
+  Network,
+  RecordSource,
+  Store
+} from 'relay-runtime'
 
 /**
  * Define fetch query
@@ -47,4 +41,4 @@ const environment = new Environment({
  * Export environment
  */
 
-module.exports = environment
+export default environment

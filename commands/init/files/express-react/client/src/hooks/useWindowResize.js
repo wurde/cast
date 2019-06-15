@@ -1,17 +1,8 @@
-'use strict'
-
 /**
  * Dependencies
  */
 
-const React = require('react')
-
-/**
- * Constants
- */
-
-const useState = React.useState
-const useEffect = React.useEffect
+import React, { useState, useEffect } from 'react'
 
 /**
  * Define hook
@@ -42,4 +33,4 @@ const useWindowResize = () => {
  * Define hook
  */
 
-module.exports = useWindowResize
+export default useWindowResize

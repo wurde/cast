@@ -1,17 +1,8 @@
-'use strict'
-
 /**
  * Dependencies
  */
 
-const react_relay = require('react-relay')
-
-/**
- * Constants
- */
-
-const graphql = react_relay.graphql
-const commitMutation = react_relay.commitMutation
+import { graphql, commitMutation } from 'react-relay'
 
 /**
  * Define the mutation
@@ -46,7 +37,7 @@ function createContent() {
 }
 
 /**
- * Export query component
+ * Export mutation
  */
 
-module.exports = CreateContentMutation
+export default CreateContentMutation

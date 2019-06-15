@@ -1,10 +1,15 @@
-'use strict'
+/**
+ * Dependencies
+ */
+
+import useInput from './useInput'
+import useMount from './useMount'
 
 /**
  * Export hooks
  */
 
-module.exports = {
-  useInput: require('./useInput'),
-  useMount: require('./useMount'),
+export {
+  useInput,
+  useMount,
 }

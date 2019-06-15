@@ -1,27 +1,18 @@
-'use strict'
-
 /**
  * Dependencies
  */
 
-const react_relay = require('react-relay')
+import { graphql, QueryRenderer } from 'react-relay'
 
 /**
- * Constants
- */
-
-const graphql = react_relay.graphql
-const QueryRenderer = react_relay.QueryRenderer
-
-/**
- * Define query component
+ * Define query
  */
 
 class ContentQuery extends QueryRenderer {
 }
 
 /**
- * Export query component
+ * Export query
  */
 
-module.exports = ContentQuery
+export default ContentQuery

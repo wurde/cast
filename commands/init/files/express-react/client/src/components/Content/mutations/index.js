@@ -1,9 +1,13 @@
-'use strict'
+/**
+ * Dependencies
+ */
+
+import CreateContentMutation from 'CreateContentMutation'
 
 /**
  * Export mutations
  */
 
-module.exports = {
-  CreateContentMutation: require('./CreateContentMutation'),
+export {
+  CreateContentMutation,
 }
