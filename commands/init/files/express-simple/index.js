@@ -10,7 +10,7 @@ const express = require('express')
  * Constants
  */
 
-const port = 3000
+const port = process.env.PORT || 8080
 
 /**
  * Define app
@@ -19,7 +19,13 @@ const port = 3000
 const app = express()
 
 /**
- * Mount routes
+ * Middleware
+ */
+
+app.use(express.json())
+
+/**
+ * Routes
  */
 
 app.get('/', (req, res) => res.send('Hello World!'))
@@ -28,4 +34,14 @@ app.get('/', (req, res) => res.send('Hello World!'))
  * Start server
  */
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+if (module === require.main) {
+  app.listen(port, () => {
+    console.log(`Express running on port ${port}.`)
+  })
+}
+
+/**
+ * Export app
+ */
+
+module.exports = app
