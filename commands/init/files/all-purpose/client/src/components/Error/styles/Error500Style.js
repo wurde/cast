@@ -1,22 +1,14 @@
-'use strict'
-
 /**
  * Dependencies
  */
 
-const styled_components = require('styled-components')
-
-/**
- * Constants
- */
-
-const styled = styled_components.default
+import styled_components from 'styled-components'
 
 /**
  * Define style component
  */
 
-let Error500Style = styled.div(() => `
+let Error500Style = styled_components.div(() => `
   background-color: #AAA;
 `)
 
@@ -24,4 +16,4 @@ let Error500Style = styled.div(() => `
  * Export style component
  */
 
-module.exports = Error500Style
+export default Error500Style

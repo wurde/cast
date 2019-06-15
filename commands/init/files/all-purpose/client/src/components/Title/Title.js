@@ -1,11 +1,9 @@
-'use strict'
-
 /**
  * Dependencies
  */
 
-const React = require('react')
-const styles = require('./styles/index')
+import React from 'react'
+import { TitleStyle } from './styles/index'
 
 /**
  * Define component
@@ -13,9 +11,9 @@ const styles = require('./styles/index')
 
 function Title(props) {
   return (
-    <styles.TitleStyle>
+    <TitleStyle>
       <h1>{props.text}</h1>
-    </styles.TitleStyle>
+    </TitleStyle>
   )
 }
 
@@ -23,4 +21,4 @@ function Title(props) {
  * Export component
  */
 
-module.exports = Title
+export default Title

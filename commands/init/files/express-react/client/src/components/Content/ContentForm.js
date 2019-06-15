@@ -1,18 +1,10 @@
-'use strict'
-
 /**
  * Dependencies
  */
 
-const React = require('react')
-const styles = require('./styles/index')
-const mutations = require('./mutations/index')
-
-/**
- * Constants
- */
-
-const useState = React.useState
+import React, { useState } from 'react'
+import { ContentFormStyle } from './styles/index'
+import { CreateContentMutation } from './mutations/index'
 
 /**
  * Define component
@@ -23,16 +15,16 @@ function Content(props) {
 
   function handleOnSubmit(event) {
     event.preventDefault()
-    mutations.CreateContentMutation(description)
+    CreateContentMutation(description)
   }
 
   return (
-    <styles.ContentFormStyle>
+    <ContentFormStyle>
       <form onSubmit={handleOnSubmit}>
         <input type="text" name="description" value={description} onChange={(e) => setDescription(e.target.value)}></input>
         <button type="submit">Submit</button>
       </form>
-    </styles.ContentFormStyle>
+    </ContentFormStyle>
   )
 }
 
@@ -40,4 +32,4 @@ function Content(props) {
  * Export component
  */
 
-module.exports = Content
+export default Content

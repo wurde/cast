@@ -1,22 +1,14 @@
-'use strict'
-
 /**
  * Dependencies
  */
 
-const styled_components = require('styled-components')
-
-/**
- * Constants
- */
-
-const styled = styled_components.default
+import styled_components from 'styled-components'
 
 /**
  * Define style component
  */
 
-let TitleStyle = styled.div(() => `
+let TitleStyle = styled_components.div(() => `
   text-decoration: underline;
 `)
 
@@ -24,4 +16,4 @@ let TitleStyle = styled.div(() => `
  * Export style component
  */
 
-module.exports = TitleStyle
+export default TitleStyle

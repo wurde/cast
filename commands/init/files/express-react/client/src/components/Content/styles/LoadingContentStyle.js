@@ -1,22 +1,14 @@
-'use strict'
-
 /**
  * Dependencies
  */
 
-const styled_components = require('styled-components')
-
-/**
- * Constants
- */
-
-const styled = styled_components.default
+import styled_components from 'styled-components'
 
 /**
  * Define style component
  */
 
-let LoadingPageStyle = styled.div(() => `
+let LoadingPageStyle = styled_components.div(() => `
   background-color: #DDD;
 `)
 
@@ -24,4 +16,4 @@ let LoadingPageStyle = styled.div(() => `
  * Export style component
  */
 
-module.exports = LoadingPageStyle
+export default LoadingPageStyle

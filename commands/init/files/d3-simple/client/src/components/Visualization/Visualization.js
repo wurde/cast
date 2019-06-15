@@ -1,18 +1,10 @@
-'use strict'
-
 /**
  * Dependencies
  */
 
-const React = require('react')
-const d3 = require('d3')
-const styles = require('./styles/index')
-
-/**
- * Constants
- */
-
-const useEffect = React.useEffect
+import React, { useEffect } from 'react'
+import d3 from 'd3'
+import { VisualizationStyle } from './styles/index'
 
 /**
  * Define component
@@ -53,13 +45,13 @@ function Visualization(props) {
   }, [])
 
   return (
-    <styles.VisualizationStyle>
+    <VisualizationStyle>
       <div className="row">
         <div className="col-12">
           <svg width="960" height="500"></svg>
         </div>
       </div>
-    </styles.VisualizationStyle>
+    </VisualizationStyle>
   )
 }
 
@@ -67,4 +59,4 @@ function Visualization(props) {
  * Export component
  */
 
-module.exports = Visualization
+export default Visualization

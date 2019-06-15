@@ -1,17 +1,9 @@
-'use strict'
-
 /**
  * Dependencies
  */
 
-const React = require('react')
-const styles = require('./styles/index')
-
-/**
- * Constants
- */
-
-const Component = React.Component
+import React, { Component } from 'react'
+import { ErrorBoundaryStyle } from './styles/index'
 
 /**
  * Define component
@@ -33,10 +25,10 @@ class ErrorBoundary extends Component {
   render() {
     if (this.state.error) {
       return (
-        <styles.ErrorBoundaryStyle>
+        <ErrorBoundaryStyle>
           <h1>Error {this.props.status}</h1>
           <p>Sorry for the inconvenience!</p>
-        </styles.ErrorBoundaryStyle>
+        </ErrorBoundaryStyle>
       )
     }
 
@@ -48,4 +40,4 @@ class ErrorBoundary extends Component {
  * Export component
  */
 
-module.exports = ErrorBoundary
+export default ErrorBoundary

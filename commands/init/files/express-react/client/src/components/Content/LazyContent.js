@@ -4,17 +4,10 @@
  * Dependencies
  */
 
-const React = require('react')
-const styles = require('./styles/index')
-const Error = require('../Error/ErrorBoundary')
-const LoadingContent = require('./LoadingContent')
-
-/**
- * Constants
- */
-
-const Suspense = React.Suspense
-const lazy = React.lazy
+import React, { Suspense, lazy } from 'react'
+import styles from './styles/index'
+import Error from '../Error/ErrorBoundary'
+import LoadingContent from './LoadingContent'
 
 /**
  * Lazy dependencies
@@ -40,4 +33,4 @@ function LazyContent(props) {
  * Export component
  */
 
-module.exports = LazyContent
+export default LazyContent

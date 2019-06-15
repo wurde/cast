@@ -1,22 +1,14 @@
-'use strict'
-
 /**
  * Dependencies
  */
 
-const styled_components = require('styled-components')
-
-/**
- * Constants
- */
-
-const styled = styled_components.default
+import styled_components from 'styled-components'
 
 /**
  * Define style component
  */
 
-let ModelStyle = styled.div(() => `
+let ModelStyle = styled_components.div(() => `
   color: #333;
 `)
 
@@ -24,4 +16,4 @@ let ModelStyle = styled.div(() => `
  * Export style component
  */
 
-module.exports = ModelStyle
+export default ModelStyle

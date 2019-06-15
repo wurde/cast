@@ -1,18 +1,10 @@
-'use strict'
-
 /**
  * Dependencies
  */
 
-const React = require('react')
-const leaflet = require('leaflet')
-const styles = require('./styles/index')
-
-/**
- * Constants
- */
-
-const useEffect = React.useEffect
+import React, { useEffect } from 'react'
+import leaflet from 'leaflet'
+import { MapStyle } from './styles/index'
 
 /**
  * Define component
@@ -36,7 +28,7 @@ function Map(props) {
     <div className="jsx-Map">
       <div className="row">
         <div className="col-12">
-          <styles.MapStyle id="map"></styles.MapStyle>
+          <MapStyle id="map"></MapStyle>
         </div>
       </div>
     </div>
@@ -47,4 +39,4 @@ function Map(props) {
  * Export component
  */
 
-module.exports = Map
+export default Map

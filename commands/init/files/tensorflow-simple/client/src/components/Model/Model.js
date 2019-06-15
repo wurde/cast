@@ -1,19 +1,10 @@
-'use strict'
-
 /**
  * Dependencies
  */
 
-const React = require('react')
-const styles = require('./styles/index')
-const tf = require('@tensorflow/tfjs')
-
-/**
- * Constants
- */
-
-const useState = React.useState
-const useEffect = React.useEffect
+import React, { useState, useEffect } from 'react'
+import { ModelStyle } from './styles/index'
+import tf from '@tensorflow/tfjs'
 
 /**
  * Define component
@@ -46,13 +37,13 @@ function Model(props) {
   }, [])
 
   return (
-    <styles.ModelStyle>
+    <ModelStyle>
       <div className="row">
         <div className="col-12">
           <h2>Model: {prediction}</h2>
         </div>
       </div>
-    </styles.ModelStyle>
+    </ModelStyle>
   )
 }
 
@@ -60,4 +51,4 @@ function Model(props) {
  * Export component
  */
 
-module.exports = Model
+export default Model

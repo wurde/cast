@@ -1,11 +1,9 @@
-'use strict'
-
 /**
  * Dependencies
  */
 
-const React = require('react')
-const styles = require('./styles/index')
+import React from 'react'
+import { LoadingContentStyle } from './styles/index'
 
 /**
  * Define component
@@ -13,9 +11,9 @@ const styles = require('./styles/index')
 
 function LoadingContent(props) {
   return (
-    <styles.LoadingContentStyle>
+    <LoadingContentStyle>
       <h1>Loading Content...</h1>
-    </styles.LoadingContentStyle>
+    </LoadingContentStyle>
   )
 }
 
@@ -23,4 +21,4 @@ function LoadingContent(props) {
  * Export component
  */
 
-module.exports = LoadingContent
+export default LoadingContent

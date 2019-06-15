@@ -3,7 +3,7 @@
  */
 
 import React from 'react'
-const styles = require('./styles/index')
+import { ContentStyle } import './styles/index'
 
 /**
  * Define component
@@ -11,9 +11,9 @@ const styles = require('./styles/index')
 
 function Content(props) {
   return (
-    <styles.ContentStyle>
+    <ContentStyle>
       This is the main content!
-    </styles.ContentStyle>
+    </ContentStyle>
   )
 }
 

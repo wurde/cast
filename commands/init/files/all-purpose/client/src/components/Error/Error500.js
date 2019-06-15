@@ -1,11 +1,9 @@
-'use strict'
-
 /**
  * Dependencies
  */
 
-const React = require('react')
-const styles = require('./styles/index')
+import React from 'react'
+import { Error500Style } from './styles/index'
 
 /**
  * Define component
@@ -13,10 +11,10 @@ const styles = require('./styles/index')
 
 function Error500(props) {
   return (
-    <styles.Error500Style>
+    <Error500Style>
       <h1>Error 500</h1>
       <p>Sorry for the inconvenience!</p>
-    </styles.Error500Style>
+    </Error500Style>
   )
 }
 
@@ -24,4 +22,4 @@ function Error500(props) {
  * Export component
  */
 
-module.exports = Error500
+export default Error500
