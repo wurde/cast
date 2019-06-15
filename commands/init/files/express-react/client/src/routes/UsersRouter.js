@@ -18,8 +18,8 @@ const { Signin, Signup } = lazy(() => require('../views/index'))
 function UsersRouter({ mount }) {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <Route path={`${mount}/signin`} component={SigninPage} />
-      <Route path={`${mount}/signup`} component={SignupPage} />
+      <Route path={`${mount}/signin`} component={Signin} />
+      <Route path={`${mount}/signup`} component={Signup} />
     </Suspense>
   )
 }

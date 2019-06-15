@@ -1,10 +1,8 @@
-'use strict'
-
 /**
  * Dependencies
  */
 
-const React = require('react')
+import React from 'react'
 const styles = require('./styles/index')
 
 /**
@@ -23,4 +21,4 @@ function Content(props) {
  * Export component
  */
 
-module.exports = Content
+export default Content

@@ -18,8 +18,8 @@ const { Landing, Home } = lazy(() => require('../views/index'))
 function RootRouter() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <Route exact path="/" component={LandingPage} />
-      <Route path="/home" component={HomePage} />
+      <Route exact path="/" component={Landing} />
+      <Route path="/home" component={Home} />
       <Route path="/about" render={() => <Redirect to="/" />} />
     </Suspense>
   )

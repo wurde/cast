@@ -1,10 +1,8 @@
-'use strict'
-
 /**
  * Dependencies
  */
 
-const React = require('react')
+import React from 'react'
 
 /**
  * Define component
@@ -23,4 +21,4 @@ function HomePage() {
  * Export component
  */
 
-module.exports = HomePage
+export default HomePage
