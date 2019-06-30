@@ -8,51 +8,58 @@ Once setup you can write CLI apps by writing **Node.js** code. Setup requires yo
 
 1. Fork the project to your GitHub account. [(click me)](https://github.com/wurde/scripts/fork)
 
-2. Clone the project locally.
+2. Clone the project locally. Then `cd` (short for *change directory*) into it.
 
 ```
 git clone https://github.com/<your-username>/scripts
+cd scripts
 ```
 
-3. Open the project in your favorite code editor.
+3. Install project dependencies via `npm install`.
 
-4. Read the `bin/cast.js` file. It uses two built-in Node.js modules `fs` and `path`. It assigns the **command** constant to the third argument passed to it. Then it builds a path that should reference the relevant script file in the `commands/` directory. Notice that it appends the `.js` file extension to the **command** constant. It then does two checks; the first looks to see if you passed it a command and the second checks that the script file exists. It then requires the script file getting whatever you are
+```
+npm install
+```
 
-5. Open the **.bash_profile** file.
+4. Open the project in your favorite code editor.
 
-6. Write your **cast** alias. This will allow you to run **cast** inside your terminal and have Node.js execute the `bin/cast.js` file.
+5. Read the `bin/cast.js` file. It uses two built-in Node.js modules `fs` and `path`. It assigns the **command** constant to the third argument passed to it. Then it builds a path that should reference the relevant script file in the `commands/` directory. Notice that it appends the `.js` file extension to the **command** constant. It then does two checks; the first looks to see if you passed it a command and the second checks that the script file exists. It then requires the script file getting whatever you are
+
+6. Open the **.bash_profile** file.
+
+7. Write your **cast** alias. This will allow you to run **cast** inside your terminal and have Node.js execute the `bin/cast.js` file.
 
 ```
 alias cast='node /full/path/to/scripts/bin/cast.js'
 ```
 
-7. Open a new terminal. Because **.bash_profile** is only read once when you start a terminal any changes to this file will not affect any open terminals. Forgetting this fact can cause some confusion when adding aliases to **.bash_profile**.
+8. Open a new terminal. Because **.bash_profile** is only read once when you start a terminal any changes to this file will not affect any open terminals. Forgetting this fact can cause some confusion when adding aliases to **.bash_profile**.
 
-8. Run `cast`. This is our new bash alias. If setup correctly in **.bash_profile** then you should see the command synopsis. This is the first of the two checks in the `bin/cast.js` file.
+9. Run `cast`. This is our new bash alias. If setup correctly in **.bash_profile** then you should see the command synopsis. This is the first of the two checks in the `bin/cast.js` file.
 
 ```
 cast
 //=> usage: cast <command> [<args>]
 ```
 
-9. Run `cast hello`.
+10. Run `cast hello`.
 
 ```
 cast hello
 //=> Missing script: /home/wurde/Code/Playpen/scripts/commands/hello.js
 ```
 
-10. Write `commands/hello.js` file.
+11. Write `commands/hello.js` file.
 
-11. Add `args` to hello script.
+12. Add `args` to hello script.
 
-12. Add `gc` alias.
+13. Add `gc` alias.
 
 ```
 alias gc='cast gitcommit'
 ```
 
-13. Run `gc` inside your scripts project.
+14. Run `gc` inside your scripts project.
 
 ```
 gc
