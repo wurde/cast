@@ -21,9 +21,15 @@ cd scripts
 npm install
 ```
 
-4. Open the project in your favorite code editor.
+4. Open the project in your favorite code editor. Popular options:
 
-5. Read the `bin/cast.js` file. It uses two built-in Node.js modules `fs` and `path`. It assigns the **command** constant to the third argument passed to it. Then it builds a path that should reference the relevant script file in the `commands/` directory. Notice that it appends the `.js` file extension to the **command** constant. It then does two checks; the first looks to see if you passed it a command and the second checks that the script file exists. It then requires the script file getting whatever you are
+```
+code .
+~or~
+atom .
+```
+
+5. Read the `bin/cast.js` file. It uses two built-in Node.js modules `fs` and `path`. It assigns the **command** constant to `process.argv[2]`, which is the third argument in the argument vector. Then it builds a path that should reference the relevant script file in the `commands/` directory. Notice that it appends the `.js` file extension to the **command** constant. It then does two checks; the first looks to see if you passed it a command argument and the second checks that the script file exists. It then requires the script and runs the script.
 
 6. Open the **.bash_profile** file.
 
@@ -51,15 +57,19 @@ cast hello
 
 11. Write `commands/hello.js` file.
 
-12. Add `args` to hello script.
+```
+module.exports = (args) => {
+  console.log('Hello world!', args)
+}
+```
 
-13. Add `gc` alias.
+12. Add a `gc` alias to the **.bash_profile** file.
 
 ```
 alias gc='cast gitcommit'
 ```
 
-14. Run `gc` inside your scripts project.
+13. Run `gc` inside your scripts project.
 
 ```
 gc
