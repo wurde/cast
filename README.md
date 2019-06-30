@@ -29,30 +29,37 @@ code .
 atom .
 ```
 
-5. Read the `bin/cast.js` file. It uses two built-in Node.js modules `fs` and `path`. It assigns the **command** constant to `process.argv[2]`, which is the third argument in the argument vector. Then it builds a path that should reference the relevant script file in the `commands/` directory. Notice that it appends the `.js` file extension to the **command** constant. It then does two checks; the first looks to see if you passed it a command argument and the second checks that the script file exists. It then requires the script and runs the script.
+5. Read the [bin/cast.js](bin/cast.js) file. It uses two built-in Node.js modules `fs` and `path`. It assigns the **command** constant to `process.argv[2]`, which is the third argument in the argument vector. Then it builds a path that should reference the relevant script file in the `commands/` directory. Notice that it appends the `.js` file extension to the **command** constant. It then does two checks; the first looks to see if you passed it a command argument and the second checks that the script file exists. It then requires the script and runs the script.
 
-6. Open the **.bash_profile** file.
-
-7. Write your **cast** alias. This will allow you to run **cast** inside your terminal and have Node.js execute the `bin/cast.js` file.
+6. Open the `~/.bash_profile` file. The tilde (`~`) is an alias to your home directory. You can `cd` to your home directory by not passing any arguments. Popular options:
 
 ```
-alias cast='node /full/path/to/scripts/bin/cast.js'
+code ~/.bash_profile
+~or~
+atom ~/.bash_profile
 ```
 
-8. Open a new terminal. Because **.bash_profile** is only read once when you start a terminal any changes to this file will not affect any open terminals. Forgetting this fact can cause some confusion when adding aliases to **.bash_profile**.
+7. Write your **cast** alias. This will allow you to run **cast** inside any of your terminals. The alias is simply a reference to **node** passing it the full path of our [bin/cast.js](bin/cast.js) file. A helpful way of getting the full path is to right click the `cast.js` file in your code editor via the tree view and selecting **Copy Full Path** or **Copy Path**.
 
-9. Run `cast`. This is our new bash alias. If setup correctly in **.bash_profile** then you should see the command synopsis. This is the first of the two checks in the `bin/cast.js` file.
+```
+alias cast='node "/full/path/to/scripts/bin/cast.js"'
+```
+
+8. Open a new terminal. Because `~/.bash_profile` is only read once when you start a terminal any changes to this file will not affect any open terminals. We'll need to open a new terminal to test new changes. Forgetting this fact can cause some confusion when adding aliases to `~/.bash_profile`.
+
+9. Run `cast` in a new terminal. This is our new bash alias. If setup correctly in the `~/.bash_profile` file you should see the command synopsis (*shown below*). This is the first of the two checks in the [bin/cast.js](bin/cast.js) file.
 
 ```
 cast
 //=> usage: cast <command> [<args>]
+
 ```
 
 10. Run `cast hello`.
 
 ```
 cast hello
-//=> Missing script: /home/wurde/Code/Playpen/scripts/commands/hello.js
+//=> Missing script: /home/wurde/Code/scripts/commands/hello.js
 ```
 
 11. Write `commands/hello.js` file.
@@ -63,7 +70,7 @@ module.exports = (args) => {
 }
 ```
 
-12. Add a `gc` alias to the **.bash_profile** file.
+12. Add a `gc` alias to the `~/.bash_profile` file.
 
 ```
 alias gc='cast gitcommit'
@@ -73,7 +80,7 @@ alias gc='cast gitcommit'
 
 ```
 gc
-//=> Running script: /home/wurde/Code/Playpen/scripts/commands/gitcommit.js
+//=> Running script: /home/wurde/Code/scripts/commands/gitcommit.js
 //=> Message: Added hello command
 ```
 
