@@ -62,7 +62,7 @@ cast hello
 //=> Missing script: /home/wurde/Code/scripts/commands/hello.js
 ```
 
-11. Write `commands/hello.js` file.
+11. Write the `commands/hello.js` file. Copy and paste the following code:
 
 ```
 module.exports = (args) => {
@@ -70,18 +70,30 @@ module.exports = (args) => {
 }
 ```
 
-12. Add a `gc` alias to the `~/.bash_profile` file.
+12. Run `cast hello` again. This time it'll execute our code.
+
+```
+cast hello
+//=> Running script: /home/wurde/Code/Playpen/scripts/commands/hello.js
+//=> Hello world! [
+//=>   '/usr/bin/node',
+//=>   '/home/wurde/Code/Playpen/scripts/bin/cast.js',
+//=>   'hello'
+//=> ]
+```
+
+13. Add a `gc` alias to the `~/.bash_profile` file. You're not limited to creating a single alias. Sometimes you'll want a shorthand reference to save yourself some typing.
 
 ```
 alias gc='cast gitcommit'
 ```
 
-13. Run `gc` inside your scripts project.
+14. Open a new terminal and run `gc` inside your scripts project.
 
 ```
 gc
 //=> Running script: /home/wurde/Code/scripts/commands/gitcommit.js
-//=> Message: Added hello command
+//=> Message: Added the *hello* command
 ```
 
 ## License
