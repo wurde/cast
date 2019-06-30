@@ -4,7 +4,7 @@ Your command-line interface (CLI) applications.
 
 ## Getting started
 
-Once setup you can write CLI apps by writing **Node.js** code. You setup the initial terminal alias to the `bin/cast.js` file and then add files to the `commands/` directory. This setup assumes you are using the Bash terminal, but other terminals work if you know how to setup an alias (*Google it if you don't*).
+Once setup you can write CLI apps by writing **Node.js** code. Setup requires you create a terminal alias that runs the node script `bin/cast.js`. Then you can add new commands by creating new files in the `commands/` directory. This setup assumes you are using the Bash terminal, but other terminals work if you know how to setup an alias in them (*Google "How do I setup an alias in terminal XYZ" if you don't use Bash*).
 
 1. Fork the project to your GitHub account. [(click me)](https://github.com/wurde/scripts/fork)
 
@@ -56,6 +56,8 @@ alias gc='cast gitcommit'
 
 ```
 gc
+//=> Running script: /home/wurde/Code/Playpen/scripts/commands/gitcommit.js
+//=> Message: Added hello command
 ```
 
 ## License
