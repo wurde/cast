@@ -85,6 +85,7 @@ cast hello
 13. Add a `gc` alias to the `~/.bash_profile` file. You're not limited to creating a single alias. Sometimes you'll want a shorthand reference to save yourself some typing.
 
 ```
+alias cast='node "/full/path/to/scripts/bin/cast.js"'
 alias gc='cast gitcommit'
 ```
 
