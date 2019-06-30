@@ -74,10 +74,10 @@ module.exports = (args) => {
 
 ```
 cast hello
-//=> Running script: /home/wurde/Code/Playpen/scripts/commands/hello.js
+//=> Running script: /home/wurde/Code/scripts/commands/hello.js
 //=> Hello world! [
 //=>   '/usr/bin/node',
-//=>   '/home/wurde/Code/Playpen/scripts/bin/cast.js',
+//=>   '/home/wurde/Code/scripts/bin/cast.js',
 //=>   'hello'
 //=> ]
 ```
