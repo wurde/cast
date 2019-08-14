@@ -4,7 +4,7 @@ Command-line interface (CLI) applications.
 
 ## Getting started
 
-Once setup you can write CLI apps that makes use of the **Node.js** JavaScript runtime and the **npm** package ecosystem. Setup involves creating a terminal alias that runs the [bin/cast.js](bin/cast.js) node script. Then to add new commands you create new files in the `commands/` directory. This setup assumes you are using the Bash terminal, but other terminals work if you know how to setup an alias (*Google "How do I setup an alias in terminal XYZ" if you aren't using Bash*).
+Setup takes around 2 minutes. Once setup you'll be able to write scripts using **Node.js**. Setup involves creating a terminal alias that runs the [bin/cast.js](bin/cast.js) node script. Then to add new commands you create new files in the `commands/` directory. This setup assumes you are using the Bash terminal, but other terminals work if you know how to setup an alias (*Google "How do I setup an alias in terminal XYZ" if you aren't using Bash*).
 
 1. Fork the project to your GitHub account. [(click me)](https://github.com/wurde/scripts/fork)
 
