@@ -1,6 +1,6 @@
 # Scripts
 
-Your command-line interface (CLI) applications.
+Command-line interface (CLI) applications.
 
 ## Getting started
 
