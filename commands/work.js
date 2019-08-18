@@ -6,6 +6,7 @@
 
 const path = require('path')
 const fs = require('fs')
+const moment = require('moment')
 const Sequelize = require('sequelize')
 
 /**
@@ -51,7 +52,13 @@ async function work(argv) {
       console.log('Clocking out of work')
       await db.query(`UPDATE entries SET end_at = ${Date.now()} WHERE end_at IS NULL;`)
     } else {
-      console.log(`Work REPORT`)
+      const [inprogress_result, _] = await db.query('SELECT * FROM entries WHERE end_at IS NULL ORDER BY start_at ASC LIMIT 1;')
+
+      if (inprogress_result.length === 1) {
+        console.log(`In progress: ${moment(inprogress_result.start_at).fromNow(true)}`)
+      }
+
+      // TODO Show work done (Total duration, earliest start_at, latest end_at, date YYYY-MM-DD)
     }
 
     await close_database()
