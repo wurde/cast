@@ -45,6 +45,7 @@ async function work(argv) {
   try {
     await setup_database()
 
+    console.log('')
     if (argv[3] === 'clockin') {
       console.log('Clocking in for work')
       await db.query(`INSERT INTO entries (working_directory, start_at) VALUES ('${cwd}', ${Date.now()});`)
@@ -52,13 +53,22 @@ async function work(argv) {
       console.log('Clocking out of work')
       await db.query(`UPDATE entries SET end_at = ${Date.now()} WHERE end_at IS NULL;`)
     } else {
-      const [inprogress_result, _] = await db.query('SELECT * FROM entries WHERE end_at IS NULL ORDER BY start_at ASC LIMIT 1;')
+      const [inprogress_result, _1] = await db.query('SELECT * FROM entries WHERE end_at IS NULL ORDER BY start_at ASC LIMIT 1;')
 
       if (inprogress_result.length === 1) {
         console.log(`In progress: ${moment(inprogress_result.start_at).fromNow(true)}`)
       }
 
-      // TODO Show work done (Total duration, earliest start_at, latest end_at, date YYYY-MM-DD)
+      const date = new Date()
+      const date_utc = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+      const [done_result, _2] = await db.query(`SELECT * FROM entries WHERE end_at IS NOT NULL AND start_at > ${date_utc} ORDER BY start_at ASC;`)
+
+      if (done_result.length >= 1) {
+        // TODO Show work done (Total duration)
+        console.log(`Started At: ${new Date(done_result[0].start_at).toTimeString()}`)
+        console.log(`Ended At: ${new Date(done_result[done_result.length - 1].end_at).toTimeString()}`)
+        console.log(`Today: ${date.toDateString()}`)
+      }
     }
 
     await close_database()
