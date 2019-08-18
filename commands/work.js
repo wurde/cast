@@ -64,7 +64,12 @@ async function work(argv) {
       const [done_result, _2] = await db.query(`SELECT * FROM entries WHERE end_at IS NOT NULL AND start_at > ${date_utc} ORDER BY start_at ASC;`)
 
       if (done_result.length >= 1) {
-        // TODO Show work done (Total duration)
+        let total_work = 0
+        for (let i = 0; i < done_result.length; i++) {
+          total_work += moment(done_result[i].end_at).diff(moment(done_result[i].start_at))
+        }
+
+        console.log(`Total: ${moment.duration(total_work, 'milliseconds').humanize()}`)
         console.log(`Started At: ${new Date(done_result[0].start_at).toTimeString()}`)
         console.log(`Ended At: ${new Date(done_result[done_result.length - 1].end_at).toTimeString()}`)
         console.log(`Today: ${date.toDateString()}`)
