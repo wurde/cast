@@ -6,6 +6,7 @@
 
 const path = require('path')
 const meow = require('meow')
+const prompts = require('prompts')
 const Sequelize = require('sequelize')
 
 /**
