@@ -40,9 +40,15 @@ const cli = meow(`
  */
 
 function tasks(argv) {
-  console.log('Tasks')
-  console.log('input', cli.input[1])
-  console.log('flags', cli.flags)
+  if (cli.flags.create || cli.flags.c || cli.input[1] === 'create') {
+    // TODO Create a task.
+  } else if (cli.flags.done || cli.flags.d || cli.input[1] === 'done') {
+    // TODO Mark a task as done.
+  } else if (cli.flags.clear || cli.input[1] === 'clear') {
+    // TODO Clear tasks marked as done.
+  } else {
+    // TODO List all tasks.
+  }
 }
 
 /**
