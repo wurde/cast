@@ -79,13 +79,34 @@ async function tasks() {
     await setup_database()
 
     if (cli.flags.create || cli.flags.c || cli.input[1] === 'create') {
-      // TODO Create a task.
+      console.log('Creating a task...')
+      const res = await prompts({
+        type: 'text',
+        name: 'task',
+        message: 'Description:'
+      })
+
+      if (res.task) {
+        await db.query(`INSERT INTO tasks (working_directory, description) VALUES ('${cwd}', '${res.task}');`)
+      }
     } else if (cli.flags.done || cli.flags.d || cli.input[1] === 'done') {
-      // TODO Mark a task as done.
+      console.log('Marking task as done...')
+      const res = await prompts({
+        type: 'text',
+        name: 'task',
+        message: 'Description:'
+      })
+
+      if (res.task) {
+        await db.query(`UPDATE tasks SET done_at = ${Date.now()} WHERE description LIKE '%${res.task}%';`)
+      }
     } else if (cli.flags.clear || cli.input[1] === 'clear') {
-      // TODO Clear tasks marked as done.
+      console.log('Clearing all tasks marked as done...')
+      await db.query(`DELETE FROM tasks WHERE working_directory = '${cwd}' AND done_at IS NOT NULL;`)
     } else {
-      // TODO List all tasks.
+      const [alltasks_result, _] = await db.query(`SELECT * FROM tasks;`)
+      console.log('alltasks_result', alltasks_result)
+      // TODO list pending,done tasks
     }
 
     await close_database()
