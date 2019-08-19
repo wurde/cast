@@ -6,6 +6,7 @@
 
 const path = require('path')
 const meow = require('meow')
+const chalk = require('chalk')
 const prompts = require('prompts')
 const Sequelize = require('sequelize')
 
@@ -77,6 +78,7 @@ async function tasks() {
   try {
     await setup_database()
 
+    console.log('')
     if (cli.flags.create || cli.flags.c || cli.input[1] === 'create') {
       console.log('Creating a task...')
       const res = await prompts({
@@ -108,9 +110,9 @@ async function tasks() {
 
       for (let i = 0; i < alltasks_result.length; i++) {
         if (alltasks_result[i].done_at) {
-          console.log(`[ ] ${alltasks_result[i].description}`)
+          console.log(`  ${chalk.green('\u2713')}  ${alltasks_result[i].description}`)
         } else {
-
+          console.log(`  ${chalk.white('\u25A2')}  ${alltasks_result[i].description}`)
         }
       }
     }
