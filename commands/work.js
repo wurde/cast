@@ -5,7 +5,6 @@
  */
 
 const path = require('path')
-const fs = require('fs')
 const moment = require('moment')
 const Sequelize = require('sequelize')
 
@@ -32,6 +31,10 @@ async function setup_database() {
     console.error(err)
   }
 }
+
+/**
+ * Close database
+ */
 
 async function close_database() {
   await db.close()
