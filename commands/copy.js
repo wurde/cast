@@ -11,7 +11,7 @@ const path = require('path')
  * Constants
  */
 
-const template_dir = path.join(__dirname, 'init', 'files', 'all-purpose')
+const template_dir = path.join(__dirname, '..', 'templates')
 
 /**
  * Define script
