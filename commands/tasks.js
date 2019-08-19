@@ -28,7 +28,6 @@ const cli = meow(`
   Options
     --create, -c  Create a task.
     --done, -d  Mark task as done.
-    --remove  Remove a specific task.
     --clear  Clear all tasks marked as done.
 `, {
   flags: {
@@ -104,9 +103,16 @@ async function tasks() {
       console.log('Clearing all tasks marked as done...')
       await db.query(`DELETE FROM tasks WHERE working_directory = '${cwd}' AND done_at IS NOT NULL;`)
     } else {
-      const [alltasks_result, _] = await db.query(`SELECT * FROM tasks;`)
-      console.log('alltasks_result', alltasks_result)
-      // TODO list pending,done tasks
+      console.log('Printing all tasks...')
+      const [alltasks_result, _] = await db.query(`SELECT * FROM tasks ORDER BY done_at;`)
+
+      for (let i = 0; i < alltasks_result.length; i++) {
+        if (alltasks_result[i].done_at) {
+          console.log(`[ ] ${alltasks_result[i].description}`)
+        } else {
+
+        }
+      }
     }
 
     await close_database()
