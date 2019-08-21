@@ -23,7 +23,7 @@ const cli = meow(`
     Options
       --regex, -r   Filter files via regex (Default: '*.*')
       --output, -o  Output file format (Default: '{{f}}').
-      --force       Force overwrite of target files (Default: false).
+      --force       Force overwrite of output files (Default: false).
 
     Format
       {{i}}        Index: The index of the file.
