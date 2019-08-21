@@ -54,13 +54,14 @@ async function rename(argv) {
       file: file,
       basename: path.basename(file),
       extname: path.extname(file),
-      dirname: path.dirname(file),
+      dirname: path.dirname(path.resolve(file)),
       absolute_path: path.resolve(file)
     }
   })
 
   for (let i = 0; i < metadataFiles.length; i++) {
     if (cli.flags.force) {
+      console.log(metadataFiles[i].dirname)
       // fs.renameSync(metadataFiles[i].absolute_path, `./test2.md`)
     } else {
       if (fs.existsSync(metadataFiles[i])) { // TODO replace with target file
