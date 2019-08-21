@@ -24,6 +24,7 @@
     "meow": "^5.0.0",
     "micromatch": "^4.0.2",
     "moment": "^2.24.0",
+    "nodemon": "^1.19.1",
     "prompt": "^1.0.0",
     "prompts": "^2.2.1",
     "sequelize": "^5.15.0",
