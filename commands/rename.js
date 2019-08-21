@@ -7,6 +7,7 @@
 const fs = require('fs')
 const path = require('path')
 const meow = require('meow')
+const prompts = require('prompts')
 const micromatch = require('micromatch')
 
 /**
@@ -18,7 +19,9 @@ const cli = meow(`
     $ cast rename [options]
 
     Options
-    --regex, -r  Filter files via regex (Default: '*.*')
+    --regex, -r   Filter files via regex (Default: '*.*')
+    --output, -o  Output file format (Default: '{{i}}-{{f}}').
+    --force       Force overwrite of target files (Default: false).
 `)
 
 /**
@@ -26,12 +29,8 @@ const cli = meow(`
  */
 
 async function rename(argv) {
-  // Show help text.
-  if (cli.flags.h) {
-    cli.showHelp()
-  }
+  if (cli.flags.h) cli.showHelp()
 
-  // Set regex to filter files.
   let isMatch
   if (cli.flags.regex) {
     isMatch = micromatch.matcher(cli.flags.regex)
@@ -39,13 +38,17 @@ async function rename(argv) {
     isMatch = micromatch.matcher('*.*')
   }
 
-  // Read all files in current working directory.
+  let output
+  if (cli.flags.output) {
+    output = cli.flags.output
+  } else {
+    output = '{{i}}-{{f}}'
+  }
+
   const files = fs.readdirSync('.').filter(file => fs.statSync(file).isFile())
 
-  // Filter files by regex
   const filteredFiles = files.filter(file => isMatch(file))
 
-  // Read all of the files and extract their metadata.
   const metadataFiles = filteredFiles.map(file => {
     return {
       file: file,
@@ -54,15 +57,26 @@ async function rename(argv) {
       dirname: path.dirname(file)
     }
   })
-  console.log(metadataFiles)
 
-  // Rename files
-  metadataFiles.forEach(file => {
-    // TODO print target filename
-    // TODO check if target file exists
-    // if (fs.existsSync(file.basename)) {
-    // fs.renameSync(`./${files[i]}`, `./${types[j]}/${files[i]}`)
-  })
+  for (let i = 0; i < metadataFiles.length; i++) {
+    if (cli.flags.force) {
+      console.log('Rename.force', i)
+      // fs.renameSync(`./test1.md`, `./test2.md`)
+    } else {
+      if (fs.existsSync(metadataFiles[i])) { // TODO replace with target file
+        const response = await prompts({
+          type: 'confirm',
+          name: 'force',
+          message: `Target file ${metadataFiles[i].basename} exists. Overwrite? (N/y)`,
+          initial: false
+        })
+        // if (response.force) fs.renameSync(`./test1.md`, `./test2.md`)
+        console.log('Response', response, i)
+      } else {
+        // fs.renameSync(`./test1.md`, `./test2.md`)
+      }
+    }
+  }
 
   // This script doesn't need to be that complicated. Write the simplest version.
   // Takes a regex to match against current directory files. Then take a format
@@ -75,10 +89,6 @@ async function rename(argv) {
   // {{t}} time
   // {{dt}} datetime
   // {{g}} globally unique id
-
-  // Add force feature. cast rename --force. By default check if output file
-  // exists already to avoid overwrite fs.existSync(). Requrie a --force switch
-  // to automatically overwrite results otherwise prompt yes/no.
 
   // Save rename function to local database (to enable "undo" functionality).
 
