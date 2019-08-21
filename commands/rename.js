@@ -9,6 +9,7 @@ const path = require('path')
 const meow = require('meow')
 const prompts = require('prompts')
 const micromatch = require('micromatch')
+const uuid = require('uuid')
 
 /**
  * Parse args
@@ -52,7 +53,8 @@ async function rename(argv) {
   const metadataFiles = filteredFiles.map(file => {
     return {
       file: file,
-      basename: path.basename(file),
+      filename: path.basename(file),
+      basename: path.basename(file, path.extname(file)),
       extname: path.extname(file),
       dirname: path.dirname(path.resolve(file)),
       absolute_path: path.resolve(file)
@@ -62,7 +64,10 @@ async function rename(argv) {
   for (let i = 0; i < metadataFiles.length; i++) {
     let output_filename = output
     output_filename = output_filename.replace('{{i}}', i)
-    output_filename = output_filename.replace('{{f}}', metadataFiles[i].basename)
+    output_filename = output_filename.replace('{{g}}', uuid.v4())
+    output_filename = output_filename.replace('{{f}}', metadataFiles[i].filename)
+    output_filename = output_filename.replace('{{b}}', metadataFiles[i].basename)
+    output_filename = output_filename.replace('{{e}}', metadataFiles[i].extname)
     const output_path = path.join(metadataFiles[i].dirname, output_filename)
 
     if (cli.flags.force) {
@@ -83,17 +88,10 @@ async function rename(argv) {
     }
   }
 
-  // This script doesn't need to be that complicated. Write the simplest version.
-  // Takes a regex to match against current directory files. Then take a format
-  // to rename matched files.
-  //
-  // {{i}} index
   // {{f}} filename (upper|lower|camel)
-  // {{e}} extname
   // {{d}} date
   // {{t}} time
   // {{dt}} datetime
-  // {{g}} globally unique id
 
   // Save rename function to local database (to enable "undo" functionality).
 
