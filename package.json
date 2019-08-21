@@ -28,6 +28,7 @@
     "nodemon": "^1.19.1",
     "prompt": "^1.0.0",
     "prompts": "^2.2.1",
+    "puppeteer": "^1.19.0",
     "sequelize": "^5.15.0",
     "sqlite3": "^4.1.0",
     "uuid": "^3.3.3",

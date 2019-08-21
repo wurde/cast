@@ -7,6 +7,7 @@
 const fs = require('fs')
 const meow = require('meow')
 const marked = require('marked')
+const puppeteer = require('puppeteer')
 
 /**
  * Parse args
@@ -42,10 +43,10 @@ function pdf(argv) {
 
   // TODO if cli.flags.stylesheet then apply custom CSS.
   // TODO if cli.flags.watch then use nodemon to listen for changes.
-  // TODO convert markdown to pdf.
 
   const html = marked(fs.readFileSync(cli.input[1], 'utf8'))
-  console.log(html)
+  fs.writeFileSync('temp.html', html)
+  fs.unlinkSync('temp.html')
 }
 
 /**
