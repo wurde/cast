@@ -5,6 +5,7 @@
  */
 
 const fs = require('fs')
+const path = require('path')
 const meow = require('meow')
 const micromatch = require('micromatch')
 
@@ -25,7 +26,7 @@ const cli = meow(`
  */
 
 async function rename(argv) {
-  // Set default for regex argument.
+  // Set regex to filter files.
   let isMatch
   if (cli.flags.regex) {
     isMatch = micromatch.matcher(cli.flags.regex)
@@ -34,15 +35,21 @@ async function rename(argv) {
   }
 
   // Read all files in current working directory.
-  let files = fs.readdirSync('.').filter(file => fs.statSync(file).isFile())
+  const files = fs.readdirSync('.').filter(file => fs.statSync(file).isFile())
 
   // Filter files by regex
-  files = files.filter(file => {
-    console.log('Match file', file, isMatch(file))
-    isMatch(file)
-  })
+  const filteredFiles = files.filter(file => isMatch(file))
 
   // Read all of the files and extract their metadata.
+  const metadataFiles = filteredFiles.map(file => {
+    return {
+      file: file,
+      basename: path.basename(file),
+      extname: path.extname(file),
+      dirname: path.dirname(file)
+    }
+  })
+  console.log(metadataFiles)
 
   // This script doesn't need to be that complicated. Write the simplest version.
   // Takes a regex to match against current directory files. Then take a format
@@ -56,16 +63,14 @@ async function rename(argv) {
   // {{dt}} datetime
   // {{g}} globally unique id
 
-  // Use prompts to get the regex file matcher and the output format.
-
-  // - extname: path.extname(files[i])
-
   // Use fs module for renaming files.
   // fs.renameSync(`./${files[i]}`, `./${types[j]}/${files[i]}`)
 
   // Add force feature. cast rename --force. By default check if output file
   // exists already to avoid overwrite fs.existSync(). Requrie a --force switch
   // to automatically overwrite results otherwise prompt yes/no.
+
+  // Save rename function to local database (to enable "undo" functionality).
 
   // Add undo feature. cast rename --undo. This can be done by saving the
   // rename scripts as an array of changes:
