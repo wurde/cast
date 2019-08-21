@@ -15,7 +15,7 @@ const micromatch = require('micromatch')
 
 const cli = meow(`
   Usage
-    $ cast rename
+    $ cast rename [options]
 
     Options
     --regex, -r  Filter files via regex (Default: '*.*')
@@ -26,6 +26,11 @@ const cli = meow(`
  */
 
 async function rename(argv) {
+  // Show help text.
+  if (cli.flags.h) {
+    cli.showHelp()
+  }
+
   // Set regex to filter files.
   let isMatch
   if (cli.flags.regex) {
@@ -51,6 +56,14 @@ async function rename(argv) {
   })
   console.log(metadataFiles)
 
+  // Rename files
+  metadataFiles.forEach(file => {
+    // TODO print target filename
+    // TODO check if target file exists
+    // if (fs.existsSync(file.basename)) {
+    // fs.renameSync(`./${files[i]}`, `./${types[j]}/${files[i]}`)
+  })
+
   // This script doesn't need to be that complicated. Write the simplest version.
   // Takes a regex to match against current directory files. Then take a format
   // to rename matched files.
@@ -62,9 +75,6 @@ async function rename(argv) {
   // {{t}} time
   // {{dt}} datetime
   // {{g}} globally unique id
-
-  // Use fs module for renaming files.
-  // fs.renameSync(`./${files[i]}`, `./${types[j]}/${files[i]}`)
 
   // Add force feature. cast rename --force. By default check if output file
   // exists already to avoid overwrite fs.existSync(). Requrie a --force switch
