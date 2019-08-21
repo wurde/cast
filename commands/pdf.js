@@ -39,4 +39,4 @@ function pdf(argv) {
  * Export script
  */
 
- module.exports = pdf
+module.exports = pdf
