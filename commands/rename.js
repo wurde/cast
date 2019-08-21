@@ -60,20 +60,25 @@ async function rename(argv) {
   })
 
   for (let i = 0; i < metadataFiles.length; i++) {
+    let output_filename = output
+    output_filename = output_filename.replace('{{i}}', i)
+    output_filename = output_filename.replace('{{f}}', metadataFiles[i].basename)
+    const output_path = path.join(metadataFiles[i].dirname, output_filename)
+
     if (cli.flags.force) {
-      console.log(metadataFiles[i].dirname)
-      // fs.renameSync(metadataFiles[i].absolute_path, `./test2.md`)
+      console.log(output_path)
+      // fs.renameSync(metadataFiles[i].absolute_path, output_path)
     } else {
-      if (fs.existsSync(metadataFiles[i])) { // TODO replace with target file
+      if (fs.existsSync(output_path)) {
         const response = await prompts({
           type: 'confirm',
           name: 'force',
           message: `Target file ${metadataFiles[i].basename} exists. Overwrite? (N/y)`,
           initial: false
         })
-        // if (response.force) fs.renameSync(metadataFiles[i].absolute_path, `./test2.md`)
+        // if (response.force) fs.renameSync(metadataFiles[i].absolute_path, output_path)
       } else {
-        // fs.renameSync(metadataFiles[i].absolute_path, `./test2.md`)
+        // fs.renameSync(metadataFiles[i].absolute_path, output_path)
       }
     }
   }
