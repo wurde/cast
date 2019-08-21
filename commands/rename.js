@@ -10,6 +10,7 @@ const meow = require('meow')
 const prompts = require('prompts')
 const micromatch = require('micromatch')
 const uuid = require('uuid')
+const moment = require('moment')
 
 /**
  * Parse args
@@ -66,8 +67,13 @@ async function rename(argv) {
     output_filename = output_filename.replace('{{i}}', i)
     output_filename = output_filename.replace('{{g}}', uuid.v4())
     output_filename = output_filename.replace('{{f}}', metadataFiles[i].filename)
+    output_filename = output_filename.replace('{{f+upper}}', metadataFiles[i].filename.toUpperCase())
+    output_filename = output_filename.replace('{{f+lower}}', metadataFiles[i].filename.toLowerCase())
     output_filename = output_filename.replace('{{b}}', metadataFiles[i].basename)
     output_filename = output_filename.replace('{{e}}', metadataFiles[i].extname)
+    output_filename = output_filename.replace('{{d}}', moment(new Date()).format('YYYY-MM-DD'))
+    output_filename = output_filename.replace('{{t}}', moment(new Date()).format('HHmm'))
+    output_filename = output_filename.replace('{{dt}}', moment(new Date()).format('YYYYMMDDHHmm'))
     const output_path = path.join(metadataFiles[i].dirname, output_filename)
 
     if (cli.flags.force) {
@@ -87,11 +93,6 @@ async function rename(argv) {
       }
     }
   }
-
-  // {{f}} filename (upper|lower|camel)
-  // {{d}} date
-  // {{t}} time
-  // {{dt}} datetime
 
   // Save rename function to local database (to enable "undo" functionality).
 
