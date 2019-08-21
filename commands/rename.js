@@ -21,9 +21,21 @@ const cli = meow(`
     $ cast rename [options]
 
     Options
-    --regex, -r   Filter files via regex (Default: '*.*')
-    --output, -o  Output file format (Default: '{{i}}-{{f}}').
-    --force       Force overwrite of target files (Default: false).
+      --regex, -r   Filter files via regex (Default: '*.*')
+      --output, -o  Output file format (Default: '{{i}}-{{f}}').
+      --force       Force overwrite of target files (Default: false).
+
+    Format
+      {{i}}        Index: The index of the file.
+      {{f}}        Filename: The original name of the file (Example: Readme.md).
+      {{f+upper}}  Uppercase filename (Example: README.MD).
+      {{f+lower}}  Lowercase filename (Example: readme.md).
+      {{b}}        Basename: Last portion of the path (Example: Readme).
+      {{e}}        Extname: The extension of the file (Example: .md).
+      {{d}}        Date: The current date (Example: 2019-08-21).
+      {{t}}        Time: The current time (Example: 0538).
+      {{dt}}       Datetime: The current datetime (Example: 201908210538).
+      {{g}}        GUID: A globally unique identifier.
 `)
 
 /**
