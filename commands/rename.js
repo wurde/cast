@@ -22,7 +22,7 @@ const cli = meow(`
 
     Options
       --regex, -r   Filter files via regex (Default: '*.*')
-      --output, -o  Output file format (Default: '{{i}}-{{f}}').
+      --output, -o  Output file format (Default: '{{f}}').
       --force       Force overwrite of target files (Default: false).
 
     Format
@@ -56,7 +56,7 @@ async function rename(argv) {
   if (cli.flags.output) {
     output = cli.flags.output
   } else {
-    output = '{{i}}-{{f}}'
+    output = '{{f}}'
   }
 
   const files = fs.readdirSync('.').filter(file => fs.statSync(file).isFile())
@@ -89,19 +89,18 @@ async function rename(argv) {
     const output_path = path.join(metadataFiles[i].dirname, output_filename)
 
     if (cli.flags.force) {
-      console.log(output_path)
-      // fs.renameSync(metadataFiles[i].absolute_path, output_path)
+      fs.renameSync(metadataFiles[i].absolute_path, output_path)
     } else {
       if (fs.existsSync(output_path)) {
         const response = await prompts({
           type: 'confirm',
           name: 'force',
-          message: `Target file ${metadataFiles[i].basename} exists. Overwrite? (N/y)`,
+          message: `Output file ${metadataFiles[i].basename} exists. Overwrite? (N/y)`,
           initial: false
         })
-        // if (response.force) fs.renameSync(metadataFiles[i].absolute_path, output_path)
+        if (response.force) fs.renameSync(metadataFiles[i].absolute_path, output_path)
       } else {
-        // fs.renameSync(metadataFiles[i].absolute_path, output_path)
+        fs.renameSync(metadataFiles[i].absolute_path, output_path)
       }
     }
   }
