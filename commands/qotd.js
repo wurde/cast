@@ -8,6 +8,7 @@ const https = require('https')
 const querystring = require('querystring')
 const meow = require('meow')
 const figlet = require('figlet')
+const cheerio = require('cheerio')
 
 /**
  * Constants
@@ -87,7 +88,6 @@ async function qotd() {
             data = JSON.parse(data)
 
             let sections = data.parse.sections
-            // console.log('sections', sections.constructor, sections)
 
             // TODO random section
             const sectionID = 1
@@ -112,7 +112,9 @@ async function qotd() {
               res.on('end', () => {
                 data = JSON.parse(data)
 
-                console.log('end_', data)
+                // console.log('end_', data)
+                let quotes = data.parse.text["*"]
+                console.log('quotes', quotes)
 
                 figlet.text('Quote of the day', (err, data) => {
                   console.log(data)
