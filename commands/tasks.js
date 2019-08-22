@@ -104,9 +104,21 @@ async function tasks() {
     } else if (cli.flags.clear || cli.input[1] === 'clear') {
       console.log('Clearing all tasks marked as done...')
       await db.query(`DELETE FROM tasks WHERE working_directory = '${cwd}' AND done_at IS NOT NULL;`)
+    } else if (cli.flags.all || cli.input[1] === 'all') {
+      console.log('Printing all tasks across all projects...')
+      const [alltasks_result, _] = await db.query(`SELECT * FROM tasks ORDER BY done_at, working_directory;`)
+
+      for (let i = 0; i < alltasks_result.length; i++) {
+        if (alltasks_result[i].done_at) {
+          console.log(`  ${chalk.green('\u2713')}  ${alltasks_result[i].working_directory}  -  ${alltasks_result[i].description}`)
+        } else {
+          console.log(`  ${chalk.white('\u25A2')}  ${alltasks_result[i].working_directory}  -  ${alltasks_result[i].description}`)
+        }
+      }
     } else {
+      console.log('Project:', cwd)
       console.log('Printing all tasks...')
-      const [alltasks_result, _] = await db.query(`SELECT * FROM tasks ORDER BY done_at;`)
+      const [alltasks_result, _] = await db.query(`SELECT * FROM tasks WHERE working_directory = '${cwd}' ORDER BY done_at;`)
 
       for (let i = 0; i < alltasks_result.length; i++) {
         if (alltasks_result[i].done_at) {
