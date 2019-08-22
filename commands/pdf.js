@@ -64,10 +64,10 @@ async function pdf(argv) {
 
   const browser = await puppeteer.launch()
   const page = await browser.newPage()
-  
-  const html = marked(fs.readFileSync(cli.input[1], 'utf8'))
+
+  let html = marked(fs.readFileSync(cli.input[1], 'utf8'))
   fs.writeFileSync('temp.html', html)
-  
+
   await setContent(page, html)
   await addStyleTag(html)
 
@@ -75,7 +75,7 @@ async function pdf(argv) {
     nodemon(`--watch temp.html --exec echo Updating PDF...`)
 
     nodemon.on('start', async () => {
-      console.log('App has started')
+      console.log('Watching for changes...')
       await page.pdf({ path: `${basename}.pdf` })
       }).on('quit', () => {
       console.log('App has quit')
@@ -84,6 +84,12 @@ async function pdf(argv) {
     }).on('restart', (files) => {
       process.exit()
       console.log('App restarted due to: ', files)
+
+      html = marked(fs.readFileSync(cli.input[1], 'utf8'))
+      fs.writeFileSync('temp.html', html)
+
+      await setContent(page, html)
+      await addStyleTag(html)
     })
   } else {
     await page.pdf({ path: `${basename}.pdf` })
