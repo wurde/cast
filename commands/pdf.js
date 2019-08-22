@@ -50,6 +50,12 @@ async function addStyleTag(page) {
   }
 }
 
+function cleanup(browser, msg) {
+  console.log('Closing PDF render...', msg)
+  browser.close()
+  if (fs.existsSync('temp.html')) fs.unlinkSync('temp.html')
+}
+
 /**
  * Define script
  */
@@ -72,25 +78,19 @@ async function pdf(argv) {
   await addStyleTag(html)
 
   if (cli.flags.watch || cli.flags.w) {
-    nodemon(`--watch temp.html --exec echo Updating PDF...`)
-
-    nodemon.on('start', async () => {
+    nodemon(`--watch ${cli.input[1]} --exec echo Updating PDF...`)
+    .on('start', () => {
       console.log('Watching for changes...')
-      await page.pdf({ path: `${basename}.pdf` })
-      }).on('quit', () => {
-      console.log('App has quit')
-      browser.close()
-      fs.unlinkSync('temp.html')
-    }).on('restart', (files) => {
-      process.exit()
-      console.log('App restarted due to: ', files)
-
+      page.pdf({ path: `${basename}.pdf` })
+    }).on('restart', files => {
+      console.log('Updating PDF...', files)
       html = marked(fs.readFileSync(cli.input[1], 'utf8'))
       fs.writeFileSync('temp.html', html)
-
-      await setContent(page, html)
-      await addStyleTag(html)
+      setContent(page, html)
     })
+    .on('crash', () => cleanup(browser, 'crash'))
+    // .on('quit', () => cleanup(browser, 'quit'))
+    // .on('exit', () => cleanup(browser, 'exit'))
   } else {
     await page.pdf({ path: `${basename}.pdf` })
 
