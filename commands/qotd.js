@@ -44,6 +44,10 @@ function randomInteger(min, max) {
 async function qotd() {
   if (cli.flags.h) cli.showHelp()
 
+  /**
+   * Get the page ID for a given author.
+   */
+
   https.get(`${API_URL}?${querystring.stringify({
     format: 'json',
     action: 'query',
@@ -58,13 +62,68 @@ async function qotd() {
 
     res.on('end', () => {
       data = JSON.parse(data)
-      const pages = data.query.pages
 
-      console.log('end', pages)
+      let pageIDs = Object.keys(data.query.pages)
+      pageIDs = pageIDs.filter(id => Number(id) > 0)
 
-      figlet.text('Quote of the day', (err, data) => {
-        console.log(data)
-      })
+      if (pageIDs.length > 0) {
+        /**
+         * Get sections for a given page.
+         */
+
+        https.get(`${API_URL}?${querystring.stringify({
+          format: 'json',
+          action: 'parse',
+          prop: 'sections',
+          pageid: pageIDs[0]
+        })}`, res => {
+          let data = ''
+
+          res.on('data', (chunk) => {
+            data += chunk
+          })
+
+          res.on('end', () => {
+            data = JSON.parse(data)
+
+            let sections = data.parse.sections
+            // console.log('sections', sections.constructor, sections)
+
+            // TODO random section
+            const sectionID = 1
+
+            /**
+             * Get quotes for a given section.
+             */
+
+            https.get(`${API_URL}?${querystring.stringify({
+              format: 'json',
+              action: 'parse',
+              noimages: '',
+              pageid: pageIDs[0],
+              section: sectionID
+            })}`, res => {
+              let data = ''
+
+              res.on('data', (chunk) => {
+                data += chunk
+              })
+
+              res.on('end', () => {
+                data = JSON.parse(data)
+
+                console.log('end_', data)
+
+                figlet.text('Quote of the day', (err, data) => {
+                  console.log(data)
+                })
+              })
+            })
+          })
+        })
+      } else {
+        console.error('No quotes found')
+      }
     })
   })
 }
