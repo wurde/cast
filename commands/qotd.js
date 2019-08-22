@@ -9,6 +9,8 @@ const querystring = require('querystring')
 const meow = require('meow')
 const figlet = require('figlet')
 const cheerio = require('cheerio')
+const chalk = require('chalk')
+const html_to_text = require('html-to-text')
 
 /**
  * Constants
@@ -45,6 +47,8 @@ function randomInteger(min, max) {
 async function qotd() {
   if (cli.flags.h) cli.showHelp()
 
+  const author = AUTHORS[randomInteger(0, AUTHORS.length - 1)]
+
   /**
    * Get the page ID for a given author.
    */
@@ -53,7 +57,7 @@ async function qotd() {
     format: 'json',
     action: 'query',
     redirects: '',
-    titles: AUTHORS[randomInteger(0, AUTHORS.length - 1)]
+    titles: author
   })}`, res => {
     let data = ''
 
@@ -90,7 +94,7 @@ async function qotd() {
             let sections = data.parse.sections
 
             // TODO random section
-            const sectionID = 1
+            const sectionID = randomInteger(1,4)
 
             /**
              * Get quotes for a given section.
@@ -112,12 +116,20 @@ async function qotd() {
               res.on('end', () => {
                 data = JSON.parse(data)
 
-                // console.log('end_', data)
-                let quotes = data.parse.text["*"]
-                console.log('quotes', quotes)
+                const text = data.parse.text["*"]
+                const $ = cheerio.load(text)
+                let quote = $('b').html()
 
-                figlet.text('Quote of the day', (err, data) => {
-                  console.log(data)
+                quote = html_to_text.fromString(quote, { wordwrap: 300 })
+                quote = quote.replace(/\[.*?\]/g, '')
+                quote = quote.replace(/\s+/, ' ')
+
+                figlet.text("Quote of the day", {
+                  font: 'Small'
+                }, (err, data) => {
+                  console.log(data, '\n')
+                  console.log(chalk.bold(quote))
+                  console.log(chalk.bold(`- ${author}`))
                 })
               })
             })
