@@ -5,6 +5,7 @@
  */
 
 const meow = require('meow')
+const figlet = require('figlet')
 
 /**
  * Parse args
@@ -22,7 +23,9 @@ const cli = meow(`
 async function qotd() {
   if (cli.flags.h) cli.showHelp()
 
-  console.log('Quote of the day')
+  figlet.text('Quote of the day', (err, data) => {
+    console.log(data)
+  })
 }
 
 /**
