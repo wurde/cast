@@ -75,6 +75,8 @@ async function close_database() {
  */
 
 async function tasks() {
+  if (cli.flags.h) cli.showHelp()
+
   try {
     await setup_database()
 
@@ -117,7 +119,7 @@ async function tasks() {
       }
     } else {
       console.log('Project:', cwd)
-      console.log('Printing all tasks...')
+      console.log('Printing tasks...')
       const [alltasks_result, _] = await db.query(`SELECT * FROM tasks WHERE working_directory = '${cwd}' ORDER BY done_at;`)
 
       for (let i = 0; i < alltasks_result.length; i++) {
