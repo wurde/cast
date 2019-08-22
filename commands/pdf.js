@@ -38,20 +38,16 @@ const cli = meow(`
  * Define helper
  */
 
-async function render_page(html) {
-  const browser = await puppeteer.launch()
-  const page = await browser.newPage()
+async function setContent(page, html) {
   await page.setContent(html)
-  return [browser, page]
 }
 
-async function style_page(page) {
+async function addStyleTag(page) {
   if (cli.flags.stylesheet) {
-    page.addStyleTag({ content: fs.readFileSync(cli.flags.stylesheet) })
+    await page.addStyleTag({ content: fs.readFileSync(cli.flags.stylesheet) })
   } else {
     // TODO apply default styles
   }
-  return page
 }
 
 /**
@@ -66,16 +62,20 @@ async function pdf(argv) {
 
   const basename = path.basename(cli.input[1], path.extname(cli.input[1]))
 
+  const browser = await puppeteer.launch()
+  const page = await browser.newPage()
+  
   const html = marked(fs.readFileSync(cli.input[1], 'utf8'))
   fs.writeFileSync('temp.html', html)
   
+  await setContent(page, html)
+  await addStyleTag(html)
+
   if (cli.flags.watch || cli.flags.w) {
     nodemon(`--watch temp.html --exec echo Updating PDF...`)
 
     nodemon.on('start', async () => {
       console.log('App has started')
-      let [browser, page] = await render_page(html)
-      page = await style_page(html)
       await page.pdf({ path: `${basename}.pdf` })
       }).on('quit', () => {
       console.log('App has quit')
@@ -86,10 +86,8 @@ async function pdf(argv) {
       console.log('App restarted due to: ', files)
     })
   } else {
-    let [browser, page] = await render_page(html)
-    page = await style_page(html)
     await page.pdf({ path: `${basename}.pdf` })
-    
+
     browser.close()
     fs.unlinkSync('temp.html')
   }
