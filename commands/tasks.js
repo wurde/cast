@@ -24,7 +24,7 @@ const cwd = process.cwd()
 
 const cli = meow(`
   Usage
-    $ cast tasks <input>
+    $ cast tasks <command>
 
   Options
     --create, -c  Create a task.
