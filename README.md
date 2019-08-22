@@ -1,4 +1,4 @@
-# Scripts 00
+# Scripts
 
 Command-line interface (CLI) applications.
 

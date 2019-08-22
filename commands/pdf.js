@@ -50,10 +50,9 @@ async function addStyleTag(page) {
   }
 }
 
-function cleanup(browser, msg) {
-  console.log('Closing PDF render...', msg)
+function cleanup(browser) {
+  console.log('Closing PDF render...')
   browser.close()
-  if (fs.existsSync('temp.html')) fs.unlinkSync('temp.html')
 }
 
 /**
@@ -80,17 +79,15 @@ async function pdf(argv) {
   if (cli.flags.watch || cli.flags.w) {
     nodemon(`--watch ${cli.input[1]} --exec echo Updating PDF...`)
     .on('start', () => {
-      console.log('Watching for changes...')
       page.pdf({ path: `${basename}.pdf` })
     }).on('restart', files => {
-      console.log('Updating PDF...', files)
       html = marked(fs.readFileSync(cli.input[1], 'utf8'))
       fs.writeFileSync('temp.html', html)
       setContent(page, html)
+      if (fs.existsSync('temp.html')) fs.unlinkSync('temp.html')
     })
-    .on('crash', () => cleanup(browser, 'crash'))
-    // .on('quit', () => cleanup(browser, 'quit'))
-    // .on('exit', () => cleanup(browser, 'exit'))
+    .on('crash', () => cleanup(browser))
+    .on('quit', () => cleanup(browser))
   } else {
     await page.pdf({ path: `${basename}.pdf` })
 
