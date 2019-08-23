@@ -11,6 +11,7 @@ const figlet = require('figlet')
 const cheerio = require('cheerio')
 const chalk = require('chalk')
 const html_to_text = require('html-to-text')
+const connectivity = require('connectivity')
 
 /**
  * Constants
@@ -58,12 +59,24 @@ function quote_api_request(obj) {
   })
 }
 
+function checkConnectivity() {
+  return new Promise((resolve, reject) => {
+    connectivity(online => online ? resolve(true) : resolve(false))
+  })
+}
+
 /**
  * Define script
  */
 
 async function qotd() {
   if (cli.flags.h) cli.showHelp()
+
+  const is_connected = await checkConnectivity()
+  if (is_connected === true) {
+    console.error(chalk.red('Error: There is no Internet connection.'))
+    process.exit(1)
+  }
 
   const author = AUTHORS[randomInteger(0, AUTHORS.length - 1)]
 
