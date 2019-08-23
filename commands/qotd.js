@@ -90,7 +90,6 @@ async function qotd() {
     redirects: '',
     titles: author
   })
-  console.log('Page Data: ', page_data)
 
   let pageIDs = Object.keys(page_data.query.pages)
   pageIDs = pageIDs.filter(id => Number(id) > 0)
@@ -99,7 +98,6 @@ async function qotd() {
     console.error(chalk.red(`Error: No quotes for author '${author}'.`))
     process.exit(1)
   }
-  console.log('pageIDs', pageIDs)
 
   /**
    * Get sections for a given page.
