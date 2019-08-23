@@ -124,44 +124,29 @@ async function qotd() {
     pageid: pageIDs[0],
     section: sectionID
   })
-  // console.log('Quotes Data: ', quotes_data)
 
-  // TODO get array of quotes
-  // TODO pick random quote
   const quotes = []
   const text = quotes_data.parse.text["*"]
   const $ = cheerio.load(text)
-  const list = $('li:not(li li)')
 
-  for (let i = 0; i < list.length; i++) {
-    let bold_text = list[i].children.filter(child => {
-      return child.name === 'b'
+  $('.mw-parser-output > ul li').each((i, element) => {
+    let quote = html_to_text.fromString($(element).html(), {
+      wordwrap: 300
     })
+    quote = quote.replace(/\[.*?\]/g, '')
+    quote = quote.replace(/\s+/, ' ')
+    quotes.push(quote)
+  })
 
-    for (let j = 0; j < bold_text.length; j++) {
-      let text_array = Array.from(bold_text[j].children)
+  const display_quote = quotes[randomInteger(0, quotes.length - 1)]
 
-      for (let k = 0; k < text_array.length; k++) {
-        if (text_array[k].type === 'text') {
-          quotes.push(text_array[k].data.trim())
-        }
-      }
-    }
-  }
-  console.log('quotes', quotes, quotes.length)
-  // let quote = $('b').html()
-
-  // quote = html_to_text.fromString(quote, { wordwrap: 300 })
-  // quote = quote.replace(/\[.*?\]/g, '')
-  // quote = quote.replace(/\s+/, ' ')
-  //
-  // figlet.text("Quote of the day", {
-  //   font: 'Small'
-  // }, (err, data) => {
-  //   console.log(data, '\n')
-  //   console.log(chalk.bold(quote))
-  //   console.log(chalk.bold(`- ${author}`))
-  // })
+  figlet.text("Quote of the day", {
+    font: 'Small'
+  }, (err, data) => {
+    console.log(data, '\n')
+    console.log(chalk.bold(display_quote))
+    console.log(chalk.bold(`- ${author}`))
+  })
 }
 
 /**
