@@ -77,34 +77,19 @@ async function qotd() {
     redirects: '',
     titles: author
   })
+  console.log('Page Data: ', page_data)
 
-  console.log('page_data', page_data)
-  // let pageIDs = Object.keys(page_data.query.pages)
-  // pageIDs = pageIDs.filter(id => Number(id) > 0)
-  //
-  // if (pageIDs.length > 0) {
-  //   console.log('pageIDs', pageIDs)
-  // }
+  let pageIDs = Object.keys(page_data.query.pages)
+  pageIDs = pageIDs.filter(id => Number(id) > 0)
+
+  if (pageIDs.length === 0) {
+    console.error(chalk.red(`Error: No quotes found for author '${author}'.`))
+    process.exit(1)
+  }
+
+  console.log('pageIDs', pageIDs)
 
   // TEMP
-  // https.get(`${API_URL}?${querystring.stringify({
-  //   format: 'json',
-  //   action: 'query',
-  //   redirects: '',
-  //   titles: author
-  // })}`, res => {
-  //   let data = ''
-  //
-  //   res.on('data', (chunk) => {
-  //     data += chunk
-  //   })
-  //
-  //   res.on('end', () => {
-  //     data = JSON.parse(data)
-  //
-  //     let pageIDs = Object.keys(data.query.pages)
-  //     pageIDs = pageIDs.filter(id => Number(id) > 0)
-  //
   //     if (pageIDs.length > 0) {
   //       /**
   //        * Get sections for a given page.
