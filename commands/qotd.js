@@ -71,7 +71,7 @@ async function qotd() {
    * Get the page ID for a given author.
    */
 
-  let page_data = await quote_api_request({
+  const page_data = await quote_api_request({
     format: 'json',
     action: 'query',
     redirects: '',
@@ -86,78 +86,54 @@ async function qotd() {
     console.error(chalk.red(`Error: No quotes found for author '${author}'.`))
     process.exit(1)
   }
-
   console.log('pageIDs', pageIDs)
 
-  // TEMP
-  //     if (pageIDs.length > 0) {
-  //       /**
-  //        * Get sections for a given page.
-  //        */
+  /**
+   * Get sections for a given page.
+   */
+
+  const section_data = await quote_api_request({
+    format: 'json',
+    action: 'parse',
+    prop: 'sections',
+    pageid: pageIDs[0]
+  })
+  console.log('Section Data: ', section_data)
+
+  let sections = section_data.parse.sections
+  console.log('sections', sections)
+
+  // TODO random section
+  const sectionID = randomInteger(1,4)
+  console.log('sectionID', sectionID)
+
+  /**
+   * Get quotes for a given section.
+   */
+
+  const quotes_data = await quote_api_request({
+    format: 'json',
+    action: 'parse',
+    noimages: '',
+    pageid: pageIDs[0],
+    section: sectionID
+  })
+  console.log('Quotes Data: ', quotes_data)
+
+  // const text = quotes_data.parse.text["*"]
+  // const $ = cheerio.load(text)
+  // let quote = $('b').html()
   //
-  //       https.get(`${API_URL}?${querystring.stringify({
-  //         format: 'json',
-  //         action: 'parse',
-  //         prop: 'sections',
-  //         pageid: pageIDs[0]
-  //       })}`, res => {
-  //         let data = ''
+  // quote = html_to_text.fromString(quote, { wordwrap: 300 })
+  // quote = quote.replace(/\[.*?\]/g, '')
+  // quote = quote.replace(/\s+/, ' ')
   //
-  //         res.on('data', (chunk) => {
-  //           data += chunk
-  //         })
-  //
-  //         res.on('end', () => {
-  //           data = JSON.parse(data)
-  //
-  //           let sections = data.parse.sections
-  //
-  //           // TODO random section
-  //           const sectionID = randomInteger(1,4)
-  //
-  //           /**
-  //            * Get quotes for a given section.
-  //            */
-  //
-  //           https.get(`${API_URL}?${querystring.stringify({
-  //             format: 'json',
-  //             action: 'parse',
-  //             noimages: '',
-  //             pageid: pageIDs[0],
-  //             section: sectionID
-  //           })}`, res => {
-  //             let data = ''
-  //
-  //             res.on('data', (chunk) => {
-  //               data += chunk
-  //             })
-  //
-  //             res.on('end', () => {
-  //               data = JSON.parse(data)
-  //
-  //               const text = data.parse.text["*"]
-  //               const $ = cheerio.load(text)
-  //               let quote = $('b').html()
-  //
-  //               quote = html_to_text.fromString(quote, { wordwrap: 300 })
-  //               quote = quote.replace(/\[.*?\]/g, '')
-  //               quote = quote.replace(/\s+/, ' ')
-  //
-  //               figlet.text("Quote of the day", {
-  //                 font: 'Small'
-  //               }, (err, data) => {
-  //                 console.log(data, '\n')
-  //                 console.log(chalk.bold(quote))
-  //                 console.log(chalk.bold(`- ${author}`))
-  //               })
-  //             })
-  //           })
-  //         })
-  //       })
-  //     } else {
-  //       console.error('No quotes found')
-  //     }
-  //   })
+  // figlet.text("Quote of the day", {
+  //   font: 'Small'
+  // }, (err, data) => {
+  //   console.log(data, '\n')
+  //   console.log(chalk.bold(quote))
+  //   console.log(chalk.bold(`- ${author}`))
   // })
 }
 
