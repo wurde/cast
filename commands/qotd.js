@@ -109,14 +109,9 @@ async function qotd() {
     prop: 'sections',
     pageid: pageIDs[0]
   })
-  console.log('Section Data: ', section_data)
 
   let sections = section_data.parse.sections
-  console.log('sections', sections)
-
-  // TODO random section
-  const sectionID = randomInteger(1,4)
-  console.log('sectionID', sectionID)
+  const sectionID = randomInteger(1, sections.length - 1)
 
   /**
    * Get quotes for a given section.
@@ -129,12 +124,33 @@ async function qotd() {
     pageid: pageIDs[0],
     section: sectionID
   })
-  console.log('Quotes Data: ', quotes_data)
+  // console.log('Quotes Data: ', quotes_data)
 
-  // const text = quotes_data.parse.text["*"]
-  // const $ = cheerio.load(text)
+  // TODO get array of quotes
+  // TODO pick random quote
+  const quotes = []
+  const text = quotes_data.parse.text["*"]
+  const $ = cheerio.load(text)
+  const list = $('li:not(li li)')
+
+  for (let i = 0; i < list.length; i++) {
+    let bold_text = list[i].children.filter(child => {
+      return child.name === 'b'
+    })
+
+    for (let j = 0; j < bold_text.length; j++) {
+      let text_array = Array.from(bold_text[j].children)
+
+      for (let k = 0; k < text_array.length; k++) {
+        if (text_array[k].type === 'text') {
+          quotes.push(text_array[k].data.trim())
+        }
+      }
+    }
+  }
+  console.log('quotes', quotes, quotes.length)
   // let quote = $('b').html()
-  //
+
   // quote = html_to_text.fromString(quote, { wordwrap: 300 })
   // quote = quote.replace(/\[.*?\]/g, '')
   // quote = quote.replace(/\s+/, ' ')
