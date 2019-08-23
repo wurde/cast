@@ -73,7 +73,7 @@ async function qotd() {
   if (cli.flags.h) cli.showHelp()
 
   const is_connected = await checkConnectivity()
-  if (is_connected === true) {
+  if (is_connected === false) {
     console.error(chalk.red('Error: There is no Internet connection.'))
     process.exit(1)
   }
