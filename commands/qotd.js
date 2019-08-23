@@ -83,7 +83,7 @@ async function qotd() {
   pageIDs = pageIDs.filter(id => Number(id) > 0)
 
   if (pageIDs.length === 0) {
-    console.error(chalk.red(`Error: No quotes found for author '${author}'.`))
+    console.error(chalk.red(`Error: No quotes for author '${author}'.`))
     process.exit(1)
   }
   console.log('pageIDs', pageIDs)
