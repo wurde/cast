@@ -34,10 +34,6 @@ async function launchPage() {
   return [browser, page]
 }
 
-function storeScrapedResults(results) {
-  fs.writeFile()
-}
-
 /**
  * Define script
  */
@@ -76,6 +72,7 @@ async function scrape() {
         message: 'Enter the filename you\'d like to save to',
       })
 
+      // Save results to output file based on user input
       fs.writeFileSync(filenamePrompt.filename, results)
     }
   
