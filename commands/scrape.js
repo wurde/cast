@@ -22,11 +22,9 @@ const cli = meow(`
   flags: {
     url: {
       type: 'text',
-      alias: 'u'
     },
     selector: {
       type: 'text',
-      alias: 's'
     },
   }
 })
@@ -37,7 +35,7 @@ const cli = meow(`
 
 async function launchPage() {
   const browser = await puppeteer.launch({ headless: false })
-  const page = browser.newPage()
+  const page = await browser.newPage()
   
   return [browser, page]
 }
@@ -48,14 +46,16 @@ async function launchPage() {
 
 async function scrape() {
   if (cli.flags.h) cli.showHelp()
-  
+  if (!cli.flags.url) cli.showHelp()
+
   const [browser, page] = await launchPage()
+  await page.goto(cli.flags.url)
   
   setTimeout(() => {
     browser.close()
   }, 5000)
 }
- 
+
 /**
  * Export script
  */
