@@ -5,6 +5,7 @@
  */
 
 const meow = require('meow')
+const puppeteer = require('puppeteer')
 
 /**
  * Parse args
@@ -31,15 +32,30 @@ const cli = meow(`
 })
 
 /**
+ * Launch Page
+ */
+
+async function launchPage() {
+  const browser = await puppeteer.launch({ headless: false })
+  const page = browser.newPage()
+  
+  return [browser, page]
+}
+
+/**
  * Define script
  */
 
 async function scrape() {
   if (cli.flags.h) cli.showHelp()
-
-  console.log('Scrape')
+  
+  const [browser, page] = await launchPage()
+  
+  setTimeout(() => {
+    browser.close()
+  }, 5000)
 }
-
+ 
 /**
  * Export script
  */
