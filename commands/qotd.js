@@ -131,7 +131,7 @@ async function qotd() {
 
   $('.mw-parser-output > ul li').each((i, element) => {
     let quote = html_to_text.fromString($(element).html(), {
-      wordwrap: 300
+      wordwrap: null
     })
     quote = quote.replace(/\[.*?\]/g, '')
     quote = quote.replace(/\s+/, ' ')
