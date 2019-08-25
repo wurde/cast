@@ -4,6 +4,9 @@
   "description": "Your command-line applications.",
   "main": "bin/cast.js",
   "private": true,
+  "bin": {
+    "cast": "./bin/cast.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/wurde/scripts.git"
