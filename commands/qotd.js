@@ -91,10 +91,11 @@ async function qotd() {
     titles: author
   })
 
-  let pageIDs = Object.keys(page_data.query.pages)
-  pageIDs = pageIDs.filter(id => Number(id) > 0)
+  const pages = Object.keys(page_data.query.pages)
+    .map(id => Number(id))
+    .filter(id => id > 0)
 
-  if (pageIDs.length === 0) {
+  if (pages.length === 0) {
     console.error(chalk.red(`Error: No quotes for author '${author}'.`))
     process.exit(1)
   }
@@ -107,7 +108,7 @@ async function qotd() {
     format: 'json',
     action: 'parse',
     prop: 'sections',
-    pageid: pageIDs[0]
+    pageid: pages[0]
   })
 
   let sections = section_data.parse.sections
@@ -121,7 +122,7 @@ async function qotd() {
     format: 'json',
     action: 'parse',
     noimages: '',
-    pageid: pageIDs[0],
+    pageid: pages[0],
     section: sectionID
   })
 
