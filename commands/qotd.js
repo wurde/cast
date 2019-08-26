@@ -20,6 +20,13 @@ const connectivity = require('connectivity')
 const API_URL = 'https://en.wikiquote.org/w/api.php'
 const AUTHORS = [
   'Albert Einstein',
+  'Albert Hofmann',
+  'Aldous Huxley',
+  'Bertrand Russell',
+  'Douglas Adams',
+  'Leo Tolstoy',
+  'Seth Godin',
+  'Timothy Ferriss',
   'Steve Jobs',
   'Walt Disney',
 ]
