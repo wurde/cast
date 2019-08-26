@@ -18,8 +18,20 @@ const connectivity = require('connectivity')
  */
 
 const API_URL = 'https://en.wikiquote.org/w/api.php'
-const AUTHORS = [
+
+/**
+ * Locals
+ */
+
+let authors = [
   'Albert Einstein',
+  'Albert Hofmann',
+  'Aldous Huxley',
+  'Bertrand Russell',
+  'Douglas Adams',
+  'Leo Tolstoy',
+  'Seth Godin',
+  'Timothy Ferriss',
   'Steve Jobs',
   'Walt Disney',
 ]
@@ -30,7 +42,7 @@ const AUTHORS = [
 
 const cli = meow(`
   Usage
-    $ cast qotd
+    $ cast qotd [AUTHOR,...AUTHOR]
 `)
 
 /**
@@ -71,6 +83,9 @@ function checkConnectivity() {
 
 async function qotd() {
   if (cli.flags.h) cli.showHelp()
+  if (cli.input.length > 1) {
+    authors = cli.input.slice(1, cli.input.length).join(' ').split(',')
+  }
 
   const is_connected = await checkConnectivity()
   if (is_connected === false) {
@@ -78,10 +93,10 @@ async function qotd() {
     process.exit(1)
   }
 
-  const author = AUTHORS[randomInteger(0, AUTHORS.length - 1)]
+  const author = authors[randomInteger(0, authors.length - 1)]
 
   /**
-   * Get the page ID for a given author.
+   * Get the page ID for a given author. If multiple then choose the first.
    */
 
   const page_data = await quote_api_request({
@@ -91,26 +106,30 @@ async function qotd() {
     titles: author
   })
 
-  let pageIDs = Object.keys(page_data.query.pages)
-  pageIDs = pageIDs.filter(id => Number(id) > 0)
+  const pages = Object.keys(page_data.query.pages)
+    .map(id => Number(id))
+    .filter(id => id > 0)
 
-  if (pageIDs.length === 0) {
+  if (pages.length === 0) {
     console.error(chalk.red(`Error: No quotes for author '${author}'.`))
     process.exit(1)
   }
 
   /**
-   * Get sections for a given page.
+   * Filter for 1.x sections. If no 1.x sections exists, return section 1.
    */
 
   const section_data = await quote_api_request({
     format: 'json',
     action: 'parse',
     prop: 'sections',
-    pageid: pageIDs[0]
+    pageid: pages[0]
   })
 
-  let sections = section_data.parse.sections
+  let sections = section_data.parse.sections.filter(s => s.number.match(/1\.\d/))
+  if (sections.length === 0) {
+    sections = section_data.parse.sections.filter(s => s.number === '1')
+  }
   const sectionID = randomInteger(1, sections.length - 1)
 
   /**
@@ -121,7 +140,7 @@ async function qotd() {
     format: 'json',
     action: 'parse',
     noimages: '',
-    pageid: pageIDs[0],
+    pageid: pages[0],
     section: sectionID
   })
 
@@ -131,11 +150,11 @@ async function qotd() {
 
   $('.mw-parser-output > ul li').each((i, element) => {
     let quote = html_to_text.fromString($(element).html(), {
-      wordwrap: 300
+      wordwrap: null
     })
     quote = quote.replace(/\[.*?\]/g, '')
     quote = quote.replace(/\s+/, ' ')
-    quotes.push(quote)
+    if (!quote.match(/^As quoted in/)) quotes.push(quote)
   })
 
   const display_quote = quotes[randomInteger(0, quotes.length - 1)]
