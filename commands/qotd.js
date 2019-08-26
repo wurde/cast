@@ -81,7 +81,7 @@ async function qotd() {
   const author = AUTHORS[randomInteger(0, AUTHORS.length - 1)]
 
   /**
-   * Get the page ID for a given author.
+   * Get the page ID for a given author. If multiple then choose the first.
    */
 
   const page_data = await quote_api_request({
@@ -94,6 +94,7 @@ async function qotd() {
   const pages = Object.keys(page_data.query.pages)
     .map(id => Number(id))
     .filter(id => id > 0)
+    // TODO reduce to pageID
 
   if (pages.length === 0) {
     console.error(chalk.red(`Error: No quotes for author '${author}'.`))
@@ -101,7 +102,7 @@ async function qotd() {
   }
 
   /**
-   * Get sections for a given page.
+   * Filter for 1.x sections. If no 1.x sections exists, return section 1.
    */
 
   const section_data = await quote_api_request({
@@ -111,7 +112,10 @@ async function qotd() {
     pageid: pages[0]
   })
 
-  let sections = section_data.parse.sections
+  let sections = section_data.parse.sections.filter(s => s.number.match(/1\.\d/))
+  if (sections.length === 0) {
+    sections = section_data.parse.sections.filter(s => s.number === '1')
+  }
   const sectionID = randomInteger(1, sections.length - 1)
 
   /**
