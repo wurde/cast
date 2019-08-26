@@ -140,7 +140,7 @@ async function qotd() {
     })
     quote = quote.replace(/\[.*?\]/g, '')
     quote = quote.replace(/\s+/, ' ')
-    quotes.push(quote)
+    if (!quote.match(/^As quoted in/)) quotes.push(quote)
   })
 
   const display_quote = quotes[randomInteger(0, quotes.length - 1)]
