@@ -18,7 +18,12 @@ const connectivity = require('connectivity')
  */
 
 const API_URL = 'https://en.wikiquote.org/w/api.php'
-const AUTHORS = [
+
+/**
+ * Locals
+ */
+
+let authors = [
   'Albert Einstein',
   'Albert Hofmann',
   'Aldous Huxley',
@@ -37,7 +42,7 @@ const AUTHORS = [
 
 const cli = meow(`
   Usage
-    $ cast qotd
+    $ cast qotd [AUTHOR,...AUTHOR]
 `)
 
 /**
@@ -78,6 +83,9 @@ function checkConnectivity() {
 
 async function qotd() {
   if (cli.flags.h) cli.showHelp()
+  if (cli.input.length > 1) {
+    authors = cli.input.slice(1, cli.input.length).join(' ').split(',')
+  }
 
   const is_connected = await checkConnectivity()
   if (is_connected === false) {
@@ -85,7 +93,7 @@ async function qotd() {
     process.exit(1)
   }
 
-  const author = AUTHORS[randomInteger(0, AUTHORS.length - 1)]
+  const author = authors[randomInteger(0, authors.length - 1)]
 
   /**
    * Get the page ID for a given author. If multiple then choose the first.
