@@ -109,7 +109,6 @@ async function qotd() {
   const pages = Object.keys(page_data.query.pages)
     .map(id => Number(id))
     .filter(id => id > 0)
-    // TODO reduce to pageID
 
   if (pages.length === 0) {
     console.error(chalk.red(`Error: No quotes for author '${author}'.`))
