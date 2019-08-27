@@ -5,9 +5,11 @@
  */
 
 const fs = require('fs')
+const url = require('url')
 const meow = require('meow')
-const puppeteer = require('puppeteer')
+const chalk = require('chalk')
 const prompts = require('prompts')
+const puppeteer = require('puppeteer')
 
 /**
  * Parse args
@@ -17,6 +19,15 @@ const cli = meow(`
   Usage
     $ cast scrape URL
 `)
+
+/**
+ * Define helper
+ */
+
+function print_error(message) {
+  console.error(chalk.red(message))
+  cli.showHelp()
+}
 
 /**
  * Launch Page
@@ -42,15 +53,17 @@ async function scrape() {
   if (cli.flags.h) cli.showHelp()
   if (!cli.input[1]) cli.showHelp()
 
+  const targetURL = url.parse(cli.input[1])
+  if (!targetURL.hostname) print_error('Error: Invalid URL')
+
   const chosenSelector = await prompts({
     type: 'text',
     name: 'selector',
     message: 'Enter a CSS selector to scrape the page'
   })
 
-  // Launch the page and visit the given url
   const [browser, page] = await launchPage()
-  await page.goto(cli.input[1])
+  await page.goto(targetURL)
 
   try {
     const results = await page.evaluate(selector => {
@@ -72,11 +85,9 @@ async function scrape() {
         message: 'Enter the filename you\'d like to save to',
       })
 
-      // Save results to output file based on user input
       fs.writeFileSync(filenamePrompt.filename, results)
     }
 
-    // Log the results to the console
     console.log('results:', results)
   } catch(err) {
     console.error(err)
