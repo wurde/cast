@@ -26,7 +26,10 @@ function os_script() {
 
   const data = [
     ['arch', os.arch()],
-    ['homedir', os.homedir()]
+    ['homedir', os.homedir()],
+    ['cpus', os.cpus().length],
+    ['endianness', os.endianness()],
+    ['freemem', os.freemem()],
   ]
 
   const config = {
