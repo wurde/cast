@@ -60,7 +60,6 @@ async function rename(argv) {
   }
 
   const files = fs.readdirSync('.').filter(file => fs.statSync(file).isFile())
-
   const filteredFiles = files.filter(file => isMatch(file))
 
   const metadataFiles = filteredFiles.map(file => {
@@ -104,16 +103,6 @@ async function rename(argv) {
       }
     }
   }
-
-  // Save rename function to local database (to enable "undo" functionality).
-
-  // Add undo feature. cast rename --undo. This can be done by saving the
-  // rename scripts as an array of changes:
-  //   signature: '*.jpg {{f}}-{{i}}.jpg'
-  //   mutations: [[/from1, /to1], [/from2, /to2]].
-  // You first see a list of signatures and number of mutations for each.
-  // You then pick which signature to reverse. Then it iterates over the
-  // mutations and reverse the changes. Defaults to reversing the last one.
 }
 
 /**
