@@ -7,6 +7,7 @@
 const child_process = require('child_process')
 const prompt = require('prompt')
 const colors = require('colors')
+const meow = require('meow')
 
 /**
  * Constants

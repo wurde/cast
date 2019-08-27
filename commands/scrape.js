@@ -4,10 +4,10 @@
  * Dependencies
  */
 
+const fs = require('fs')
 const meow = require('meow')
 const puppeteer = require('puppeteer')
 const prompts = require('prompts')
-const fs = require('fs')
 
 /**
  * Parse args
@@ -23,14 +23,14 @@ const cli = meow(`
  */
 
 async function launchPage() {
-  const browser = await puppeteer.launch({ 
+  const browser = await puppeteer.launch({
     defaultViewport: {
       width: 1024,
       height: 800
     }
   })
   const page = await browser.newPage()
-  
+
   return [browser, page]
 }
 
@@ -47,7 +47,7 @@ async function scrape() {
     name: 'selector',
     message: 'Enter a CSS selector to scrape the page'
   })
-  
+
   // Launch the page and visit the given url
   const [browser, page] = await launchPage()
   await page.goto(cli.input[1])
@@ -75,7 +75,7 @@ async function scrape() {
       // Save results to output file based on user input
       fs.writeFileSync(filenamePrompt.filename, results)
     }
-  
+
     // Log the results to the console
     console.log('results:', results)
   } catch(err) {

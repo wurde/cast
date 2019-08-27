@@ -5,6 +5,7 @@
  */
 
 const child_process = require('child_process')
+const meow = require('meow')
 
 /**
  * Constants
