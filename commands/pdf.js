@@ -43,18 +43,18 @@ async function setContent(page, html) {
 }
 
 async function addStyleTag(page) {
+  await page.addStyleTag({ content: `
+    body {
+      padding: 50px;
+    }
+
+    p {
+      font-size: 18px;
+    }
+  `})
+
   if (cli.flags.stylesheet) {
     await page.addStyleTag({ content: fs.readFileSync(cli.flags.stylesheet, 'utf8') })
-  } else {
-    await page.addStyleTag({ content: `
-      body {
-        padding: 50px;
-      }
-
-      p {
-        font-size: 18px;
-      }
-    `})
   }
 }
 
