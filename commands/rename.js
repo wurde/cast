@@ -88,6 +88,7 @@ async function rename(argv) {
     const output_path = path.join(metadataFiles[i].dirname, output_filename)
 
     if (cli.flags.force) {
+      console.log(`Rename ${metadataFiles[i].absolute_path} to ${output_path}`)
       fs.renameSync(metadataFiles[i].absolute_path, output_path)
     } else {
       if (fs.existsSync(output_path)) {
@@ -97,8 +98,12 @@ async function rename(argv) {
           message: `Output file ${metadataFiles[i].basename} exists. Overwrite? (N/y)`,
           initial: false
         })
-        if (response.force) fs.renameSync(metadataFiles[i].absolute_path, output_path)
+        if (response.force) {
+          console.log(`Rename ${metadataFiles[i].absolute_path} to ${output_path}`)
+          fs.renameSync(metadataFiles[i].absolute_path, output_path)
+        }
       } else {
+        console.log(`Rename ${metadataFiles[i].absolute_path} to ${output_path}`)
         fs.renameSync(metadataFiles[i].absolute_path, output_path)
       }
     }
