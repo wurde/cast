@@ -6,6 +6,7 @@
 
 const os = require('os')
 const meow = require('meow')
+const moment = require('moment')
 const filesize = require('filesize')
 const { table } = require('table')
 
@@ -38,7 +39,7 @@ function os_script() {
     ['platform', os.platform()],
     ['release', os.release()],
     ['type', os.type()],
-    ['uptime', os.uptime()],
+    ['uptime', moment.duration(os.uptime(), 'seconds').humanize()],
   ]
 
   const config = {
