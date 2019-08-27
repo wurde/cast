@@ -44,9 +44,17 @@ async function setContent(page, html) {
 
 async function addStyleTag(page) {
   if (cli.flags.stylesheet) {
-    await page.addStyleTag({ content: fs.readFileSync(cli.flags.stylesheet) })
+    await page.addStyleTag({ content: fs.readFileSync(cli.flags.stylesheet, 'utf8') })
   } else {
-    // TODO apply default styles
+    await page.addStyleTag({ content: `
+      body {
+        padding: 50px;
+      }
+
+      p {
+        font-size: 18px;
+      }
+    `})
   }
 }
 
@@ -71,10 +79,11 @@ async function pdf(argv) {
   const page = await browser.newPage()
 
   let html = marked(fs.readFileSync(cli.input[1], 'utf8'))
+  if (fs.existsSync('temp.html')) fs.unlinkSync('temp.html')
   fs.writeFileSync('temp.html', html)
 
   await setContent(page, html)
-  await addStyleTag(html)
+  await addStyleTag(page)
 
   if (cli.flags.watch || cli.flags.w) {
     nodemon(`--watch ${cli.input[1]} --exec echo Updating PDF...`)
