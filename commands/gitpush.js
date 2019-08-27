@@ -17,6 +17,15 @@ const config = {
 }
 
 /**
+ * Parse args
+ */
+
+const cli = meow(`
+  Usage
+    $ cast gitpush
+`)
+
+/**
  * Define script
  */
 

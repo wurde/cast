@@ -15,6 +15,15 @@ const meow = require('meow')
 const template_dir = path.join(__dirname, '..', 'templates')
 
 /**
+ * Parse args
+ */
+
+const cli = meow(`
+  Usage
+    $ cast copy
+`)
+
+/**
  * Define script
  */
 

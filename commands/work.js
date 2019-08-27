@@ -18,6 +18,15 @@ const db = new Sequelize({ dialect: 'sqlite', storage: work_db, logging: false }
 const cwd = process.cwd()
 
 /**
+ * Parse args
+ */
+
+const cli = meow(`
+  Usage
+    $ cast work
+`)
+
+/**
  * Setup database
  */
 

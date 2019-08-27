@@ -24,6 +24,15 @@ const formats = {
 const types = Object.keys(formats)
 
 /**
+ * Parse args
+ */
+
+const cli = meow(`
+  Usage
+    $ cast organize
+`)
+
+/**
  * Define script
  */
 

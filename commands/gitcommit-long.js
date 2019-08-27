@@ -19,6 +19,15 @@ const config = {
 }
 
 /**
+ * Parse args
+ */
+
+const cli = meow(`
+  Usage
+    $ cast gitcommit-long
+`)
+
+/**
  * Define script
  */
 

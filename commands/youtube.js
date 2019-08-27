@@ -10,6 +10,15 @@ const meow = require('meow')
 const ytdl_core = require('ytdl-core')
 
 /**
+ * Parse args
+ */
+
+const cli = meow(`
+  Usage
+    $ cast youtube
+`)
+
+/**
  * Define script
  */
 
