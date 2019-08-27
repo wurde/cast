@@ -5,6 +5,7 @@
  */
 
 const meow = require('meow')
+const ora = require('ora')
 
 /**
  * Parse args
@@ -25,7 +26,12 @@ function encrypt() {
 
   const message = cli.input.slice(1, cli.input.length).join(' ')
 
-  console.log(`\nEncrypting: '${message}'`)
+  console.log('')
+  const spinner = ora(`Encrypting: '${message}'`).start()
+
+  setTimeout(() => {
+    spinner.succeed(`Encrypted: '${message}'`)
+  }, 1000)
 }
 
 /**
