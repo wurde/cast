@@ -55,6 +55,8 @@ async function close_database() {
  */
 
 async function work(argv) {
+  if (cli.flags.h) cli.showHelp()
+
   try {
     await setup_database()
 

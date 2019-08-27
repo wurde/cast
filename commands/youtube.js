@@ -23,6 +23,8 @@ const cli = meow(`
  */
 
 function youtube(link) {
+  if (cli.flags.h) cli.showHelp()
+
   const youtube_url = url.parse(link)
 
   ytdl_core(link).pipe(fs.createWriteStream(`${(youtube_url.query || 'youtube')}.flv`))

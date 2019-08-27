@@ -32,6 +32,7 @@ const cli = meow(`
  */
 
 function gitcommit() {
+  if (cli.flags.h) cli.showHelp()
   const result = child_process.spawnSync('git', ['add', '-A'], config)
 
   if (result.status === 0) {

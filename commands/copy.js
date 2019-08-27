@@ -20,7 +20,7 @@ const template_dir = path.join(__dirname, '..', 'templates')
 
 const cli = meow(`
   Usage
-    $ cast copy
+    $ cast copy TEMPLATE
 `)
 
 /**
@@ -28,6 +28,9 @@ const cli = meow(`
  */
 
 function copy(file) {
+  if (cli.flags.h) cli.showHelp()
+  // TODO check for cli.input.length > 1 file
+
   const template = path.join(template_dir, file)
 
   if (fs.existsSync(file)) {

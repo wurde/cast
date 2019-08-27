@@ -30,6 +30,7 @@ const cli = meow(`
  */
 
 function gitpush() {
+  if (cli.flags.h) cli.showHelp()
   child_process.spawnSync('git', ['push'], config)
 }
 
