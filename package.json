@@ -5,7 +5,8 @@
   "main": "bin/cast.js",
   "private": true,
   "bin": {
-    "cast": "./bin/cast.js"
+    "cast": "./bin/cast.js",
+    "gc": "./bin/gc.js"
   },
   "repository": {
     "type": "git",
