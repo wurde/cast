@@ -46,6 +46,4 @@ function gitsync() {
  * Export script
  */
 
-module.exports = (argv) => {
-  gitsync()
-}
+module.exports = gitsync
