@@ -6,6 +6,7 @@
 
 const os = require('os')
 const meow = require('meow')
+const filesize = require('filesize')
 const { table } = require('table')
 
 /**
@@ -27,9 +28,17 @@ function os_script() {
   const data = [
     ['arch', os.arch()],
     ['homedir', os.homedir()],
+    ['tmpdir', os.tmpdir()],
     ['cpus', os.cpus().length],
     ['endianness', os.endianness()],
-    ['freemem', os.freemem()],
+    ['freemem', filesize(os.freemem())],
+    ['totalmem', filesize(os.totalmem())],
+    ['hostname', os.hostname()],
+    ['networkInterfaces', Object.keys(os.networkInterfaces()).join(', ')],
+    ['platform', os.platform()],
+    ['release', os.release()],
+    ['type', os.type()],
+    ['uptime', os.uptime()],
   ]
 
   const config = {
