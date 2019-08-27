@@ -77,12 +77,15 @@ async function close_database() {
 async function tasks() {
   if (cli.flags.h) cli.showHelp()
 
+  const command = cli.input[1]
+
   try {
     await setup_database()
 
     console.log('')
-    if (cli.flags.create || cli.flags.c || cli.input[1] === 'create') {
-      console.log('Creating a task...')
+    if (cli.flags.create || cli.flags.c || command === 'create') {
+      console.log('Project:', cwd, '\n')
+      console.log('  Creating a task...')
       const res = await prompts({
         type: 'text',
         name: 'task',
@@ -92,8 +95,9 @@ async function tasks() {
       if (res.task) {
         await db.query(`INSERT INTO tasks (working_directory, description) VALUES ('${cwd}', '${res.task}');`)
       }
-    } else if (cli.flags.done || cli.flags.d || cli.input[1] === 'done') {
-      console.log('Marking task as done...')
+    } else if (cli.flags.done || cli.flags.d || command === 'done') {
+      console.log('Project:', cwd, '\n')
+      console.log('  Marking task as done...')
       const res = await prompts({
         type: 'text',
         name: 'task',
@@ -103,11 +107,12 @@ async function tasks() {
       if (res.task) {
         await db.query(`UPDATE tasks SET done_at = ${Date.now()} WHERE description LIKE '%${res.task}%';`)
       }
-    } else if (cli.flags.clear || cli.input[1] === 'clear') {
-      console.log('Clearing all tasks marked as done...')
+    } else if (cli.flags.clear || command === 'clear') {
+      console.log('Project:', cwd, '\n')
+      console.log('  Clearing all tasks marked as done...')
       await db.query(`DELETE FROM tasks WHERE working_directory = '${cwd}' AND done_at IS NOT NULL;`)
-    } else if (cli.flags.all || cli.input[1] === 'all') {
-      console.log('Printing all tasks across all projects...')
+    } else if (cli.flags.all || command === 'all') {
+      console.log('Printing all tasks across all projects...', '\n')
       const [alltasks_result, _] = await db.query(`SELECT * FROM tasks ORDER BY done_at, working_directory;`)
 
       for (let i = 0; i < alltasks_result.length; i++) {
@@ -118,8 +123,8 @@ async function tasks() {
         }
       }
     } else {
-      console.log('Project:', cwd)
-      console.log('Printing tasks...')
+      console.log('Project:', cwd, '\n')
+      console.log('  Printing tasks...')
       const [alltasks_result, _] = await db.query(`SELECT * FROM tasks WHERE working_directory = '${cwd}' ORDER BY done_at;`)
 
       for (let i = 0; i < alltasks_result.length; i++) {
