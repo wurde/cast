@@ -4,6 +4,7 @@
  * Dependencies
  */
 
+const crypto = require('crypto')
 const meow = require('meow')
 
 /**

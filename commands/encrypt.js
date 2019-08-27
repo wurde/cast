@@ -4,6 +4,7 @@
  * Dependencies
  */
 
+const crypto = require('crypto')
 const meow = require('meow')
 const ora = require('ora')
 
@@ -27,7 +28,10 @@ function encrypt() {
   const message = cli.input.slice(1, cli.input.length).join(' ')
 
   console.log('')
-  const spinner = ora(`Encrypting: '${message}'`).start()
+  const spinner = ora({
+    text: `Encrypting: '${message}'`,
+    spinner: 'noise'
+  }).start()
 
   setTimeout(() => {
     spinner.succeed(`Encrypted: '${message}'`)
