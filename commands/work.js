@@ -57,14 +57,16 @@ async function close_database() {
 async function work(argv) {
   if (cli.flags.h) cli.showHelp()
 
+  const command = cli.input[1]
+
   try {
     await setup_database()
 
     console.log('')
-    if (argv[3] === 'clockin') {
+    if (command === 'clockin') {
       console.log('Clocking in for work')
       await db.query(`INSERT INTO entries (working_directory, start_at) VALUES ('${cwd}', ${Date.now()});`)
-    } else if (argv[3] === 'clockout') {
+    } else if (command === 'clockout') {
       console.log('Clocking out of work')
       await db.query(`UPDATE entries SET end_at = ${Date.now()} WHERE end_at IS NULL;`)
     } else {
@@ -88,6 +90,8 @@ async function work(argv) {
         console.log(`Started At: ${new Date(done_result[0].start_at).toTimeString()}`)
         console.log(`Ended At: ${new Date(done_result[done_result.length - 1].end_at).toTimeString()}`)
         console.log(`Today: ${date.toDateString()}`)
+      } else {
+        console.log('Nothing to report')
       }
     }
 
