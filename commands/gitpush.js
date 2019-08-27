@@ -38,6 +38,4 @@ function gitpush() {
  * Export script
  */
 
-module.exports = (argv) => {
-  gitpush()
-}
+module.exports = gitpush
