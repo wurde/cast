@@ -7,6 +7,7 @@
 const child_process = require('child_process')
 const prompt = require('prompt')
 const colors = require('colors')
+const meow = require('meow')
 
 /**
  * Constants
@@ -18,10 +19,21 @@ const config = {
 }
 
 /**
+ * Parse args
+ */
+
+const cli = meow(`
+  Usage
+    $ cast gitcommit
+`)
+
+/**
  * Define script
  */
 
 function gitcommit() {
+  if (cli.flags.h) cli.showHelp()
+
   const result = child_process.spawnSync('git', ['add', '-A'], config)
 
   if (result.status === 0) {
@@ -41,6 +53,4 @@ function gitcommit() {
  * Export script
  */
 
-module.exports = (argv) => {
-  gitcommit()
-}
+module.exports = gitcommit

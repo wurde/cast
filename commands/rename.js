@@ -60,7 +60,6 @@ async function rename(argv) {
   }
 
   const files = fs.readdirSync('.').filter(file => fs.statSync(file).isFile())
-
   const filteredFiles = files.filter(file => isMatch(file))
 
   const metadataFiles = filteredFiles.map(file => {
@@ -89,6 +88,7 @@ async function rename(argv) {
     const output_path = path.join(metadataFiles[i].dirname, output_filename)
 
     if (cli.flags.force) {
+      console.log(`Rename ${metadataFiles[i].absolute_path} to ${output_path}`)
       fs.renameSync(metadataFiles[i].absolute_path, output_path)
     } else {
       if (fs.existsSync(output_path)) {
@@ -98,22 +98,16 @@ async function rename(argv) {
           message: `Output file ${metadataFiles[i].basename} exists. Overwrite? (N/y)`,
           initial: false
         })
-        if (response.force) fs.renameSync(metadataFiles[i].absolute_path, output_path)
+        if (response.force) {
+          console.log(`Rename ${metadataFiles[i].absolute_path} to ${output_path}`)
+          fs.renameSync(metadataFiles[i].absolute_path, output_path)
+        }
       } else {
+        console.log(`Rename ${metadataFiles[i].absolute_path} to ${output_path}`)
         fs.renameSync(metadataFiles[i].absolute_path, output_path)
       }
     }
   }
-
-  // Save rename function to local database (to enable "undo" functionality).
-
-  // Add undo feature. cast rename --undo. This can be done by saving the
-  // rename scripts as an array of changes:
-  //   signature: '*.jpg {{f}}-{{i}}.jpg'
-  //   mutations: [[/from1, /to1], [/from2, /to2]].
-  // You first see a list of signatures and number of mutations for each.
-  // You then pick which signature to reverse. Then it iterates over the
-  // mutations and reverse the changes. Defaults to reversing the last one.
 }
 
 /**

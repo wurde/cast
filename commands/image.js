@@ -4,8 +4,8 @@
  * Dependencies
  */
 
-const meow = require('meow')
 const child_process = require('child_process')
+const meow = require('meow')
 const chalk = require('chalk')
 
 /**
