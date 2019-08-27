@@ -9,12 +9,18 @@ const meow = require('meow')
 const ora = require('ora')
 
 /**
+ * Constants
+ */
+
+const ALGORITHM = 'aes-256-cbc'
+
+/**
  * Parse args
  */
 
 const cli = meow(`
   Usage
-    $ cast encrypt
+    $ cast encrypt MESSAGE
 `)
 
 /**
@@ -33,8 +39,20 @@ function encrypt() {
     spinner: 'noise'
   }).start()
 
+  const key = crypto.scryptSync('secret', 'salt', 24)
+  console.log('key', key)
+
+  const initialization_vector = crypto.randomBytes(16)
+  console.log('initialization_vector', initialization_vector)
+
+  // const cipher = crypto.createCipheriv(ALGORITHM, key, initialization_vector)
+  //   // .update(message)
+  //   // .digest('hex')
+  // console.log('cipher', cipher)
+
   setTimeout(() => {
     spinner.succeed(`Encrypted: '${message}'`)
+    console.log(hash)
   }, 1000)
 }
 
