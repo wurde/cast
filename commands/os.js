@@ -6,6 +6,7 @@
 
 const os = require('os')
 const meow = require('meow')
+const { table } = require('table')
 
 /**
  * Parse args
@@ -22,6 +23,26 @@ const cli = meow(`
 
 function os_script() {
   if (cli.flags.h) cli.showHelp()
+
+  const data = [
+    ['arch', os.arch()],
+    ['homedir', os.homedir()]
+  ]
+
+  const config = {
+    columns: {
+      0: {
+        alignment: 'right'
+      },
+      1: {
+        alignment: 'left'
+      }
+    }
+  }
+
+  const output = table(data, config)
+
+  console.log(output)
 }
 
 /**
