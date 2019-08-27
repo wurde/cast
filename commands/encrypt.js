@@ -21,6 +21,11 @@ const cli = meow(`
 
 function encrypt() {
   if (cli.flags.h) cli.showHelp()
+  if (cli.input.length < 2) cli.showHelp()
+
+  const message = cli.input.slice(1, cli.input.length).join(' ')
+
+  console.log(`\nEncrypting: '${message}'`)
 }
 
 /**
