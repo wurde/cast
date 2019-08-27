@@ -22,9 +22,11 @@ const cli = meow(`
  * Define script
  */
 
-function youtube(link) {
+function youtube() {
   if (cli.flags.h) cli.showHelp()
+  if (cli.input.length < 2) cli.showHelp()
 
+  const link = cli.input[1]
   const youtube_url = url.parse(link)
 
   ytdl_core(link).pipe(fs.createWriteStream(`${(youtube_url.query || 'youtube')}.flv`))
@@ -34,10 +36,4 @@ function youtube(link) {
  * Export script
  */
 
-module.exports = (argv) => {
-  if (argv.length >= 4) {
-    youtube(argv[3])
-  } else {
-    throw new Error("Missing link to youtube video.")
-  }
-}
+module.exports = youtube
