@@ -148,7 +148,7 @@ async function qotd() {
   const text = quotes_data.parse.text["*"]
   const $ = cheerio.load(text)
 
-  $('.mw-parser-output > ul li').each((i, element) => {
+  $('.mw-parser-output > ul > li').each((i, element) => {
     let quote = html_to_text.fromString($(element).html(), {
       wordwrap: null
     })
@@ -156,7 +156,6 @@ async function qotd() {
     quote = quote.replace(/\s+/, ' ')
     if (!quote.match(/^As quoted in/)) quotes.push(quote)
   })
-
   const display_quote = quotes[randomInteger(0, quotes.length - 1)]
 
   figlet.text("Quote of the day", {
