@@ -25,7 +25,7 @@ const cli = meow(`
     $ cast compress FILE...
 
   Options
-    --unzip       Decompress file (Default: false).
+    --unzip     Decompress file (Default: false).
 `, {
   flags: {
     unzip: {
