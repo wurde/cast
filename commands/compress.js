@@ -12,7 +12,7 @@ const meow = require('meow')
 
 const cli = meow(`
   Usage
-    $ cast compress FILE
+    $ cast compress FILE...
 
   Options
     --unzip       Decompress file (Default: false).
@@ -31,9 +31,13 @@ const cli = meow(`
 
 function compress() {
   if (cli.flags.h) cli.showHelp()
+  if (!cli.input.length < 2) cli.showHelp()
 
-  console.log(cli.flags)
-  console.log('Compress')
+  if (cli.flags.unzip) {
+    console.log('Uncompress', cli.input)
+  } else {
+    console.log('Compress', cli.input)
+  }
 }
 
 /**
