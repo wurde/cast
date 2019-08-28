@@ -35,24 +35,22 @@ function encrypt() {
 
   console.log('')
   const spinner = ora({
-    text: `Encrypting: '${message}'`,
+    text: `Encrypting: '${message}'\n`,
     spinner: 'noise'
   }).start()
 
-  const key = crypto.scryptSync('secret', 'salt', 24)
-  console.log('key', key)
-
+  // Key length is dependent on the algorithm. For example for aes256, it is
+  // 32 bytes (256 bits / 8 bits per byte).
+  const key = crypto.scryptSync('secret', 'salt', 32)
   const initialization_vector = crypto.randomBytes(16)
-  console.log('initialization_vector', initialization_vector)
+  const cipher = crypto.createCipheriv(ALGORITHM, key, initialization_vector)
 
-  // const cipher = crypto.createCipheriv(ALGORITHM, key, initialization_vector)
-  //   // .update(message)
-  //   // .digest('hex')
-  // console.log('cipher', cipher)
+  let encrypted = cipher.update(message, 'utf8', 'hex')
+  encrypted += cipher.final('hex')
 
   setTimeout(() => {
-    spinner.succeed(`Encrypted: '${message}'`)
-    console.log(hash)
+    spinner.succeed(`Encrypted: '${message}'\n`)
+    console.log(encrypted)
   }, 1000)
 }
 
