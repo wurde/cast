@@ -51,7 +51,10 @@ function compress() {
     }
   } else {
     for (let i = 0; i < files.length; i++) {
-      console.log('Compress', files[i])
+      const fileIn = fs.createReadStream(files[i])
+      const fileOut = fs.createWriteStream(`${files[i]}.gz`)
+
+      fileIn.pipe(gzip).pipe(fileOut)
     }
   }
 }
