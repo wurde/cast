@@ -27,7 +27,16 @@ const cli = meow(`
   Options
     --secret       Provide a secret.
     --nonce-path   Path to file containing nonce.
-`)
+`, {
+  flags: {
+    secret: {
+      type: 'text'
+    },
+    noncePath: {
+      type: 'text'
+    }
+  }
+})
 
 /**
  * Define script

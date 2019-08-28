@@ -26,7 +26,13 @@ const cli = meow(`
 
   Options
     --secret   Provide a secret.
-`)
+`, {
+  flags: {
+    secret: {
+      type: 'text'
+    }
+  }
+})
 
 /**
  * Define helper
@@ -80,7 +86,6 @@ async function encrypt() {
 
   setTimeout(() => {
     spinner.succeed(`Encrypted: '${message}'\n`)
-    console.log('initialization_vector', initialization_vector.length, initialization_vector)
     console.log(encrypted)
   }, 1000)
 }
