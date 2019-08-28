@@ -10,6 +10,7 @@ const meow = require('meow')
 const chalk = require('chalk')
 const prompts = require('prompts')
 const puppeteer = require('puppeteer')
+const connectivity = require('connectivity')
 
 /**
  * Parse args
@@ -27,6 +28,12 @@ const cli = meow(`
 function print_error(message) {
   console.error(chalk.red(message))
   cli.showHelp()
+}
+
+function checkConnectivity() {
+  return new Promise((resolve, reject) => {
+    connectivity(online => online ? resolve(true) : resolve(false))
+  })
 }
 
 /**
@@ -55,6 +62,12 @@ async function scrape() {
 
   const targetURL = url.parse(cli.input[1])
   if (!targetURL.hostname) print_error('Error: Invalid URL')
+
+  const is_connected = await checkConnectivity()
+  if (is_connected === false) {
+    console.error(chalk.red('Error: There is no Internet connection.'))
+    process.exit(1)
+  }
 
   const chosenSelector = await prompts({
     type: 'text',
