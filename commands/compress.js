@@ -5,6 +5,7 @@
  */
 
 const fs = require('fs')
+const path = require('path')
 const zlib = require('zlib')
 const meow = require('meow')
 
@@ -12,6 +13,7 @@ const meow = require('meow')
  * Constants
  */
 
+const gunzip = zlib.createGunzip()
 const gzip = zlib.createGzip()
 
 /**
@@ -47,7 +49,11 @@ function compress() {
 
   if (cli.flags.unzip) {
     for (let i = 0; i < files.length; i++) {
-      console.log('Uncompress', files[i])
+      const filename = path.basename(files[i], path.extname(files[i]))
+      const fileIn = fs.createReadStream(files[i])
+      const fileOut = fs.createWriteStream(filename)
+
+      fileIn.pipe(gunzip).pipe(fileOut)
     }
   } else {
     for (let i = 0; i < files.length; i++) {
