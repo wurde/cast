@@ -7,6 +7,7 @@
 const crypto = require('crypto')
 const meow = require('meow')
 const ora = require('ora')
+const prompts = require('prompts')
 
 /**
  * Constants
@@ -27,13 +28,25 @@ const cli = meow(`
  * Define script
  */
 
-function encrypt() {
+async function encrypt() {
   if (cli.flags.h) cli.showHelp()
   if (cli.input.length < 2) cli.showHelp()
 
   const message = cli.input.slice(1, cli.input.length).join(' ')
+  let secret = cli.flags.secret
 
   console.log('')
+  while (!secret) {
+    const secretPrompt = await prompts({
+      type: 'password',
+      name: 'value',
+      message: 'Please enter a secret:',
+      validate: value => value.length < 7 ? 'Minimum 7 characters' : true
+    })
+
+    secret = secretPrompt.value
+  }
+
   const spinner = ora({
     text: `Encrypting: '${message}'\n`,
     spinner: 'noise'
