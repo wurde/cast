@@ -19,7 +19,17 @@ const connectivity = require('connectivity')
 const cli = meow(`
   Usage
     $ cast scrape URL
-`)
+
+  Options
+    --selector, -s   Define the CSS selector.
+`, {
+  flags: {
+    selector: {
+      type: 'text',
+      alias: 's'
+    }
+  }
+})
 
 /**
  * Define helper
@@ -70,11 +80,19 @@ async function scrape() {
     process.exit(1)
   }
 
-  const chosenSelector = await prompts({
-    type: 'text',
-    name: 'selector',
-    message: 'Enter a CSS selector to scrape the page'
-  })
+  let selector = cli.flags.selector
+
+  console.log('')
+  while (!selector || selector.length === 0) {
+    const selectorPrompt = await prompts({
+      type: 'text',
+      name: 'value',
+      message: 'Enter a CSS selector to scrape the page',
+      validate: value => value.length === 0 ? 'Minimum 1 character' : true
+    })
+
+    selector = selectorPrompt.value
+  }
 
   const [browser, page] = await launchPage()
   await page.goto(targetURL)
@@ -83,7 +101,7 @@ async function scrape() {
     const results = await page.evaluate(selector => {
       return Array.from(document.querySelectorAll(selector))
              .map(el => el.innerHTML)
-    }, chosenSelector.selector)
+    }, selector)
 
     const saveFilePrompt = await prompts({
       type: 'confirm',
