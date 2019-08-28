@@ -4,6 +4,7 @@
  * Dependencies
  */
 
+const fs = require('fs')
 const crypto = require('crypto')
 const meow = require('meow')
 const ora = require('ora')
@@ -26,6 +27,19 @@ const cli = meow(`
   Options
     --secret   Provide a secret.
 `)
+
+/**
+ * Define helper
+ */
+
+function generateNonce() {
+  // Static Alternatives:
+  // - Buffer.alloc(16, 0)
+  // - crypto.createHash('md5').update('pineapple').digest('hex').slice(0,16)
+  const nonce = crypto.randomBytes(16)
+  fs.writeFileSync('cipher.nonce', nonce.toString('hex'), { encoding: 'hex' })
+  return nonce
+}
 
 /**
  * Define script
@@ -58,7 +72,7 @@ async function encrypt() {
   // Key length is dependent on the algorithm. For example for aes256, it is
   // 32 bytes (256 bits / 8 bits per byte).
   const key = crypto.scryptSync(secret, 'salt', 32)
-  const initialization_vector = Buffer.alloc(16, 0) //crypto.randomBytes(16)
+  const initialization_vector = generateNonce()
   const cipher = crypto.createCipheriv(ALGORITHM, key, initialization_vector)
 
   let encrypted = cipher.update(message, 'utf8', 'hex')
@@ -66,6 +80,7 @@ async function encrypt() {
 
   setTimeout(() => {
     spinner.succeed(`Encrypted: '${message}'\n`)
+    console.log('initialization_vector', initialization_vector.length, initialization_vector)
     console.log(encrypted)
   }, 1000)
 }
