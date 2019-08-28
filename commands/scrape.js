@@ -60,7 +60,8 @@ async function scrape() {
   if (cli.flags.h) cli.showHelp()
   if (!cli.input[1]) cli.showHelp()
 
-  const targetURL = url.parse(cli.input[1])
+  let targetURL = url.parse(cli.input[1])
+  if (!targetURL.protocol) targetURL = url.parse('https://' + cli.input[1])
   if (!targetURL.hostname) print_error('Error: Invalid URL')
 
   const is_connected = await checkConnectivity()
