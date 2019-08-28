@@ -36,7 +36,7 @@ async function encrypt() {
   let secret = cli.flags.secret
 
   console.log('')
-  while (!secret) {
+  while (!secret || secret.length < 7) {
     const secretPrompt = await prompts({
       type: 'password',
       name: 'value',
