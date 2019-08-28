@@ -26,7 +26,13 @@ const cli = meow(`
 
   Options
     --secret   Provide a secret.
-`)
+`, {
+  flags: {
+    secret: {
+      type: 'text'
+    }
+  }
+})
 
 /**
  * Define helper

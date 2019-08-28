@@ -12,8 +12,18 @@ const meow = require('meow')
 
 const cli = meow(`
   Usage
-    $ cast compress
-`)
+    $ cast compress FILE
+
+  Options
+    --unzip       Decompress file (Default: false).
+`, {
+  flags: {
+    unzip: {
+      type: 'boolean',
+      default: false
+    }
+  }
+})
 
 /**
  * Define script
@@ -21,6 +31,8 @@ const cli = meow(`
 
 function compress() {
   if (cli.flags.h) cli.showHelp()
+
+  console.log(cli.flags)
   console.log('Compress')
 }
 
