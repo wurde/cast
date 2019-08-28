@@ -21,7 +21,10 @@ const ALGORITHM = 'aes-256-cbc'
 
 const cli = meow(`
   Usage
-    $ cast encrypt MESSAGE
+    $ cast encrypt [options] MESSAGE
+
+  Options
+    --secret   Provide a secret.
 `)
 
 /**
@@ -54,8 +57,8 @@ async function encrypt() {
 
   // Key length is dependent on the algorithm. For example for aes256, it is
   // 32 bytes (256 bits / 8 bits per byte).
-  const key = crypto.scryptSync('secret', 'salt', 32)
-  const initialization_vector = crypto.randomBytes(16)
+  const key = crypto.scryptSync(secret, 'salt', 32)
+  const initialization_vector = Buffer.alloc(16, 0) //crypto.randomBytes(16)
   const cipher = crypto.createCipheriv(ALGORITHM, key, initialization_vector)
 
   let encrypted = cipher.update(message, 'utf8', 'hex')
