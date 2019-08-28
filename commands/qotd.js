@@ -164,7 +164,12 @@ async function qotd() {
   }, (err, data) => {
     console.log(data, '\n')
     console.log(chalk.bold(display_quote))
-    console.log(chalk.bold(`- ${author}`))
+    console.log(
+      chalk.bold(`- ${author}, `) +
+      html_to_text.fromString(section_data.parse.sections[sectionID - 1].line, {
+        wordwrap: null
+      })
+    )
   })
 }
 
