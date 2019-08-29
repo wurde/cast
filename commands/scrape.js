@@ -11,6 +11,7 @@ const chalk = require('chalk')
 const prompts = require('prompts')
 const puppeteer = require('puppeteer')
 const checkConnectivity = require('../helpers/checkConnectivity')
+const showHelpIfFlagged = require('../helpers/showHelpIfFlagged')
 
 /**
  * Parse args
@@ -62,8 +63,10 @@ async function launchPage() {
  */
 
 async function scrape() {
-  if (cli.flags.h) cli.showHelp()
-  if (!cli.input[1]) cli.showHelp()
+  showHelpIfFlagged([
+    cli.flags.h,
+    !cli.input[1]
+  ], cli)
 
   let targetURL = url.parse(cli.input[1])
   if (!targetURL.protocol) targetURL = url.parse('https://' + cli.input[1])
