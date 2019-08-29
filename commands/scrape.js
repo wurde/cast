@@ -95,7 +95,7 @@ async function scrape() {
   }
 
   const [browser, page] = await launchPage()
-  await page.goto(targetURL)
+  await page.goto(targetURL.href)
 
   try {
     const results = await page.evaluate(selector => {
