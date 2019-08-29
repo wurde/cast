@@ -61,6 +61,25 @@ function buildTargetURL(cli) {
   return targetURL.href
 }
 
+async function promptForCSSSelector(selector) {
+  if (!selector || selector.length === 0) {
+    const selectorPrompt = await prompts({
+      type: 'text',
+      name: 'value',
+      message: 'Enter a CSS selector to scrape the page',
+      validate: value => value.length === 0 ? 'Minimum 1 character' : true,
+    }, {
+      onCancel: () => {
+        console.log('onCancel')
+        process.exit(1)
+      }
+    })
+
+    selector = selectorPrompt.value
+  }
+  return selector
+}
+
 /**
  * Define script
  */
@@ -75,16 +94,7 @@ async function scrape() {
   let selector = cli.flags.selector
 
   console.log('')
-  while (!selector || selector.length === 0) {
-    const selectorPrompt = await prompts({
-      type: 'text',
-      name: 'value',
-      message: 'Enter a CSS selector to scrape the page',
-      validate: value => value.length === 0 ? 'Minimum 1 character' : true
-    })
-
-    selector = selectorPrompt.value
-  }
+  selector = promptForCSSSelector(selector)
 
   const [browser, page] = await launchPage()
   await page.goto(buildTargetURL(cli))
