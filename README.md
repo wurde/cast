@@ -12,6 +12,13 @@ Setup takes less than 1 minute on a good connection.
 4. Setup the primary binary via `npm link` or `sudo npm link`.
 5. Run any command via `cast mycommand`
 
+## How to Keep in Sync With This Repo
+
+1. `git remote add upstream https://github.com/wurde/scripts.git`
+2. `git pull upstream master`
+
 ## License
 
 Scripts is released under the [MIT License](http://www.opensource.org/licenses/MIT).
+
+
