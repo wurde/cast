@@ -10,7 +10,7 @@ const meow = require('meow')
 const chalk = require('chalk')
 const prompts = require('prompts')
 const puppeteer = require('puppeteer')
-const connectivity = require('connectivity')
+const checkConnectivity = require('../helpers/checkConnectivity')
 
 /**
  * Parse args
@@ -31,6 +31,7 @@ const cli = meow(`
   }
 })
 
+
 /**
  * Define helper
  */
@@ -38,12 +39,6 @@ const cli = meow(`
 function print_error(message) {
   console.error(chalk.red(message))
   cli.showHelp()
-}
-
-function checkConnectivity() {
-  return new Promise((resolve, reject) => {
-    connectivity(online => online ? resolve(true) : resolve(false))
-  })
 }
 
 /**
