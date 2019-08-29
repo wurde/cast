@@ -10,7 +10,7 @@ const meow = require('meow')
 const chalk = require('chalk')
 const prompts = require('prompts')
 const puppeteer = require('puppeteer')
-const checkConnectivity = require('../helpers/checkConnectivity')
+const { requireConnectivity } = require('../helpers/connectivity')
 const showHelpIfFlagged = require('../helpers/showHelpIfFlagged')
 
 /**
@@ -42,10 +42,6 @@ function print_error(message) {
   cli.showHelp()
 }
 
-/**
- * Launch Page
- */
-
 async function launchPage() {
   const browser = await puppeteer.launch({
     defaultViewport: {
@@ -58,25 +54,23 @@ async function launchPage() {
   return [browser, page]
 }
 
+function buildTargetURL(cli) {
+  let targetURL = url.parse(cli.input[1])
+  if (!targetURL.protocol) targetURL = url.parse('https://' + cli.input[1])
+  if (!targetURL.hostname) print_error('Error: Invalid URL')
+  return targetURL.href
+}
+
 /**
  * Define script
  */
 
 async function scrape() {
+  requireConnectivity()
   showHelpIfFlagged([
     cli.flags.h,
     !cli.input[1]
   ], cli)
-
-  let targetURL = url.parse(cli.input[1])
-  if (!targetURL.protocol) targetURL = url.parse('https://' + cli.input[1])
-  if (!targetURL.hostname) print_error('Error: Invalid URL')
-
-  const is_connected = await checkConnectivity()
-  if (is_connected === false) {
-    console.error(chalk.red('Error: There is no Internet connection.'))
-    process.exit(1)
-  }
 
   let selector = cli.flags.selector
 
@@ -93,7 +87,7 @@ async function scrape() {
   }
 
   const [browser, page] = await launchPage()
-  await page.goto(targetURL.href)
+  await page.goto(buildTargetURL(cli))
 
   try {
     const results = await page.evaluate(selector => {
