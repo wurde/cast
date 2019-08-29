@@ -10,6 +10,9 @@ const meow = require('meow')
 const chalk = require('chalk')
 const prompts = require('prompts')
 const puppeteer = require('puppeteer')
+const { requireConnectivity } = require('../helpers/connectivity')
+const showHelpIfFlagged = require('../helpers/showHelpIfFlagged')
+const printError = require('../helpers/printError')
 
 /**
  * Parse args
@@ -18,19 +21,21 @@ const puppeteer = require('puppeteer')
 const cli = meow(`
   Usage
     $ cast scrape URL
-`)
+
+  Options
+    --selector, -s   Define the CSS selector.
+`, {
+  flags: {
+    selector: {
+      type: 'text',
+      alias: 's'
+    }
+  }
+})
+
 
 /**
  * Define helper
- */
-
-function print_error(message) {
-  console.error(chalk.red(message))
-  cli.showHelp()
-}
-
-/**
- * Launch Page
  */
 
 async function launchPage() {
@@ -45,31 +50,56 @@ async function launchPage() {
   return [browser, page]
 }
 
+function buildTargetURL(cli) {
+  let targetURL = url.parse(cli.input[1])
+  if (!targetURL.protocol) targetURL = url.parse('https://' + cli.input[1])
+  if (!targetURL.hostname) printError('Error: Invalid URL', cli)
+  return targetURL.href
+}
+
+async function promptForCSSSelector(selector) {
+  if (!selector || selector.length === 0) {
+    const selectorPrompt = await prompts({
+      type: 'text',
+      name: 'value',
+      message: 'Enter a CSS selector to scrape the page',
+      validate: value => value.length === 0 ? 'Minimum 1 character' : true,
+    }, {
+      onCancel: () => {
+        console.log('onCancel')
+        process.exit(1)
+      }
+    })
+
+    selector = selectorPrompt.value
+  }
+  return selector
+}
+
 /**
  * Define script
  */
 
 async function scrape() {
-  if (cli.flags.h) cli.showHelp()
-  if (!cli.input[1]) cli.showHelp()
+  requireConnectivity()
+  showHelpIfFlagged([
+    cli.flags.h,
+    !cli.input[1]
+  ], cli)
 
-  const targetURL = url.parse(cli.input[1])
-  if (!targetURL.hostname) print_error('Error: Invalid URL')
+  let selector = cli.flags.selector
 
-  const chosenSelector = await prompts({
-    type: 'text',
-    name: 'selector',
-    message: 'Enter a CSS selector to scrape the page'
-  })
+  console.log('')
+  selector = await promptForCSSSelector(selector)
 
   const [browser, page] = await launchPage()
-  await page.goto(targetURL)
+  await page.goto(buildTargetURL(cli))
 
   try {
     const results = await page.evaluate(selector => {
       return Array.from(document.querySelectorAll(selector))
              .map(el => el.innerHTML)
-    }, chosenSelector.selector)
+    }, selector)
 
     const saveFilePrompt = await prompts({
       type: 'confirm',
