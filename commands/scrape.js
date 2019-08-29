@@ -12,6 +12,7 @@ const prompts = require('prompts')
 const puppeteer = require('puppeteer')
 const { requireConnectivity } = require('../helpers/connectivity')
 const showHelpIfFlagged = require('../helpers/showHelpIfFlagged')
+const printError = require('../helpers/printError')
 
 /**
  * Parse args
@@ -37,11 +38,6 @@ const cli = meow(`
  * Define helper
  */
 
-function print_error(message) {
-  console.error(chalk.red(message))
-  cli.showHelp()
-}
-
 async function launchPage() {
   const browser = await puppeteer.launch({
     defaultViewport: {
@@ -57,7 +53,7 @@ async function launchPage() {
 function buildTargetURL(cli) {
   let targetURL = url.parse(cli.input[1])
   if (!targetURL.protocol) targetURL = url.parse('https://' + cli.input[1])
-  if (!targetURL.hostname) print_error('Error: Invalid URL')
+  if (!targetURL.hostname) printError('Error: Invalid URL', cli)
   return targetURL.href
 }
 
@@ -94,7 +90,7 @@ async function scrape() {
   let selector = cli.flags.selector
 
   console.log('')
-  selector = promptForCSSSelector(selector)
+  selector = await promptForCSSSelector(selector)
 
   const [browser, page] = await launchPage()
   await page.goto(buildTargetURL(cli))
