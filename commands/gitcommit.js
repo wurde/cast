@@ -8,6 +8,7 @@ const child_process = require('child_process')
 const prompt = require('prompt')
 const colors = require('colors')
 const meow = require('meow')
+const showHelpIfFlagged = require('../helpers/showHelpIfFlagged')
 
 /**
  * Constants
@@ -25,27 +26,41 @@ const config = {
 const cli = meow(`
   Usage
     $ cast gitcommit
-`)
+
+  Options
+    --message, -m <message>  Commit message
+`, {
+  flags: {
+    message: {
+      type: 'string',
+      alias: 'm'
+    }
+  }
+})
 
 /**
  * Define script
  */
 
 function gitcommit() {
-  if (cli.flags.h) cli.showHelp()
+  showHelpIfFlagged([cli.flags.h], cli)
 
   const result = child_process.spawnSync('git', ['add', '-A'], config)
 
   if (result.status === 0) {
-    prompt.message = ''
+    const message = cli.flags.message
 
-    prompt.get({
-      name: 'message',
-      description: colors.white.bold('Message'),
-      required: true
-    }, (err, result) => {
-      child_process.spawnSync('git', ['commit', '-m', result.message], config)
-    })
+    if (cli.flags.message) {
+      child_process.spawnSync('git', ['commit', '-m', message], config)
+    } else {
+      prompt.get({
+        name: 'message',
+        description: colors.white.bold('Message'),
+        required: true
+      }, (err, result) => {
+        child_process.spawnSync('git', ['commit', '-m', result.message], config)
+      })
+    }
   }
 }
 
