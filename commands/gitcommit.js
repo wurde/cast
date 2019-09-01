@@ -48,15 +48,19 @@ function gitcommit() {
   const result = child_process.spawnSync('git', ['add', '-A'], config)
 
   if (result.status === 0) {
-    prompt.message = cli.flags.message
+    const message = cli.flags.message
 
-    prompt.get({
-      name: 'message',
-      description: colors.white.bold('Message'),
-      required: true
-    }, (err, result) => {
-      child_process.spawnSync('git', ['commit', '-m', result.message], config)
-    })
+    if (!cli.flags.message) {
+      prompt.get({
+        name: 'message',
+        description: colors.white.bold('Message'),
+        required: true
+      }, (err, result) => {
+        child_process.spawnSync('git', ['commit', '-m', result.message], config)
+      })
+    } else {
+      child_process.spawnSync('git', ['commit', '-m', message], config)
+    }
   }
 }
 
