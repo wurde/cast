@@ -26,7 +26,17 @@ const config = {
 const cli = meow(`
   Usage
     $ cast gitcommit
-`)
+
+  Options
+    --message, -m <message>  Commit message
+`, {
+  flags: {
+    message: {
+      type: 'string',
+      alias: 'm'
+    }
+  }
+})
 
 /**
  * Define script
@@ -38,7 +48,7 @@ function gitcommit() {
   const result = child_process.spawnSync('git', ['add', '-A'], config)
 
   if (result.status === 0) {
-    prompt.message = ''
+    prompt.message = cli.flags.message
 
     prompt.get({
       name: 'message',
