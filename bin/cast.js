@@ -8,6 +8,7 @@
 
 const fs = require('fs')
 const path = require('path')
+const meow = require('meow')
 
 /**
  * Constants
@@ -17,12 +18,22 @@ const command = process.argv[2]
 const script_path = path.join(__dirname, '..', 'commands', command + '.js')
 
 /**
+ * Parse args
+ */
+
+const cli = meow(`
+  Usage:
+    $ cast <command> [args]
+  
+  Commands
+`)
+
+/**
  * Check command argument exists
  */
 
-if (!command) {
-  console.error('usage: cast <command> [<args>]\n')
-  process.exit(1)
+if (!cli.input.length > 0) {
+  cli.showHelp()
 }
 
 /**
