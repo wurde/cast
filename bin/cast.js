@@ -21,8 +21,17 @@ const script_path = path.join(__dirname, '..', 'commands', command + '.js')
  */
 
 if (!command) {
-  console.error('usage: cast <command> [<args>]\n')
-  process.exit(1)
+  console.error(`
+  Usage
+    $ cast <command>
+  `)
+
+  console.error('  Commands')
+  fs.readdirSync(path.join(__dirname, '..', 'commands'))
+    .map(file => path.basename(file, path.extname(file)))
+    .forEach(command => console.error(`    ${command}`))
+
+    process.exit(1)
 }
 
 /**
