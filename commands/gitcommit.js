@@ -53,6 +53,7 @@ function gitcommit() {
     if (cli.flags.message) {
       child_process.spawnSync('git', ['commit', '-m', message], config)
     } else {
+      prompt.message = ''
       prompt.get({
         name: 'message',
         description: colors.white.bold('Message'),
