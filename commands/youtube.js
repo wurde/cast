@@ -8,6 +8,7 @@ const fs = require('fs')
 const url = require('url')
 const meow = require('meow')
 const ytdl_core = require('ytdl-core')
+const showHelp = require('../helpers/showHelp')
 
 /**
  * Parse args
@@ -23,8 +24,7 @@ const cli = meow(`
  */
 
 function youtube() {
-  if (cli.flags.h) cli.showHelp()
-  if (cli.input.length < 2) cli.showHelp()
+  showHelp(cli, [cli.input.length < 2])
 
   const link = cli.input[1]
   const youtube_url = url.parse(link)

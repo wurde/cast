@@ -8,6 +8,7 @@ const path = require('path')
 const meow = require('meow')
 const moment = require('moment')
 const Sequelize = require('sequelize')
+const showHelp = require('../helpers/showHelp')
 
 /**
  * Constants
@@ -55,7 +56,7 @@ async function close_database() {
  */
 
 async function work(argv) {
-  if (cli.flags.h) cli.showHelp()
+  showHelp(cli)
 
   const command = cli.input[1]
 

@@ -7,6 +7,7 @@
 const child_process = require('child_process')
 const meow = require('meow')
 const chalk = require('chalk')
+const showHelp = require('../helpers/showHelp')
 
 /**
  * Parse args
@@ -35,7 +36,7 @@ function hasImageMagick() {
  */
 
 async function image(argv) {
-  if (cli.flags.h) cli.showHelp()
+  showHelp(cli)
 
   if (!hasImageMagick()) {
     console.error(chalk.red('Missing ImageMagick. Visit http://www.imagemagick.org/ for more information.'))

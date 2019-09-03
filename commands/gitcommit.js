@@ -8,7 +8,7 @@ const child_process = require('child_process')
 const prompt = require('prompt')
 const colors = require('colors')
 const meow = require('meow')
-const showHelpIfFlagged = require('../helpers/showHelpIfFlagged')
+const showHelp = require('../helpers/showHelp')
 
 /**
  * Constants
@@ -43,7 +43,7 @@ const cli = meow(`
  */
 
 function gitcommit() {
-  showHelpIfFlagged([cli.flags.h], cli)
+  showHelp(cli)
 
   const result = child_process.spawnSync('git', ['add', '-A'], config)
 

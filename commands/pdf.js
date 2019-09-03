@@ -10,6 +10,7 @@ const meow = require('meow')
 const marked = require('marked')
 const nodemon = require('nodemon')
 const puppeteer = require('puppeteer')
+const showHelp = require('../helpers/showHelp')
 
 /**
  * Parse args
@@ -68,10 +69,11 @@ function cleanup(browser) {
  */
 
 async function pdf(argv) {
-  if (cli.flags.h) cli.showHelp()
-  if (cli.input.length < 2) cli.showHelp()
-  if (!fs.existsSync(cli.input[1])) cli.showHelp()
-  if (cli.flags.stylesheet && !fs.existsSync(cli.flags.stylesheet)) cli.showHelp()
+  showHelp(cli, [
+    cli.input.length < 2,
+    !fs.existsSync(cli.input[1]),
+    cli.flags.stylesheet && !fs.existsSync(cli.flags.stylesheet)
+  ])
 
   const basename = path.basename(cli.input[1], path.extname(cli.input[1]))
 
