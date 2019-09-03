@@ -70,7 +70,6 @@ function cleanup(browser) {
 
 async function pdf(argv) {
   showHelp(cli, [
-    cli.flags.h, 
     cli.input.length < 2,
     !fs.existsSync(cli.input[1]),
     cli.flags.stylesheet && !fs.existsSync(cli.flags.stylesheet)

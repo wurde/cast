@@ -44,7 +44,7 @@ const cli = meow(`
  */
 
 async function rename(argv) {
-  showHelp(cli, [cli.flags.h])
+  showHelp(cli)
 
   let isMatch
   if (cli.flags.regex) {

@@ -24,7 +24,7 @@ const cli = meow(`
  */
 
 function youtube() {
-  showHelp(cli, [cli.flags.h, cli.input.length < 2])
+  showHelp(cli, [cli.input.length < 2])
 
   const link = cli.input[1]
   const youtube_url = url.parse(link)

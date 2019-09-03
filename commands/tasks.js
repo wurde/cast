@@ -76,7 +76,7 @@ async function close_database() {
  */
 
 async function tasks() {
-  showHelp(cli, [cli.flags.h])
+  showHelp(cli)
 
   const command = cli.input[1]
 

@@ -25,7 +25,7 @@ const cli = meow(`
  */
 
 function os_script() {
-  showHelp(cli, [cli.flags.h])
+  showHelp(cli)
 
   const data = [
     ['arch', os.arch()],

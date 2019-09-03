@@ -3,7 +3,7 @@
  */
 
 function showHelp(cli, checks=[]) {
-  if (checks.length === 0) cli.showHelp()
+  if (cli.flags.h) cli.showHelp()
   if (checks.some((check) => check)) cli.showHelp()
 }
 

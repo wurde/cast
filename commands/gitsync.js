@@ -31,7 +31,7 @@ const cli = meow(`
  */
 
 function gitsync() {
-  showHelp(cli, [cli.flags.h])
+  showHelp(cli)
   child_process.spawnSync('git', ['add', '-A'], config)
   child_process.spawnSync('git', ['commit', '-m', 'gitsync cleanup commit'], config)
   child_process.spawnSync('git', ['checkout', '--quiet', 'master'], config)

@@ -44,7 +44,7 @@ const cli = meow(`
  */
 
 async function decrypt() {
-  showHelp(cli, [cli.flags.h, cli.input.length < 2])
+  showHelp(cli, [cli.input.length < 2])
 
   const hash = cli.input[1]
   let secret = cli.flags.secret

@@ -53,7 +53,7 @@ function generateNonce() {
  */
 
 async function encrypt() {
-  showHelp(cli, [cli.flags.h, cli.input.length < 2])
+  showHelp(cli, [cli.input.length < 2])
 
   const message = cli.input.slice(1, cli.input.length).join(' ')
   let secret = cli.flags.secret

@@ -38,7 +38,7 @@ const cli = meow(`
  */
 
 function organize(argv) {
-  showHelp(cli, [cli.flags.h])
+  showHelp(cli)
 
   const files = fs.readdirSync('.').filter(file => fs.statSync(file).isFile())
 

@@ -36,7 +36,7 @@ function hasImageMagick() {
  */
 
 async function image(argv) {
-  showHelp(cli, [cli.flags.h])
+  showHelp(cli)
 
   if (!hasImageMagick()) {
     console.error(chalk.red('Missing ImageMagick. Visit http://www.imagemagick.org/ for more information.'))

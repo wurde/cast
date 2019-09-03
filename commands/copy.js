@@ -39,7 +39,7 @@ function print_error(message) {
  */
 
 function copy() {
-  showHelp(cli, [cli.flags.h, cli.input.length < 2])
+  showHelp(cli, [cli.input.length < 2])
 
   const file = cli.input[1]
   const template = path.join(TEMPLATE_DIR, file)

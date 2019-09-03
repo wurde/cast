@@ -41,7 +41,7 @@ const cli = meow(`
  */
 
 function compress() {
-  showHelp(cli, [cli.flags.h, cli.input.length < 2])
+  showHelp(cli, [cli.input.length < 2])
 
   let files = cli.input.slice(1, cli.input.length)
   files = files.filter(file => fs.existsSync(file))

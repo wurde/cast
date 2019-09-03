@@ -83,7 +83,7 @@ function checkConnectivity() {
  */
 
 async function qotd() {
-  showHelp(cli, [cli.flags.h])
+  showHelp(cli)
 
   if (cli.input.length > 1) {
     authors = cli.input.slice(1, cli.input.length).join(' ').split(',')
