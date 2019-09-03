@@ -2,7 +2,7 @@
  * Define helper
  */
 
-function showHelpIfFlagged(checks=[], cli) {
+function showHelp(checks=[], cli) {
   if (checks.some((check) => check)) cli.showHelp()
 }
 
@@ -10,4 +10,4 @@ function showHelpIfFlagged(checks=[], cli) {
  * Export helper
  */
 
-module.exports = showHelpIfFlagged
+module.exports = showHelp

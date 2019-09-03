@@ -11,7 +11,7 @@ const chalk = require('chalk')
 const prompts = require('prompts')
 const puppeteer = require('puppeteer')
 const { requireConnectivity } = require('../helpers/connectivity')
-const showHelpIfFlagged = require('../helpers/showHelpIfFlagged')
+const showHelp = require('../helpers/showHelp')
 const printError = require('../helpers/printError')
 
 /**
@@ -82,7 +82,7 @@ async function promptForCSSSelector(selector) {
 
 async function scrape() {
   requireConnectivity()
-  showHelpIfFlagged([
+  showHelp([
     cli.flags.h,
     !cli.input[1]
   ], cli)
