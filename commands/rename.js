@@ -11,6 +11,7 @@ const prompts = require('prompts')
 const micromatch = require('micromatch')
 const uuid = require('uuid')
 const moment = require('moment')
+const showHelp = require('../helpers/showHelp')
 
 /**
  * Parse args
@@ -43,7 +44,7 @@ const cli = meow(`
  */
 
 async function rename(argv) {
-  if (cli.flags.h) cli.showHelp()
+  showHelp(cli, [cli.flags.h])
 
   let isMatch
   if (cli.flags.regex) {

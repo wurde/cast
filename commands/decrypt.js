@@ -9,6 +9,7 @@ const crypto = require('crypto')
 const meow = require('meow')
 const ora = require('ora')
 const prompts = require('prompts')
+const showHelp = require('../helpers/showHelp')
 
 /**
  * Constants
@@ -43,8 +44,7 @@ const cli = meow(`
  */
 
 async function decrypt() {
-  if (cli.flags.h) cli.showHelp()
-  if (cli.input.length < 2) cli.showHelp()
+  showHelp(cli, [cli.flags.h, cli.input.length < 2])
 
   const hash = cli.input[1]
   let secret = cli.flags.secret

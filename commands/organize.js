@@ -7,6 +7,7 @@
 const fs = require('fs')
 const path = require('path')
 const meow = require('meow')
+const showHelp = require('../helpers/showHelp')
 
 /**
  * Constants
@@ -37,7 +38,7 @@ const cli = meow(`
  */
 
 function organize(argv) {
-  if (cli.flags.h) cli.showHelp()
+  showHelp(cli, [cli.flags.h])
 
   const files = fs.readdirSync('.').filter(file => fs.statSync(file).isFile())
 

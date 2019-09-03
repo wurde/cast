@@ -6,6 +6,7 @@
 
 const child_process = require('child_process')
 const meow = require('meow')
+const showHelp = require('../helpers/showHelp')
 
 /**
  * Constants
@@ -30,7 +31,7 @@ const cli = meow(`
  */
 
 function gitpush() {
-  if (cli.flags.h) cli.showHelp()
+  showHelp(cli, [cli.flags.h])
   child_process.spawnSync('git', ['push'], config)
 }
 

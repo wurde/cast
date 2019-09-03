@@ -12,6 +12,7 @@ const cheerio = require('cheerio')
 const chalk = require('chalk')
 const html_to_text = require('html-to-text')
 const connectivity = require('connectivity')
+const showHelp = require('../helpers/showHelp')
 
 /**
  * Constants
@@ -82,7 +83,8 @@ function checkConnectivity() {
  */
 
 async function qotd() {
-  if (cli.flags.h) cli.showHelp()
+  showHelp(cli, [cli.flags.h])
+
   if (cli.input.length > 1) {
     authors = cli.input.slice(1, cli.input.length).join(' ').split(',')
   }

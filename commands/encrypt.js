@@ -9,6 +9,7 @@ const crypto = require('crypto')
 const meow = require('meow')
 const ora = require('ora')
 const prompts = require('prompts')
+const showHelp = require('../helpers/showHelp')
 
 /**
  * Constants
@@ -52,8 +53,7 @@ function generateNonce() {
  */
 
 async function encrypt() {
-  if (cli.flags.h) cli.showHelp()
-  if (cli.input.length < 2) cli.showHelp()
+  showHelp(cli, [cli.flags.h, cli.input.length < 2])
 
   const message = cli.input.slice(1, cli.input.length).join(' ')
   let secret = cli.flags.secret

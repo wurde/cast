@@ -9,6 +9,7 @@ const meow = require('meow')
 const moment = require('moment')
 const filesize = require('filesize')
 const { table } = require('table')
+const showHelp = require('../helpers/showHelp')
 
 /**
  * Parse args
@@ -24,7 +25,7 @@ const cli = meow(`
  */
 
 function os_script() {
-  if (cli.flags.h) cli.showHelp()
+  showHelp(cli, [cli.flags.h])
 
   const data = [
     ['arch', os.arch()],

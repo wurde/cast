@@ -8,6 +8,7 @@ const fs = require('fs')
 const path = require('path')
 const meow = require('meow')
 const chalk = require('chalk')
+const showHelp = require('../helpers/showHelp')
 
 /**
  * Constants
@@ -38,8 +39,7 @@ function print_error(message) {
  */
 
 function copy() {
-  if (cli.flags.h) cli.showHelp()
-  if (cli.input.length < 2) cli.showHelp()
+  showHelp(cli, [cli.flags.h, cli.input.length < 2])
 
   const file = cli.input[1]
   const template = path.join(TEMPLATE_DIR, file)

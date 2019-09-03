@@ -8,6 +8,7 @@ const fs = require('fs')
 const path = require('path')
 const zlib = require('zlib')
 const meow = require('meow')
+const showHelp = require('../helpers/showHelp')
 
 /**
  * Constants
@@ -40,8 +41,7 @@ const cli = meow(`
  */
 
 function compress() {
-  if (cli.flags.h) cli.showHelp()
-  if (cli.input.length < 2) cli.showHelp()
+  showHelp(cli, [cli.flags.h, cli.input.length < 2])
 
   let files = cli.input.slice(1, cli.input.length)
   files = files.filter(file => fs.existsSync(file))
