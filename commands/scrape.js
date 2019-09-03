@@ -82,10 +82,7 @@ async function promptForCSSSelector(selector) {
 
 async function scrape() {
   requireConnectivity()
-  showHelp([
-    cli.flags.h,
-    !cli.input[1]
-  ], cli)
+  showHelp(cli, [cli.flags.h, !cli.input[1]])
 
   let selector = cli.flags.selector
 

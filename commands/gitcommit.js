@@ -43,7 +43,7 @@ const cli = meow(`
  */
 
 function gitcommit() {
-  showHelp([cli.flags.h], cli)
+  showHelp(cli, [cli.flags.h])
 
   const result = child_process.spawnSync('git', ['add', '-A'], config)
 
