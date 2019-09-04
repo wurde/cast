@@ -13,10 +13,15 @@ const prompts = require('prompts')
  */
 
 const CHOICES = [
-  'Rock',
-  'Paper',
-  'Scissors',
+  'rock',
+  'paper',
+  'scissors',
 ]
+const GAME_STATE = {
+  win: ['paper,rock', 'rock,scissors', 'scissors,paper'],
+  lose: ['rock,paper', 'scissors,rock', 'paper,scissors'],
+  tie: ['rock,rock', 'paper,paper', 'scissors,scissors'],
+}
 
 /**
  * Parse args
@@ -44,6 +49,17 @@ async function rock_paper_scissors() {
   
   console.log(`You chose ${response.choice}`)
   console.log(`Bot chose ${botChoice}`)
+  
+  const pair = `${response.choice.toLowerCase()},${botChoice}`
+  if (GAME_STATE.win.includes(pair)) {
+      console.log('You win!')
+  } else if (GAME_STATE.lose.includes(pair)) {
+      console.log('You lose!')
+  } else if (GAME_STATE.tie.includes(pair)) {
+      console.log('You tied!')
+  } else {
+      console.log('Unknown game state')
+  }
 }
 
 /**
