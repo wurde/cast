@@ -50,6 +50,10 @@ function init_state() {
   }
 }
 
+function write_state(state) {
+  fs.writeFileSync(HISTORY_PATH, state, 'utf8')
+}
+
 function print_state(state) {
   console.log(`
     Welcome to Rock Paper Scissors!
@@ -83,13 +87,16 @@ async function rock_paper_scissors() {
   
   const pair = `${response.choice.toLowerCase()},${botChoice}`
   if (GAME_STATE.win.includes(pair)) {
-      console.log('  You win!\n')
+    write_state(`${state[0]+1},${state[1]},${state[2]}`)
+    console.log('  You win!\n')
   } else if (GAME_STATE.lose.includes(pair)) {
-      console.log('  You lose!\n')
+    write_state(`${state[0]},${state[1]},${state[2]+1}`)
+    console.log('  You lose!\n')
   } else if (GAME_STATE.tie.includes(pair)) {
-      console.log('  You tied!\n')
+    write_state(`${state[0]},${state[1]+1},${state[2]}`)
+    console.log('  You tied!\n')
   } else {
-      console.log('  Unknown game state\n')
+    console.log('  Unknown game state\n')
   }
 }
 
