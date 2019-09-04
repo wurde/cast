@@ -73,7 +73,6 @@ async function rock_paper_scissors() {
 
   const state = init_state()
   print_state(state)
-  // TODO ask "Want to play again? (Y/n)"
 
   const response = await prompts({
     type: 'text',
