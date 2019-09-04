@@ -9,6 +9,7 @@ const path = require('path')
 const meow = require('meow')
 const showHelp = require('../helpers/showHelp')
 const prompts = require('prompts')
+const chalk = require('chalk')
 
 /**
  * Constants
@@ -82,19 +83,19 @@ async function rock_paper_scissors() {
 
   const botChoice = CHOICES[Math.floor(Math.random() * 3)]
   
-  console.log(`  You chose ${response.choice}`)
-  console.log(`  Bot chose ${botChoice}`)
+  console.log(`  You chose ${chalk.bold(response.choice.toUpperCase())}.`)
+  console.log(`  Bot chose ${chalk.bold(botChoice.toUpperCase())}.`)
   
   const pair = `${response.choice.toLowerCase()},${botChoice}`
   if (GAME_STATE.win.includes(pair)) {
     write_state(`${state[0]+1},${state[1]},${state[2]}`)
-    console.log('  You win!\n')
+    console.log(`  You ${chalk.green.bold('win'.toUpperCase())}!\n`)
   } else if (GAME_STATE.lose.includes(pair)) {
     write_state(`${state[0]},${state[1]},${state[2]+1}`)
-    console.log('  You lose!\n')
+    console.log(`  You ${chalk.red.bold('lose'.toUpperCase())}!\n`)
   } else if (GAME_STATE.tie.includes(pair)) {
     write_state(`${state[0]},${state[1]+1},${state[2]}`)
-    console.log('  You tied!\n')
+    console.log(`  You ${chalk.yellow.bold('tied'.toUpperCase())}!\n`)
   } else {
     console.log('  Unknown game state\n')
   }
