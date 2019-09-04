@@ -42,11 +42,11 @@ const cli = meow(`
 function init_state() {
   if (fs.existsSync(HISTORY_PATH)) {
     const history = fs.readFileSync(HISTORY_PATH, 'utf8')
-    return history.split(',')
+    return history.split(',').map(i => Number(i))
   } else {
     const history = '0,0,0'
     fs.writeFileSync(HISTORY_PATH, history, 'utf8')
-    return history.split(',')
+    return history.split(',').map(i => Number(i))
   }
 }
 
