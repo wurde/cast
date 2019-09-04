@@ -6,6 +6,7 @@
 
 const meow = require('meow')
 const showHelp = require('../helpers/showHelp')
+const prompts = require('prompts')
 
 /**
  * Parse args
@@ -20,10 +21,16 @@ const cli = meow(`
  * Define script
  */
 
-function rock_paper_scissors() {
+async function rock_paper_scissors() {
   showHelp(cli)
 
-  console.log("Rock Paper Scissors")
+  const response = await prompts({
+    type: 'text',
+    name: 'choice',
+    message: 'Choose rock, paper, or scissors:'
+  })
+
+  console.log(`You chose ${response.choice}`)
 }
 
 /**
