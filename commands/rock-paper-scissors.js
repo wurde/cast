@@ -4,6 +4,8 @@
  * Dependencies
  */
 
+const fs = require('fs')
+const path = require('path')
 const meow = require('meow')
 const showHelp = require('../helpers/showHelp')
 const prompts = require('prompts')
@@ -12,6 +14,7 @@ const prompts = require('prompts')
  * Constants
  */
 
+const HISTORY_PATH = path.join(process.env.HOME, 'rock-paper-scissors.txt')
 const CHOICES = [
   'rock',
   'paper',
@@ -33,11 +36,39 @@ const cli = meow(`
 `)
 
 /**
+ * Define helper
+ */
+
+function init_state() {
+  if (fs.existsSync(HISTORY_PATH)) {
+    const history = fs.readFileSync(HISTORY_PATH, 'utf8')
+    return history.split(',')
+  } else {
+    const history = '0,0,0'
+    fs.writeFileSync(HISTORY_PATH, history, 'utf8')
+    return history.split(',')
+  }
+}
+
+function print_state(state) {
+  console.log(`
+    Welcome to Rock Paper Scissors!
+
+    Current Stats:
+      Wins: ${state[0]}, Ties: ${state[1]}, Losses: ${state[2]}
+  `)
+}
+
+/**
  * Define script
  */
 
 async function rock_paper_scissors() {
   showHelp(cli)
+
+  const state = init_state()
+  print_state(state)
+  // TODO ask "Want to play again? (Y/n)"
 
   const response = await prompts({
     type: 'text',
@@ -47,18 +78,18 @@ async function rock_paper_scissors() {
 
   const botChoice = CHOICES[Math.floor(Math.random() * 3)]
   
-  console.log(`You chose ${response.choice}`)
-  console.log(`Bot chose ${botChoice}`)
+  console.log(`  You chose ${response.choice}`)
+  console.log(`  Bot chose ${botChoice}`)
   
   const pair = `${response.choice.toLowerCase()},${botChoice}`
   if (GAME_STATE.win.includes(pair)) {
-      console.log('You win!')
+      console.log('  You win!\n')
   } else if (GAME_STATE.lose.includes(pair)) {
-      console.log('You lose!')
+      console.log('  You lose!\n')
   } else if (GAME_STATE.tie.includes(pair)) {
-      console.log('You tied!')
+      console.log('  You tied!\n')
   } else {
-      console.log('Unknown game state')
+      console.log('  Unknown game state\n')
   }
 }
 
