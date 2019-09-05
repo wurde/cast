@@ -64,12 +64,12 @@ class Player {
 
   take(action) {
     const item_name = action.replace('take ', '')
-    
+
     if (this.current_area.has_item(item_name)) {
-      console.log(chalk.white.bold(`Take: ${item_name}\n`))
       const item = this.current_area.take(item_name)
       if (Math.random() < item.rng) this.health += item.health
       this.items = this.items.concat(item)
+      console.log(chalk.white.bold(`Take: ${item.name}\n`))
     } else {
       this.health -= 5
       console.log(chalk.yellow.bold('*You stare up in confusion*\n'))
@@ -78,12 +78,12 @@ class Player {
   
   drop(action) {
     const item_name = action.replace('drop ', '')
-    const item = this.items.find(i => i.name === item_name)
+    const item = this.items.find(i => i.name.toLowerCase() === item_name)
 
     if (item) {
-      console.log(chalk.white.bold(`Drop: ${item_name}\n`))
+      console.log(chalk.white.bold(`Drop: ${item.name}\n`))
       this.current_area.drop(item)
-      this.items = this.items.filter(i => i.name !== item_name)
+      this.items = this.items.filter(i => i.name !== item.name)
     } else {
       this.health -= 5
       console.log(chalk.yellow.bold('*You stare up in confusion*\n'))
@@ -111,11 +111,11 @@ class Area {
   }
 
   has_item(name) {
-    return this.items.map(i => i.name).includes(name)
+    return this.items.map(i => i.name.toLowerCase()).includes(name)
   }
 
   take(name) {
-    const item = this.items.find(item => item.name === name)
+    const item = this.items.find(item => item.name.toLowerCase() === name)
     this.items = this.items.filter(i => i.name !== item.name)
     return item
   }
@@ -168,7 +168,7 @@ class Map {
     this.areas = this.areas.concat(
       new Area({ name: 'Outside', description: 'Any direction will do.', north: 'Fairy Asylum', south: 'Crimson Sanctum', east: 'Dining Room of the Sigl', west: 'Watchtower of Ending' }),
       new Area({ name: 'Fairy Asylum', description: "You pass through a twisted trail that leads passed countless rooms and soon you enter a dark area. Small holes and carved paths cover the walls, it looks like a community or burrow for small creatures.", south: 'Outside', west: 'Desolate Prison of the Miners', items: [
-        new Item({ name: 'Glowing Ignot', description: 'You pickup something glowing on the ground.', health: -15 }),
+        new Item({ name: 'Pointed Stick', description: 'You pickup a pointed stick for defense.', health: 20 }),
       ]}),
       new Area({ name: 'Crimson Sanctum', description: "A narrow granite door in a gloomy thicket marks the entrance ahead. Beyond the granite door lies a large, clammy room. It's covered in rat droppings, dead insects and puddles of water. Your torch allows you to see what seems like some form of a sacrificial chamber, destroyed and absorbed by time itself.", north: 'Outside', items: [
         new Item({ name: 'Glowing Ignot', description: 'You pickup something glowing on the ground.', health: -15 }),
@@ -178,14 +178,14 @@ class Map {
       ]}),
       new Area({ name: 'Room of Knowledge', description: "Inside the room looks grandiose. It has been built with wheat colored bricks and has granite decorations. Small, triangular windows let in plenty of light and have been added to the room in a mostly symmetric way.", west: 'Dining Room of the Sigl', items: [
         new Item({ name: 'Glowing Ignot', description: 'You pickup something glowing on the ground.', health: -15 }),
-        new Item({ name: 'Parchment', description: "You read a quickly drawn note. 'Drop me off at the Watchtower of Ending'", health: 10 }),
+        new Item({ name: 'Red Parchment', description: "You read instructions: 'Deliver to the Watchtower of Ending'", health: 10 }),
       ]}),
       new Area({ name: 'Desolate Prison of the Miners', description: "Beyond the boulder lies a large, dusty room. It's covered in remains, broken stone and rubble.", east: 'Fairy Asylum', items: [
         new Item({ name: 'Glowing Ignot', description: 'You pickup something glowing on the ground.', health: -15 }),
       ]}),
       new Area({ name: 'Watchtower of Ending', description: "You pass many rooms and passages, it's one big labyrinth of twists and turns. You eventually make it to what is likely the final room. A mysterious granite door blocks your path. Dried blood splatters are all over it, you enter cautiously.", east: 'Outside', items: [
         new Item({ name: 'Glowing Ignot', description: 'You pickup something glowing on the ground.', health: -15 }),
-        new Item({ name: 'Parchment', description: "You read a quickly drawn note. 'Drop me off at the Chrimson Sanctum'", health: 10 }),
+        new Item({ name: 'Blue Parchment', description: "You read instructions: 'Deliver to the Chrimson Sanctum'", health: 10 }),
       ]}),
     )
     // new Activity({ name: 'Apple Tree', description: 'You reach up and eat an apple.', health: 5 })
@@ -212,6 +212,9 @@ async function adventure() {
   console.log(chalk.white.bold('*You wake up*\n'))
   
   while (true) {
+    // TODO check for win condition
+    console.log(JSON.stringify(map.areas), '\n')
+
     let response = await prompts({
       type: 'text',
       name: 'action',
@@ -227,8 +230,7 @@ async function adventure() {
     })
     console.log('')
 
-    const user_input = response.action.toLowerCase()
-    console.log(`user_input '${user_input.constructor}'`)
+    const user_input = response.action.toLowerCase().trim()
 
     if (main_player.health <= 0 || ['q', 'quit'].includes(user_input)) {
       main_player.health = 0
