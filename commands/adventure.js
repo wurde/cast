@@ -166,9 +166,9 @@ async function adventure() {
       process.exit(0)
     } else if (['n', 's', 'e', 'w'].includes(response.action)) {
       main_player.move(response.action)
-    } else if (['get', 'take'].includes(response.action)) {
+    } else if (response.action.match(/^get|^take/)) {
       main_player.take(response.action)
-    } else if (['drop'].includes(response.action)) {
+    } else if (response.action.match(/^drop/)) {
       main_player.drop(response.action)
     } else if (['i', 'inventory'].includes(response.action)) {
       main_player.inventory(response.action)
