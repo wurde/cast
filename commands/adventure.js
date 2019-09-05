@@ -228,7 +228,7 @@ async function adventure() {
     console.log('')
 
     const user_input = response.action.toLowerCase()
-    console.log(`user_input '${user_input}'`)
+    console.log(`user_input '${user_input.constructor}'`)
 
     if (main_player.health <= 0 || ['q', 'quit'].includes(user_input)) {
       main_player.health = 0
