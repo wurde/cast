@@ -68,6 +68,7 @@ class Player {
     if (this.current_area.has_item(item_name)) {
       console.log(chalk.white.bold(`Take: ${item_name}\n`))
       const item = this.current_area.take(item_name)
+      if (Math.random() < item.rng) this.health += item.health
       this.items = this.items.concat(item)
     } else {
       this.health -= 5
@@ -177,14 +178,14 @@ class Map {
       ]}),
       new Area({ name: 'Room of Knowledge', description: "Inside the room looks grandiose. It has been built with wheat colored bricks and has granite decorations. Small, triangular windows let in plenty of light and have been added to the room in a mostly symmetric way.", west: 'Dining Room of the Sigl', items: [
         new Item({ name: 'Glowing Ignot', description: 'You pickup something glowing on the ground.', health: -15 }),
-        new Item({ name: 'Parchment', description: "You read a quickly drawn note. 'Drop me off at the Watchtower of Ending'" }),
+        new Item({ name: 'Parchment', description: "You read a quickly drawn note. 'Drop me off at the Watchtower of Ending'", health: 10 }),
       ]}),
       new Area({ name: 'Desolate Prison of the Miners', description: "Beyond the boulder lies a large, dusty room. It's covered in remains, broken stone and rubble.", east: 'Fairy Asylum', items: [
         new Item({ name: 'Glowing Ignot', description: 'You pickup something glowing on the ground.', health: -15 }),
       ]}),
       new Area({ name: 'Watchtower of Ending', description: "You pass many rooms and passages, it's one big labyrinth of twists and turns. You eventually make it to what is likely the final room. A mysterious granite door blocks your path. Dried blood splatters are all over it, you enter cautiously.", east: 'Outside', items: [
         new Item({ name: 'Glowing Ignot', description: 'You pickup something glowing on the ground.', health: -15 }),
-        new Item({ name: 'Parchment', description: "You read a quickly drawn note. 'Drop me off at the Chrimson Sanctum'" }),
+        new Item({ name: 'Parchment', description: "You read a quickly drawn note. 'Drop me off at the Chrimson Sanctum'", health: 10 }),
       ]}),
     )
     // new Activity({ name: 'Apple Tree', description: 'You reach up and eat an apple.', health: 5 })
@@ -226,24 +227,27 @@ async function adventure() {
     })
     console.log('')
 
-    if (main_player.health <= 0 || ['q', 'quit'].includes(response.action)) {
+    const user_input = response.action.toLowerCase()
+    console.log(`user_input '${user_input}'`)
+
+    if (main_player.health <= 0 || ['q', 'quit'].includes(user_input)) {
       main_player.health = 0
       console.log(chalk.red.bold('*Death by exhaustion*\n'))
       console.log(chalk.white.bold('// GAME OVER\n'))
       process.exit(0)
-    } else if (['h', 'help'].includes(response.action)) {
+    } else if (['h', 'help'].includes(user_input)) {
       main_player.health -= 5
       console.log(chalk.white.bold('Navigation: n, s, e, w'))
       console.log(chalk.white.bold('Items: take ITEM, drop ITEM, inventory'))
       console.log(chalk.white.bold('Exit: q, quit\n'))
-    } else if (['n', 's', 'e', 'w'].includes(response.action)) {
-      main_player.move(response.action)
-    } else if (response.action.match(/^take/)) {
-      main_player.take(response.action)
-    } else if (response.action.match(/^drop/)) {
-      main_player.drop(response.action)
-    } else if (['i', 'inventory'].includes(response.action)) {
-      main_player.inventory(response.action)
+    } else if (['n', 's', 'e', 'w'].includes(user_input)) {
+      main_player.move(user_input)
+    } else if (user_input.match(/^take/)) {
+      main_player.take(user_input)
+    } else if (user_input.match(/^drop/)) {
+      main_player.drop(user_input)
+    } else if (['i', 'inventory'].includes(user_input)) {
+      main_player.inventory(user_input)
     } else {
       main_player.health -= 5
       console.log(chalk.yellow.bold('*You stare up in confusion*\n'))
