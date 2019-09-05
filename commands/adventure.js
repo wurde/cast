@@ -37,6 +37,7 @@ const cli = meow(`
 
 class Player {
   health = 100
+  items = ['ball', 'parchman']
 
   constructor(map, area) {
     this.map = map
@@ -60,15 +61,24 @@ class Player {
   }
 
   take(action) {
-    console.log(chalk.white.bold('Take\n'))
+    const item = action.replace('take ', '')
+    console.log(chalk.white.bold(`Take: ${item}\n`))
+    this.items = this.items.concat(item)
   }
   
   drop(action) {
-    console.log(chalk.white.bold('Drop\n'))
+    const item = action.replace('drop ', '')
+    if (this.items.includes(item)) {
+      console.log(chalk.white.bold(`Drop: ${item}\n`))
+      this.items = this.items.filter(i => i !== item)
+    } else {
+      this.health -= 5
+      console.log(chalk.yellow.bold('*You stare up in confusion*\n'))
+    }
   }
 
   inventory() {
-    console.log(chalk.white.bold('Inventory\n'))
+    console.log(chalk.white.bold(`Inventory: ${this.items.join(', ')}\n`))
   }
 }
 
@@ -77,9 +87,10 @@ class Player {
  */
 
 class Area {
-  constructor({ name, description, north = null, south = null, east = null, west = null}) {
+  constructor({ name, description, items = [], north = null, south = null, east = null, west = null }) {
     this.name = name
     this.description = description
+    this.items = items
     this.north = north
     this.south = south
     this.east = east
@@ -126,17 +137,30 @@ class Activity {
 class Map {
   constructor() {
     this.areas = []
-
+    
     this.areas = this.areas.concat(
       new Area({ name: 'Outside', description: 'Any direction will do.', north: 'Fairy Asylum', south: 'Crimson Sanctum', east: 'Dining Room of the Sigl', west: 'Watchtower of Ending' }),
-      new Area({ name: 'Fairy Asylum', description: "You pass through a twisted trail that leads passed countless rooms and soon you enter a dark area. Small holes and carved paths cover the walls, it looks like a community or burrow for small creatures.", south: 'Outside', west: 'Desolate Prison of the Miners' }),
-      new Area({ name: 'Crimson Sanctum', description: "A narrow granite door in a gloomy thicket marks the entrance ahead. Beyond the granite door lies a large, clammy room. It's covered in rat droppings, dead insects and puddles of water. Your torch allows you to see what seems like some form of a sacrificial chamber, destroyed and absorbed by time itself.", north: 'Outside' }),
-      new Area({ name: 'Dining Room of the Sigl', description: "Inside the room looks warm and cozy. It has been built with red bricks and has brown stone decorations. Tall, large windows brighten up the room and have been added in a fairly symmetrical pattern.", east: 'Room of Knowledge', west: 'Outside' }),
-      new Area({ name: 'Room of Knowledge', description: "Inside the room looks grandiose. It has been built with wheat colored bricks and has granite decorations. Small, triangular windows let in plenty of light and have been added to the room in a mostly symmetric way.", west: 'Dining Room of the Sigl' }),
-      new Area({ name: 'Desolate Prison of the Miners', description: "Beyond the boulder lies a large, dusty room. It's covered in remains, broken stone and rubble.", east: 'Fairy Asylum' }),
-      new Area({ name: 'Watchtower of Ending', description: "You pass many rooms and passages, it's one big labyrinth of twists and turns. You eventually make it to what is likely the final room. A mysterious granite door blocks your path. Dried blood splatters are all over it, you enter cautiously.", east: 'Outside' }),
+      new Area({ name: 'Fairy Asylum', description: "You pass through a twisted trail that leads passed countless rooms and soon you enter a dark area. Small holes and carved paths cover the walls, it looks like a community or burrow for small creatures.", south: 'Outside', west: 'Desolate Prison of the Miners', items: [
+        new Item({ name: 'Glowing Ignot', description: 'You pickup something glowing on the ground.', health: -15 }),
+      ]}),
+      new Area({ name: 'Crimson Sanctum', description: "A narrow granite door in a gloomy thicket marks the entrance ahead. Beyond the granite door lies a large, clammy room. It's covered in rat droppings, dead insects and puddles of water. Your torch allows you to see what seems like some form of a sacrificial chamber, destroyed and absorbed by time itself.", north: 'Outside', items: [
+        new Item({ name: 'Glowing Ignot', description: 'You pickup something glowing on the ground.', health: -15 }),
+      ]}),
+      new Area({ name: 'Dining Room of the Sigl', description: "Inside the room looks warm and cozy. It has been built with red bricks and has brown stone decorations. Tall, large windows brighten up the room and have been added in a fairly symmetrical pattern.", east: 'Room of Knowledge', west: 'Outside', items: [
+        new Item({ name: 'Glowing Ignot', description: 'You pickup something glowing on the ground.', health: -15 }),
+      ]}),
+      new Area({ name: 'Room of Knowledge', description: "Inside the room looks grandiose. It has been built with wheat colored bricks and has granite decorations. Small, triangular windows let in plenty of light and have been added to the room in a mostly symmetric way.", west: 'Dining Room of the Sigl', items: [
+        new Item({ name: 'Glowing Ignot', description: 'You pickup something glowing on the ground.', health: -15 }),
+        new Item({ name: 'Parchment', description: "You read a quickly drawn note. 'Drop me off at the Watchtower of Ending'" }),
+      ]}),
+      new Area({ name: 'Desolate Prison of the Miners', description: "Beyond the boulder lies a large, dusty room. It's covered in remains, broken stone and rubble.", east: 'Fairy Asylum', items: [
+        new Item({ name: 'Glowing Ignot', description: 'You pickup something glowing on the ground.', health: -15 }),
+      ]}),
+      new Area({ name: 'Watchtower of Ending', description: "You pass many rooms and passages, it's one big labyrinth of twists and turns. You eventually make it to what is likely the final room. A mysterious granite door blocks your path. Dried blood splatters are all over it, you enter cautiously.", east: 'Outside', items: [
+        new Item({ name: 'Glowing Ignot', description: 'You pickup something glowing on the ground.', health: -15 }),
+        new Item({ name: 'Parchment', description: "You read a quickly drawn note. 'Drop me off at the Chrimson Sanctum'" }),
+      ]}),
     )
-    // new Item({ name: 'Glowing Ignot', description: 'You pickup something glowing on the ground.', health: -15 })
     // new Activity({ name: 'Apple Tree', description: 'You reach up and eat an apple.', health: 5 })
   }
 
@@ -183,7 +207,7 @@ async function adventure() {
       process.exit(0)
     } else if (['n', 's', 'e', 'w'].includes(response.action)) {
       main_player.move(response.action)
-    } else if (response.action.match(/^get|^take/)) {
+    } else if (response.action.match(/^take/)) {
       main_player.take(response.action)
     } else if (response.action.match(/^drop/)) {
       main_player.drop(response.action)
