@@ -111,7 +111,7 @@ class Area {
   }
 
   has_item(name) {
-    return this.items.map(i => i.name.toLowerCase()).includes(name)
+    return this.items.map(i => i.name.toLowerCase()).includes(name.toLowerCase())
   }
 
   take(name) {
@@ -143,24 +143,6 @@ class Item {
   }
 }
 
-/**
- * Define Activity
- */
-
-class Activity {
-  constructor({ name, description, health }) {
-    this.name = name
-    this.description = description
-    this.health = health
-
-    if (this.health > 0) {
-      this.rng = Math.floor(Math.random() * 100)
-    } else {
-      this.rng = Math.floor(Math.random() * 100) + 15
-    }
-  }
-}
-
 class Map {
   constructor() {
     this.areas = []
@@ -168,7 +150,7 @@ class Map {
     this.areas = this.areas.concat(
       new Area({ name: 'Outside', description: 'Any direction will do.', north: 'Fairy Asylum', south: 'Crimson Sanctum', east: 'Dining Room of the Sigl', west: 'Watchtower of Ending' }),
       new Area({ name: 'Fairy Asylum', description: "You pass through a twisted trail that leads passed countless rooms and soon you enter a dark area. Small holes and carved paths cover the walls, it looks like a community or burrow for small creatures.", south: 'Outside', west: 'Desolate Prison of the Miners', items: [
-        new Item({ name: 'Pointed Stick', description: 'You pickup a pointed stick for defense.', health: 20 }),
+        new Item({ name: 'Glowing Ignot', description: 'You pickup something glowing on the ground.', health: -15 }),
       ]}),
       new Area({ name: 'Crimson Sanctum', description: "A narrow granite door in a gloomy thicket marks the entrance ahead. Beyond the granite door lies a large, clammy room. It's covered in rat droppings, dead insects and puddles of water. Your torch allows you to see what seems like some form of a sacrificial chamber, destroyed and absorbed by time itself.", north: 'Outside', items: [
         new Item({ name: 'Glowing Ignot', description: 'You pickup something glowing on the ground.', health: -15 }),
@@ -178,17 +160,16 @@ class Map {
       ]}),
       new Area({ name: 'Room of Knowledge', description: "Inside the room looks grandiose. It has been built with wheat colored bricks and has granite decorations. Small, triangular windows let in plenty of light and have been added to the room in a mostly symmetric way.", west: 'Dining Room of the Sigl', items: [
         new Item({ name: 'Glowing Ignot', description: 'You pickup something glowing on the ground.', health: -15 }),
-        new Item({ name: 'Red Parchment', description: "You read instructions: 'Deliver to the Watchtower of Ending'", health: 10 }),
+        new Item({ name: 'Red Parchment', description: "You read instructions: 'Deliver to the Watchtower of Ending'", health: 5 }),
       ]}),
       new Area({ name: 'Desolate Prison of the Miners', description: "Beyond the boulder lies a large, dusty room. It's covered in remains, broken stone and rubble.", east: 'Fairy Asylum', items: [
         new Item({ name: 'Glowing Ignot', description: 'You pickup something glowing on the ground.', health: -15 }),
       ]}),
       new Area({ name: 'Watchtower of Ending', description: "You pass many rooms and passages, it's one big labyrinth of twists and turns. You eventually make it to what is likely the final room. A mysterious granite door blocks your path. Dried blood splatters are all over it, you enter cautiously.", east: 'Outside', items: [
         new Item({ name: 'Glowing Ignot', description: 'You pickup something glowing on the ground.', health: -15 }),
-        new Item({ name: 'Blue Parchment', description: "You read instructions: 'Deliver to the Chrimson Sanctum'", health: 10 }),
+        new Item({ name: 'Blue Parchment', description: "You read instructions: 'Deliver to the Crimson Sanctum'", health: 5 }),
       ]}),
     )
-    // new Activity({ name: 'Apple Tree', description: 'You reach up and eat an apple.', health: 5 })
   }
 
   area(name) {
@@ -212,8 +193,16 @@ async function adventure() {
   console.log(chalk.white.bold('*You wake up*\n'))
   
   while (true) {
-    // TODO check for win condition
-    console.log(JSON.stringify(map.areas), '\n')
+    const objective_a = map.area('Watchtower of Ending').has_item('Red Parchment')
+
+    const objective_b = map.area('Crimson Sanctum').has_item('Blue Parchment')
+
+    if (objective_a && objective_b) {
+      console.log('')
+      console.log(chalk.green.bold(figlet.textSync('SUCCESS', { font: 'Bright' })))
+      console.log('')
+      process.exit(0)
+    }
 
     let response = await prompts({
       type: 'text',
