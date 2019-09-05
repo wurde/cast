@@ -25,6 +25,17 @@ class Player {
 }
 
 /**
+ * Define Area
+ */
+
+class Area {
+  constructor({ name, description }) {
+    this.name = name
+    this.description = description
+  }
+}
+
+/**
  * Define script
  */
 
@@ -33,7 +44,9 @@ function adventure() {
 
   let main_player = new Player()
 
-  console.log('Adventure', main_player)
+  let first_area = new Area({ name: 'Outside', description: 'Any direction will do.'})
+
+  console.log('Adventure', main_player, first_area)
 }
 
 /**
