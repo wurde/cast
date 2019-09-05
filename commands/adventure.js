@@ -104,21 +104,24 @@ async function adventure() {
     })
     console.log('')
 
-    // TODO Handle get,take,drop for items.
-    // TODO Handle i for listing player inventory.
-
     // let first_area = new Area({ name: 'Outside', description: 'Any direction will do.' })
     // let first_item = new Item({ name: 'Glowing Ignot', description: 'You pickup something glowing on the ground.', health: -15 })
     // let first_activity = new Activity({ name: 'Apple Tree', description: 'You reach up and eat an apple.', health: 5 })
 
-    if (['n', 's', 'e', 'w'].includes(response.action)) {
-      console.log(chalk.green.bold('Move\n'))
-      main_player.health -= 10
-    } else if (main_player.health <= 0 || response.action === 'q') {
+    if (main_player.health <= 0 || ['q', 'quit'].includes(response.action)) {
       main_player.health = 0
       console.log(chalk.red.bold('*Death by exhaustion*\n'))
       console.log(chalk.white.bold('// GAME OVER\n'))
       process.exit(0)
+    } else if (['n', 's', 'e', 'w'].includes(response.action)) {
+      console.log(chalk.green.bold('Move\n'))
+      main_player.health -= 10
+    } else if (['get', 'take'].includes(response.action)) {
+      console.log(chalk.white.bold('Take\n'))
+    } else if (['drop'].includes(response.action)) {
+      console.log(chalk.white.bold('Drop\n'))
+    } else if (['i', 'inventory'].includes(response.action)) {
+      console.log(chalk.white.bold('Inventory\n'))
     } else {
       main_player.health -= 10
       console.log(chalk.yellow.bold('*You stare up in confusion*\n'))
