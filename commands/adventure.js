@@ -82,42 +82,46 @@ async function adventure() {
   showHelp(cli)
 
   console.log('')
-  console.log(figlet.textSync('ADVENTURE', { font: 'Bright' }))
+  console.log(chalk.white.bold(figlet.textSync('ADVENTURE', { font: 'Bright' })))
   console.log('')
 
   let main_player = new Player()
   console.log(chalk.white.bold('*You wake up*\n'))
-  // print(`// ${main_player.current_room).toUpperCase()}\n}`)
-  // print(main_player.current_room.description, '\n')
   
   while (true) {
-    // TODO Handle n,s,e,w for movement.
-    // TODO Handle get,take,drop for items.
-    // TODO Handle i for listing player inventory.
-
     let response = await prompts({
-      type: 'select',
+      type: 'text',
       name: 'action',
-      // TODO change color based on health green to red
-      message: `${chalk.green.bold('☺')}`,
-      choices: [
-        { title: 'Move north', value: 'north' },
-        { title: 'Move south', value: 'south' },
-        { title: 'Move east', value: 'east' },
-        { title: 'Move west', value: 'west' },
-        { title: 'Quit', value: 'quit' },
-      ]
+      message: () => {
+        if (main_player.health < 20) {
+          return chalk.red.bold('(╯°□°）╯︵ ┻━┻')
+        } else if (main_player.health < 50) {
+          return chalk.yellow.bold('(ಠ_ಠ)')
+        } else {
+          return chalk.green.bold('(ʘ‿ʘ)')
+        }
+      }
     })
     console.log('')
 
-    let first_area = new Area({ name: 'Outside', description: 'Any direction will do.' })
-    let first_item = new Item({ name: 'Glowing Ignot', description: 'You pickup something glowing on the ground.', health: -15 })
-    let first_activity = new Activity({ name: 'Apple Tree', description: 'You reach up and eat an apple.', health: 5 })
+    // TODO Handle get,take,drop for items.
+    // TODO Handle i for listing player inventory.
 
-    if (response.action === 'q' || response.action === 'quit') {
+    // let first_area = new Area({ name: 'Outside', description: 'Any direction will do.' })
+    // let first_item = new Item({ name: 'Glowing Ignot', description: 'You pickup something glowing on the ground.', health: -15 })
+    // let first_activity = new Activity({ name: 'Apple Tree', description: 'You reach up and eat an apple.', health: 5 })
+
+    if (['n', 's', 'e', 'w'].includes(response.action)) {
+      console.log(chalk.green.bold('Move\n'))
+      main_player.health -= 10
+    } else if (main_player.health <= 0 || response.action === 'q') {
+      main_player.health = 0
       console.log(chalk.red.bold('*Death by exhaustion*\n'))
       console.log(chalk.white.bold('// GAME OVER\n'))
       process.exit(0)
+    } else {
+      main_player.health -= 10
+      console.log(chalk.yellow.bold('*You stare up in confusion*\n'))
     }
   }
 }
