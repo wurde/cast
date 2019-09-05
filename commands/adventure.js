@@ -231,6 +231,11 @@ async function adventure() {
       console.log(chalk.red.bold('*Death by exhaustion*\n'))
       console.log(chalk.white.bold('// GAME OVER\n'))
       process.exit(0)
+    } else if (['h', 'help'].includes(response.action)) {
+      main_player.health -= 5
+      console.log(chalk.white.bold('Navigation: n, s, e, w'))
+      console.log(chalk.white.bold('Items: take ITEM, drop ITEM, inventory'))
+      console.log(chalk.white.bold('Exit: q, quit\n'))
     } else if (['n', 's', 'e', 'w'].includes(response.action)) {
       main_player.move(response.action)
     } else if (response.action.match(/^take/)) {
