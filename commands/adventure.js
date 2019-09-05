@@ -8,6 +8,7 @@ const meow = require('meow')
 const chalk = require('chalk')
 const figlet = require('figlet')
 const prompts = require('prompts')
+const wrap_ansi = require('wrap-ansi')
 const showHelp = require('../helpers/showHelp')
 
 /**
@@ -43,11 +44,14 @@ class Player {
   }
 
   move(direction) {
-    const next_area = this.current_area[directions[direction]]
+    const next_area_name = this.current_area[directions[direction]]
 
-    if (next_area) {
+    if (next_area_name) {
+      const next_area = this.map.area(next_area_name)
       console.log(chalk.green.bold(`*Move ${directions[direction].toUpperCase()}*\n`))
-      this.current_area = this.map.area(next_area)
+      console.log(`// ${next_area_name.toUpperCase()}\n`)
+      console.log(wrap_ansi(chalk.white.bold(next_area.description), 70), '\n')
+      this.current_area = next_area
     } else {
       console.log(chalk.yellow.bold(`*You try to move ${directions[direction].toUpperCase()}, but the way is blocked*.\n`))
     }
