@@ -37,7 +37,7 @@ const cli = meow(`
 
 class Player {
   health = 100
-  items = ['ball', 'parchman']
+  items = []
 
   constructor(map, area) {
     this.map = map
@@ -63,16 +63,26 @@ class Player {
   }
 
   take(action) {
-    const item = action.replace('take ', '')
-    console.log(chalk.white.bold(`Take: ${item}\n`))
-    this.items = this.items.concat(item)
+    const item_name = action.replace('take ', '')
+    
+    if (this.current_area.has_item(item_name)) {
+      console.log(chalk.white.bold(`Take: ${item_name}\n`))
+      const item = this.current_area.take(item_name)
+      this.items = this.items.concat(item)
+    } else {
+      this.health -= 5
+      console.log(chalk.yellow.bold('*You stare up in confusion*\n'))
+    }
   }
   
   drop(action) {
-    const item = action.replace('drop ', '')
-    if (this.items.includes(item)) {
-      console.log(chalk.white.bold(`Drop: ${item}\n`))
-      this.items = this.items.filter(i => i !== item)
+    const item_name = action.replace('drop ', '')
+    const item = this.items.find(i => i.name === item_name)
+
+    if (item) {
+      console.log(chalk.white.bold(`Drop: ${item_name}\n`))
+      this.current_area.drop(item)
+      this.items = this.items.filter(i => i.name !== item_name)
     } else {
       this.health -= 5
       console.log(chalk.yellow.bold('*You stare up in confusion*\n'))
@@ -80,7 +90,7 @@ class Player {
   }
 
   inventory() {
-    console.log(chalk.white.bold(`Inventory: ${this.items.join(', ')}\n`))
+    console.log(chalk.white.bold(`Inventory: ${this.items.map(i => i.name).join(', ')}\n`))
   }
 }
 
@@ -97,6 +107,20 @@ class Area {
     this.south = south
     this.east = east
     this.west = west
+  }
+
+  has_item(name) {
+    return this.items.map(i => i.name).includes(name)
+  }
+
+  take(name) {
+    const item = this.items.find(item => item.name === name)
+    this.items = this.items.filter(i => i.name !== item.name)
+    return item
+  }
+
+  drop(item) {
+    this.items = this.items.concat(item)
   }
 }
 
