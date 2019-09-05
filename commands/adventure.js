@@ -52,6 +52,8 @@ class Player {
       console.log(chalk.green.bold(`*Move ${directions[direction].toUpperCase()}*\n`))
       console.log(`// ${next_area_name.toUpperCase()}\n`)
       console.log(wrap_ansi(chalk.white.bold(next_area.description), 70), '\n')
+      console.log(chalk.white.bold(`Items: ${next_area.items.map(item => item.name).join(', ')}\n`))
+
       this.current_area = next_area
     } else {
       console.log(chalk.yellow.bold(`*You try to move ${directions[direction].toUpperCase()}, but the way is blocked*.\n`))
