@@ -17,12 +17,23 @@ const cli = meow(`
 `)
 
 /**
+ * Define Player
+ */
+
+class Player {
+  health = 100
+}
+
+/**
  * Define script
  */
 
 function adventure() {
   showHelp(cli)
-  console.log('Adventure')
+
+  let main_player = new Player()
+
+  console.log('Adventure', main_player)
 }
 
 /**
