@@ -15,10 +15,10 @@ const showHelp = require('../helpers/showHelp')
  */
 
 const directions = {
-  'n': 'NORTH',
-  's': 'SOUTH',
-  'e': 'EAST',
-  'w': 'WEST',
+  'n': 'north',
+  's': 'south',
+  'e': 'east',
+  'w': 'west',
 }
 
 /**
@@ -37,13 +37,22 @@ const cli = meow(`
 class Player {
   health = 100
 
-  constructor(area) {
+  constructor(map, area) {
+    this.map = map
     this.current_area = area
   }
 
   move(direction) {
-    console.log(chalk.green.bold(`*Move ${directions[direction].toUpperCase()}*\n`))
-    this.health -= 10
+    const next_area = this.current_area[directions[direction]]
+
+    if (next_area) {
+      console.log(chalk.green.bold(`*Move ${directions[direction].toUpperCase()}*\n`))
+      this.current_area = this.map.area(next_area)
+    } else {
+      console.log(chalk.yellow.bold(`*You try to move ${directions[direction].toUpperCase()}, but the way is blocked*.\n`))
+    }
+
+    this.health -= 5
   }
 
   take(action) {
@@ -64,9 +73,13 @@ class Player {
  */
 
 class Area {
-  constructor({ name, description }) {
+  constructor({ name, description, north = null, south = null, east = null, west = null}) {
     this.name = name
     this.description = description
+    this.north = north
+    this.south = south
+    this.east = east
+    this.west = west
   }
 }
 
@@ -111,13 +124,13 @@ class Map {
     this.areas = []
 
     this.areas = this.areas.concat(
-      new Area({ name: 'Outside', description: 'Any direction will do.', north_area: 'Fairy Asylum', south_area: 'Crimson Sanctum', east_area: 'Dining Room of the Sigl', west_area: 'Watchtower of Ending' }),
-      new Area({ name: 'Fairy Asylum', description: "You pass through a twisted trail that leads passed countless rooms and soon you enter a dark area. Small holes and carved paths cover the walls, it looks like a community or burrow for small creatures.", south_area: 'Outside', west_area: 'Desolate Prison of the Miners' }),
-      new Area({ name: 'Crimson Sanctum', description: "A narrow granite door in a gloomy thicket marks the entrance ahead. Beyond the granite door lies a large, clammy room. It's covered in rat droppings, dead insects and puddles of water. Your torch allows you to see what seems like some form of a sacrificial chamber, destroyed and absorbed by time itself.", north_area: 'Outside' }),
-      new Area({ name: 'Dining Room of the Sigl', description: "Inside the room looks warm and cozy. It has been built with red bricks and has brown stone decorations. Tall, large windows brighten up the room and have been added in a fairly symmetrical pattern.", east_area: 'Room of Knowledge', west_area: 'Outside' }),
-      new Area({ name: 'Room of Knowledge', description: "Inside the room looks grandiose. It has been built with wheat colored bricks and has granite decorations. Small, triangular windows let in plenty of light and have been added to the room in a mostly symmetric way.", west_area: 'Dining Room of the Sigl' }),
-      new Area({ name: 'Desolate Prison of the Miners', description: "Beyond the boulder lies a large, dusty room. It's covered in remains, broken stone and rubble.", east_area: 'Fairy Asylum' }),
-      new Area({ name: 'Watchtower of Ending', description: "You pass many rooms and passages, it's one big labyrinth of twists and turns. You eventually make it to what is likely the final room. A mysterious granite door blocks your path. Dried blood splatters are all over it, you enter cautiously.", east_area: 'Outside' }),
+      new Area({ name: 'Outside', description: 'Any direction will do.', north: 'Fairy Asylum', south: 'Crimson Sanctum', east: 'Dining Room of the Sigl', west: 'Watchtower of Ending' }),
+      new Area({ name: 'Fairy Asylum', description: "You pass through a twisted trail that leads passed countless rooms and soon you enter a dark area. Small holes and carved paths cover the walls, it looks like a community or burrow for small creatures.", south: 'Outside', west: 'Desolate Prison of the Miners' }),
+      new Area({ name: 'Crimson Sanctum', description: "A narrow granite door in a gloomy thicket marks the entrance ahead. Beyond the granite door lies a large, clammy room. It's covered in rat droppings, dead insects and puddles of water. Your torch allows you to see what seems like some form of a sacrificial chamber, destroyed and absorbed by time itself.", north: 'Outside' }),
+      new Area({ name: 'Dining Room of the Sigl', description: "Inside the room looks warm and cozy. It has been built with red bricks and has brown stone decorations. Tall, large windows brighten up the room and have been added in a fairly symmetrical pattern.", east: 'Room of Knowledge', west: 'Outside' }),
+      new Area({ name: 'Room of Knowledge', description: "Inside the room looks grandiose. It has been built with wheat colored bricks and has granite decorations. Small, triangular windows let in plenty of light and have been added to the room in a mostly symmetric way.", west: 'Dining Room of the Sigl' }),
+      new Area({ name: 'Desolate Prison of the Miners', description: "Beyond the boulder lies a large, dusty room. It's covered in remains, broken stone and rubble.", east: 'Fairy Asylum' }),
+      new Area({ name: 'Watchtower of Ending', description: "You pass many rooms and passages, it's one big labyrinth of twists and turns. You eventually make it to what is likely the final room. A mysterious granite door blocks your path. Dried blood splatters are all over it, you enter cautiously.", east: 'Outside' }),
     )
     // new Item({ name: 'Glowing Ignot', description: 'You pickup something glowing on the ground.', health: -15 })
     // new Activity({ name: 'Apple Tree', description: 'You reach up and eat an apple.', health: 5 })
@@ -140,7 +153,7 @@ async function adventure() {
   console.log('')
 
   let map = new Map()
-  let main_player = new Player(map.area('Outside'))
+  let main_player = new Player(map, map.area('Outside'))
   console.log(chalk.white.bold('*You wake up*\n'))
   
   while (true) {
@@ -173,7 +186,7 @@ async function adventure() {
     } else if (['i', 'inventory'].includes(response.action)) {
       main_player.inventory(response.action)
     } else {
-      main_player.health -= 10
+      main_player.health -= 5
       console.log(chalk.yellow.bold('*You stare up in confusion*\n'))
     }
   }
