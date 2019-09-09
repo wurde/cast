@@ -10,6 +10,7 @@ const path = require('path')
 const chalk = require('chalk')
 const prompts = require('prompts')
 const fs = require('fs')
+const child_process = require('child_process')
 
 /**
  * Parse args
@@ -43,46 +44,29 @@ async function delete_all() {
   const confirmPrompt = await prompts({
     type: 'confirm',
     name: 'value',
-    message: `Are you sure you want to delete? ${chalk.red.bold(cli.input[1])} from ${chalk.green.bold(path.resolve(destDir))} [Y/n]`,
-    initial: true
+    message: `Are you sure you want to delete? ${chalk.red.bold(cli.input[1])} from ${chalk.green.bold(destDir)} [N/y]`,
+    initial: false
   })
   if (!confirmPrompt.value) process.exit(1)
 
-  // Define the base case
-  // Define the case where the element is a file
-  // Define the case where the element is a subfolder
-  // In the recursive call, change the arguments so that the function reaches the base case
-
-  buildPaths(destDir)
+  const matches = []
+  buildPaths(destDir, cli.input[1])
   
-  function buildPaths(fromDir, match) {  
+  function buildPaths(fromDir, match) {
     const files = fs.readdirSync(fromDir, { withFileTypes: true })
-    const matches = []
 
     // match all cases
-    return files.reduce((acc, cur) => {
-      // case where cur is a file
-      // if (cur.isFile() && cur.name === match) {
-        // return acc.concat([path.resolve(cur.name)])
-        
-      // case where cur is a subfolder
-      if (cur.isDirectory()) { 
-        console.log(path.resolve(fromDir, cur.name))
-        return buildPaths(path.resolve(fromDir, cur.name), match)
+    return files.forEach(file => {
+      if (file.name === match) {
+        console.log('removing:', file.name)
+        matches.push(path.resolve(fromDir, file.name))
+      } else if (file.isDirectory()) {
+        return buildPaths(path.resolve(fromDir, file.name), match)
       }
-    }, [])
+    })
   }
 
-  // const pathsWithNodeModules = [
-  //   ['code', 'lambda', 'web-applications-I', 'lambda-calc'],
-  //   ['code', 'lambda', 'web-applications-I', 'gh-user-card'],
-  //   ['code', 'lambda', 'web-applications-II', 'NASA-APOD'],
-  // ].map(path => path.join(...path)) // MS support path.join('code', 'lambda')
-
-  // for (path of pathsWithNodeModules) {
-  //   childprocess.spawn('cd', [path])
-  //   childprocess.spanw('rm -rf', ['node_modules'])
-  // }
+  child_process.spawn('rm', ['-rf', ...matches])
 }
 
 /**
