@@ -40,7 +40,6 @@ async function delete_all() {
   
   const destDir = path.resolve(cli.flags.destination || '.')
 
-  console.log('')
   const confirmPrompt = await prompts({
     type: 'confirm',
     name: 'value',
@@ -55,7 +54,6 @@ async function delete_all() {
   function buildPaths(fromDir, match) {
     const files = fs.readdirSync(fromDir, { withFileTypes: true })
 
-    // match all cases
     return files.forEach(file => {
       if (file.name === match) {
         console.log('removing:', file.name)
