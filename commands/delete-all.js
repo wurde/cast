@@ -24,7 +24,7 @@ const cli = meow(`
     --destination, -d DIR   Destination to start removal.
 `, {
   flags: {
-    destDir: {
+    destination: {
       type: 'string',
       alias: 'd'
     }
@@ -38,9 +38,8 @@ const cli = meow(`
 async function delete_all() {
   showHelp(cli, [cli.input.length < 2])
   
-  const destDir = path.resolve(cli.flags.destDir || '.')
+  const destDir = path.resolve(cli.flags.destination || '.')
 
-  console.log('')
   const confirmPrompt = await prompts({
     type: 'confirm',
     name: 'value',
@@ -55,7 +54,6 @@ async function delete_all() {
   function buildPaths(fromDir, match) {
     const files = fs.readdirSync(fromDir, { withFileTypes: true })
 
-    // match all cases
     return files.forEach(file => {
       if (file.name === match) {
         console.log('removing:', file.name)
