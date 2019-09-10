@@ -50,6 +50,24 @@ function weather_js2_async(location) {
   })
 }
 
+function generate_icon(code) {
+  let icon
+
+  if (['0', '1', '2', '3', '4', '11', '12'].includes(code)) {
+    icon = chalk.blue.bold('\u2602') // thunderstorm
+  } else if (['5', '6', '7', '8', '9', '10', '13', '14', '15', '16'].includes(code)) {
+    icon = '' // rain sleet snow
+  } else if (['31', '32', '33', '34'].includes(code)) {
+    icon = chalk.yellow.bold('\u2600') // sunny
+  } else if (['26', '27', '28', '29', '30'].includes(code)) {
+    icon = chalk.white.bold('\u2601') // cloudy
+  } else {
+    icon = ' '
+  }
+
+  return icon
+}
+
  /**
  * Define script
  */
@@ -81,7 +99,7 @@ async function weather() {
     })
 
     console.log(`\nLocation: ${res.location.name}\n`)
-    console.log(`${chalk.yellow.bold('\u2600')}  ${res.current.skytext}`)
+    console.log(`${generate_icon(res.current.skycode)}  ${res.current.skytext}`)
     console.log(`   Today ${res.current.temperature} ℉`)
     console.log(`   ${res.current.winddisplay}`)
     console.log('')
@@ -90,20 +108,7 @@ async function weather() {
     res.forecast = res.forecast.filter(daily_forecast => daily_forecast.date >= res.current.date)
 
     const res_array = res.forecast.map(daily_forecast => {
-      let icon
-      if (['0', '1', '2', '3', '4', '11', '12'].includes(daily_forecast.skycodeday)) {
-        icon = chalk.blue.bold('\u2602') // thunderstorm
-      } else if (['5', '6', '7', '8', '9', '10', '13', '14', '15', '16'].includes(daily_forecast.skycodeday)) {
-        icon = '' // rain sleet snow
-      } else if (['31', '32', '33', '34'].includes(daily_forecast.skycodeday)) {
-        icon = chalk.yellow.bold('\u2600') // sunny
-      } else if (['26', '27', '28', '29', '30'].includes(daily_forecast.skycodeday)) {
-        icon = chalk.white.bold('\u2601') // cloudy
-      } else {
-        console.log(daily_forecast.skycodeday)
-        icon = ' '
-      }
-
+      let icon = generate_icon(daily_forecast.skycodeday)
       return `${icon}  ${daily_forecast.skytextday}\n   ${daily_forecast.shortday} ${chalk.green.bold(daily_forecast.high)} - ${chalk.green.bold(daily_forecast.low)} ℉\n   Precipitation ${daily_forecast.precip}%`
     })
 
