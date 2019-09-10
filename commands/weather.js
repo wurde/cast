@@ -4,12 +4,20 @@
  * Dependencies
  */
 
+const fs = require('fs')
+const path = require('path')
 const meow = require('meow')
 const showHelp = require('../helpers/showHelp')
 const weather_js2 = require('weather-js2')
 const {table} = require('table')
 const chalk = require('chalk')
 const figlet = require('figlet')
+
+/**
+ * Constants
+ */
+
+const weather_config_path = path.join(process.env.HOME, '.weather')
 
 /**
  * Parse args
@@ -52,8 +60,13 @@ async function weather() {
   let location
   if (cli.input.length > 1) {
     location = cli.input.slice(1, cli.input.length).join(' ')
+    fs.writeFileSync(weather_config_path, location)
   } else {
-    location = 'Houston, TX'
+    if (fs.existsSync(weather_config_path)) {
+      location = fs.readFileSync(weather_config_path)
+    } else {
+      location = 'Houston, TX'
+    }
   }
 
   try {
