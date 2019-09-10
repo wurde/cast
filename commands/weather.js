@@ -17,7 +17,7 @@ const figlet = require('figlet')
 
 const cli = meow(`
   Usage
-    $ cast weather
+    $ cast weather [LOCATION]
 `)
 
 /**
@@ -33,20 +33,31 @@ function figlet_text(text) {
   })
 }
 
+function weather_js2_async(location) {
+  return new Promise((resolve, reject) => {
+    weather_js2.find({ search: location, degreeType: 'F', resCount: 1 }, async (err, result) => {
+      if (err) reject(err)
+      resolve(result)
+    })
+  })
+}
+
  /**
  * Define script
  */
 
-function weather() {
+async function weather() {
   showHelp(cli)
 
-  const location = 'Houston, TX'
+  let location
+  if (cli.input.length > 1) {
+    location = cli.input.slice(1, cli.input.length).join(' ')
+  } else {
+    location = 'Houston, TX'
+  }
 
-  weather_js2.find({ search: location, degreeType: 'F', resCount: 2 }, async (err, result) => {
-    if (err) {
-      console.error(err)
-      process.exit(1)
-    }
+  try {
+    const result = await weather_js2_async(location)
 
     const res = result.reduce((acc, curr) => {
       if (curr.location.name == location) {
@@ -85,7 +96,10 @@ function weather() {
 
     console.log(table([res_array]))
     console.log('')
-  })
+  } catch(err) {
+    console.error(chalk.red.bold(`Coudn't find location: ${location}`))
+    process.exit(1)
+  }
 }
 
 /**
