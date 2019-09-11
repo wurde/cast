@@ -10,6 +10,7 @@ const meow = require('meow')
 const ora = require('ora')
 const prompts = require('prompts')
 const showHelp = require('../helpers/showHelp')
+const handleInterrupt = require('../helpers/handleInterrupt')
 
 /**
  * Constants
@@ -45,31 +46,42 @@ const cli = meow(`
 
 async function decrypt() {
   showHelp(cli, [cli.input.length < 2])
+  handleInterrupt()
 
   const hash = cli.input[1]
   let secret = cli.flags.secret
   let noncePath = cli.flags.noncePath
 
   console.log('')
+  let prompt_count = 0
   while (!secret || secret.length < 7) {
     const secretPrompt = await prompts({
       type: 'password',
       name: 'value',
       message: 'Please enter the secret:',
-      validate: value => value.length < 7 ? 'Minimum 7 characters' : true
+      validate: value => value.length < 7 ? 'Minimum 7 characters' : true,
+      onCancel: () => {
+        if (prompt_count >= 1) handleInterrupt({ force: true, code: 130 })
+      }
     })
-
+    
+    prompt_count += 1
     secret = secretPrompt.value
   }
-
+  
+  prompt_count = 0
   while (!noncePath || !fs.existsSync(noncePath)) {
     const noncePrompt = await prompts({
       type: 'text',
       name: 'value',
       message: 'Please provide path to nonce:',
-      validate: value => !fs.existsSync(value) ? 'File not found' : true
+      validate: value => !fs.existsSync(value) ? 'File not found' : true,
+      onCancel: () => {
+        if (prompt_count >= 1) handleInterrupt({ force: true, code: 130 })
+      }
     })
 
+    prompt_count += 1
     noncePath = noncePrompt.value
   }
   const nonce = fs.readFileSync(noncePath)

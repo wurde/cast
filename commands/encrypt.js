@@ -10,6 +10,7 @@ const meow = require('meow')
 const ora = require('ora')
 const prompts = require('prompts')
 const showHelp = require('../helpers/showHelp')
+const handleInterrupt = require('../helpers/handleInterrupt')
 
 /**
  * Constants
@@ -54,19 +55,24 @@ function generateNonce() {
 
 async function encrypt() {
   showHelp(cli, [cli.input.length < 2])
+  handleInterrupt()
 
   const message = cli.input.slice(1, cli.input.length).join(' ')
   let secret = cli.flags.secret
 
   console.log('')
+  let prompt_count = 0
   while (!secret || secret.length < 7) {
     const secretPrompt = await prompts({
       type: 'password',
       name: 'value',
       message: 'Please enter a secret:',
-      validate: value => value.length < 7 ? 'Minimum 7 characters' : true
+      validate: value => value.length < 7 ? 'Minimum 7 characters' : true,
+      onCancel: () => {
+        if (prompt_count >= 1) handleInterrupt({force: true, code: 130})
+      }
     })
-
+    prompt_count += 1
     secret = secretPrompt.value
   }
 
