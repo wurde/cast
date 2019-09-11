@@ -10,6 +10,7 @@ const figlet = require('figlet')
 const prompts = require('prompts')
 const wrap_ansi = require('wrap-ansi')
 const showHelp = require('../helpers/showHelp')
+const handleInterrupt = require('../helpers/handleInterrupt')
 
 /**
  * Constants
@@ -198,6 +199,7 @@ function print_commands() {
 
 async function adventure() {
   showHelp(cli)
+  handleInterrupt()
   
   console.log('')
   console.log(chalk.white.bold(figlet.textSync('ADVENTURE', { font: 'Bright' })))
@@ -221,22 +223,35 @@ async function adventure() {
       process.exit(0)
     }
 
-    let response = await prompts({
-      type: 'text',
-      name: 'action',
-      message: () => {
-        if (main_player.health < 20) {
-          return chalk.red.bold('(╯°□°）╯︵ ┻━┻')
-        } else if (main_player.health < 50) {
-          return chalk.yellow.bold('(ಠ_ಠ)')
-        } else {
-          return chalk.green.bold('(ʘ‿ʘ)')
+    let user_input
+    let prompt_count = 0
+    while (!user_input) {
+      let actionPrompt = await prompts({
+        type: 'text',
+        name: 'value',
+        message: () => {
+          if (main_player.health < 20) {
+            return chalk.red.bold('(╯°□°）╯︵ ┻━┻')
+          } else if (main_player.health < 50) {
+            return chalk.yellow.bold('(ಠ_ಠ)')
+          } else {
+            return chalk.green.bold('(ʘ‿ʘ)')
+          }
+        },
+        onCancel: () => {
+          if (prompt_count >= 1) {
+            console.log('')
+            console.log(chalk.red.bold('*Death by exhaustion*\n'))
+            console.log(chalk.white.bold('// GAME OVER\n'))
+            handleInterrupt({ force: true, code: 130, silent: true })
+          }
         }
-      }
-    })
-    console.log('')
+      })
+      console.log('')
 
-    const user_input = response.action.toLowerCase().trim()
+      prompt_count += 1
+      user_input = (actionPrompt.value) ? actionPrompt.value.toLowerCase().trim() : null
+    }
 
     if (main_player.health <= 0 || ['q', 'quit'].includes(user_input)) {
       main_player.health = 0

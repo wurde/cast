@@ -8,9 +8,9 @@ const chalk = require('chalk')
  * Define helper
  */
 
-function handleInterrupt({ force, code } = { force: false, code: 1 }) {
+function handleInterrupt({ force, code, silent } = { force: false, code: 1, silent: false }) {
   function print_and_exit(code) {
-    console.log(chalk.red.bold("Command killed by keyboard interrupt"))
+    if (!silent) console.log(chalk.red.bold("Command killed by keyboard interrupt"))
     process.exit(code)
   }
 
