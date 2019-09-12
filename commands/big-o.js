@@ -5,6 +5,7 @@
  */
 
 const meow = require('meow')
+const chalk = require('chalk')
 const showHelp = require('../helpers/showHelp')
 
 /**
@@ -23,15 +24,15 @@ const cli = meow(`
 function big_o() {
   showHelp(cli)
   console.log(`
-Big O Classifications:
+${chalk.white.bold('Big O Classifications:')}
 
-  Constant O(1)
-  Logarithmic O(log n)
-  Linear O(n)
-  Linearithmic O(n log n)
-  Polynomial O(n ^ c)
-  Exponential O(c ^ n)
-  Factorial O(n!)
+  Constant.......${chalk.green.bold('O(1)')}
+  Logarithmic....${chalk.green.bold('O(log n)')}
+  Linear.........${chalk.green.bold('O(n)')}
+  Linearithmic...${chalk.green.bold('O(n log n)')}
+  Polynomial.....${chalk.green.bold('O(n ^ c)')}
+  Exponential....${chalk.green.bold('O(c ^ n)')}
+  Factorial......${chalk.green.bold('O(n!)')}
 `)
 }
 
