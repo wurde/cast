@@ -17,6 +17,10 @@ Setup takes less than 1 minute on a good connection.
 1. `git remote add upstream https://github.com/wurde/scripts.git`
 2. `git pull upstream master`
 
+## Vision
+
+There is a vision that guides development. Learn more in [VISION.md](VISION.md).
+
 ## License
 
 Scripts is released under the [MIT License](http://www.opensource.org/licenses/MIT).
