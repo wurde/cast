@@ -8,7 +8,11 @@ There has never been a more exciting time to be tech-enabled. The world has incr
 
 ## Agile
 
-The command-line interface (CLI) [[1]](https://en.wikipedia.org/wiki/Command-line_interface) is for the power user. Writing scripts is the fastest way to build, deploy, and maintain real-world solutions. Unlike web applications or mobile applications, which have many moving parts, a script is often a single file with less than 300 lines of code.
+The command-line interface (CLI) [[1]](https://en.wikipedia.org/wiki/Command-line_interface) is for the power user. Writing scripts is the fastest way to build, deploy, and maintain real-world solutions. Unlike web or mobile apps, which have many moving parts, a script is often a single file with less than 300 lines of code.
+
+## Emergent
+
+When written in a way to allow chaining functionality scripts produce emergent behavior. The output of one script can become the input of another and so on. Also designs of previous scripts inform the designs of newer scripts. The emergence of functionality and design accelerates with each new script.
 
 ## References
 
