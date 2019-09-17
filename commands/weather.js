@@ -53,13 +53,13 @@ function weather_js2_async(location) {
 function generate_icon(code) {
   let icon
 
-  if (['0', '1', '2', '3', '4', '11', '12'].includes(code)) {
+  if (['0', '1', '2', '3', '4', '11', '12', '17', '18', '35', '37', '38', '39', '40', '45', '47'].includes(code)) {
     icon = chalk.blue.bold('\u2602') // thunderstorm
-  } else if (['5', '6', '7', '8', '9', '10', '13', '14', '15', '16'].includes(code)) {
-    icon = '' // rain sleet snow
-  } else if (['31', '32', '33', '34'].includes(code)) {
+  } else if (['5', '6', '7', '8', '9', '10', '13', '14', '15', '16', '25', '41', '42', '43', '46'].includes(code)) {
+    icon = chalk.white.bold('\u2603') // rain sleet snow
+  } else if (['31', '32', '33', '34', '36'].includes(code)) {
     icon = chalk.yellow.bold('\u2600') // sunny
-  } else if (['26', '27', '28', '29', '30'].includes(code)) {
+  } else if (['19', '20', '21', '22', '23', '24', '26', '27', '28', '29', '30'].includes(code)) {
     icon = chalk.white.bold('\u2601') // cloudy
   } else {
     icon = ' '
