@@ -80,6 +80,9 @@ async function create_readme() {
     },
   ])
 
+  // TODO check if missing any responses.
+  // TODO if yes process.exit(130)
+  process.exit(130)
   console.log('response', response)
 }
 
