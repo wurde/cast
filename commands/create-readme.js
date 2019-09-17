@@ -12,6 +12,19 @@ const chalk = require('chalk')
 const showHelp = require('../helpers/showHelp')
 
 /**
+ * Constants
+ */
+
+const responseNames = [
+  'projectName',
+  'projectDescription',
+  'hasGettingStarted',
+  'hasExamples',
+  'licenseName',
+  'licenseUrl'
+]
+
+/**
  * Parse args
  */
 
@@ -19,6 +32,22 @@ const cli = meow(`
   Usage
     $ cast create-readme
 `)
+
+/**
+ * Define helper
+ */
+
+function requireAllResponses(response) {
+  const keys = Object.keys(response)
+  const hasResponses = responseNames.every(x => keys.includes(x))
+
+  if (hasResponses) {
+    return true
+  } else {
+    console.log(chalk.red.bold('Cancelled README.md generation.\n'))
+    process.exit(130)
+  }
+}
 
 /**
  * Define script
@@ -80,10 +109,7 @@ async function create_readme() {
     },
   ])
 
-  // TODO check if missing any responses.
-  // TODO if yes process.exit(130)
-  process.exit(130)
-  console.log('response', response)
+  requireAllResponses(response)
 }
 
 /**
