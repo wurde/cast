@@ -120,8 +120,16 @@ async function create_readme() {
 
   requireAllResponses(response)
 
-  console.log(response)
-  // fs.writeFileSync()
+  const data = `# ${response.projectName}
+${(response.projectDescription.length > 0) ? `\n${response.projectDescription}\n` : ''}
+${(response.hasGettingStarted) ? '## Getting started\n' : ''}
+${(response.hasExamples) ? '## Examples\n' : ''}
+## License
+
+This project is [${response.licenseName}](${response.licenseUrl}) licensed.
+`
+
+  fs.writeFileSync('README.md', data)
 }
 
 /**
