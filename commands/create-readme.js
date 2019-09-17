@@ -4,6 +4,7 @@
  * Dependencies
  */
 
+const fs = require('fs')
 const path = require('path')
 const meow = require('meow')
 const prompts = require('prompts')
@@ -37,6 +38,13 @@ const cli = meow(`
  * Define helper
  */
 
+function checkReadmeExists() {
+  if (fs.existsSync('README.md')) {
+    console.log(chalk.red.bold('README.md already exists.\n'))
+    process.exit(1)
+  }
+}
+
 function requireAllResponses(response) {
   const keys = Object.keys(response)
   const hasResponses = responseNames.every(x => keys.includes(x))
@@ -55,6 +63,7 @@ function requireAllResponses(response) {
 
 async function create_readme() {
   showHelp(cli)
+  checkReadmeExists()
 
   let response = await prompts([
     {
@@ -110,6 +119,9 @@ async function create_readme() {
   ])
 
   requireAllResponses(response)
+
+  console.log(response)
+  // fs.writeFileSync()
 }
 
 /**
