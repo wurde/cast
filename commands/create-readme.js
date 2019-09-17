@@ -4,7 +4,11 @@
  * Dependencies
  */
 
+const path = require('path')
 const meow = require('meow')
+const prompts = require('prompts')
+const strip_ansi = require('strip-ansi')
+const chalk = require('chalk')
 const showHelp = require('../helpers/showHelp')
 
 /**
@@ -20,10 +24,22 @@ const cli = meow(`
  * Define script
  */
 
-function create_readme() {
+async function create_readme() {
   showHelp(cli)
 
-  console.log("Create README")
+  let response = await prompts([
+    {
+      type: 'text',
+      name: 'projectName',
+      message: 'Project name:',
+      initial: chalk.blue.bold(path.basename(process.cwd())),
+      format: value => {
+        return strip_ansi(value)
+      }
+    }
+  ])
+
+  console.log('response', response)
 }
 
 /**
