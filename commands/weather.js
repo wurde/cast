@@ -26,6 +26,10 @@ const weather_config_path = path.join(process.env.HOME, '.weather')
 const cli = meow(`
   Usage
     $ cast weather [LOCATION]
+
+  Options
+    --celsius     Degrees in Celsius.
+    --fahrenheit  Degrees in Fahrenheit.
 `)
 
 /**
