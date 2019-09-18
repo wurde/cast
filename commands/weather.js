@@ -17,7 +17,11 @@ const figlet = require('figlet')
  * Constants
  */
 
-const weather_config_path = path.join(process.env.HOME, '.weather')
+const CONFIG_PATH = path.join(process.env.HOME, '.weather.json')
+const CONFIG_DEFAULT = {
+  location: 'Houston, TX',
+  scale: 'fahrenheit'
+}
 
 /**
  * Parse args
@@ -29,7 +33,7 @@ const cli = meow(`
 
   Options
     --celsius     Degrees in Celsius.
-    --fahrenheit  Degrees in Fahrenheit.
+    --fahrenheit  Degrees in Fahrenheit (Default).
 `)
 
 /**
@@ -72,6 +76,17 @@ function generate_icon(code) {
   return icon
 }
 
+function readConfig() {
+  if (fs.existsSync(CONFIG_PATH)) {
+    return JSON.parse(fs.readFileSync(CONFIG_PATH))
+  } else {
+    fs.writeFileSync(CONFIG_PATH, JSON.stringify(CONFIG_DEFAULT))
+    return CONFIG_DEFAULT
+  }
+}
+
+// TODO writeConfig(key, value)
+
  /**
  * Define script
  */
@@ -79,16 +94,25 @@ function generate_icon(code) {
 async function weather() {
   showHelp(cli)
 
-  let location
+  let options = readConfig()
+  console.log('options')
+  console.log(options)
+  process.exit(1)
+
   if (cli.input.length > 1) {
-    location = cli.input.slice(1, cli.input.length).join(' ')
-    fs.writeFileSync(weather_config_path, location)
+    options.location = cli.input.slice(1, cli.input.length).join(' ')
+    fs.writeFileSync(CONFIG_PATH, options.location)
   } else {
-    if (fs.existsSync(weather_config_path)) {
-      location = fs.readFileSync(weather_config_path)
-    } else {
-      location = 'Houston, TX'
-    }
+    options.location = 'Houston, TX'
+    writeConfig('location', options.location)
+  }
+  
+  if (cli.flags.celsius || cli.flags.fahrenheit) {
+    options.scale = (cli.flags.celsius) ? 'celsius' : 'fahrenheit'
+    fs.appendFileSync(CONFIG_PATH, options.scale)
+  } else {
+    options.scale = 'fahrenheit'
+    writeConfig('scale', options.scale)
   }
 
   try {
@@ -104,7 +128,7 @@ async function weather() {
 
     console.log(`\nLocation: ${res.location.name}\n`)
     console.log(`${generate_icon(res.current.skycode)}  ${res.current.skytext}`)
-    console.log(`   Today ${res.current.temperature} ℉`)
+    console.log(`   Today ${res.current.temperature} ${(scale == 'fahrenheit') ? '°F' : '°C'}`)
     console.log(`   ${res.current.winddisplay}`)
     console.log('')
 
