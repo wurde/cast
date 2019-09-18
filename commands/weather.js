@@ -90,7 +90,7 @@ function readConfig() {
 function writeConfig(key, value) {
   let options = JSON.parse(fs.readFileSync(CONFIG_PATH))
   options[key] = value
-  fs.writeFileSync(CONFIG_PATH, JSON.stringify(options))
+  fs.writeFileSync(CONFIG_PATH, JSON.stringify(options, null, 2))
 }
 
 function renderScale(scale) {
