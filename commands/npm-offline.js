@@ -4,7 +4,9 @@
  * Dependencies
  */
 
+const child_process = require('child_process')
 const meow = require('meow')
+const chalk = require('chalk')
 const showHelp = require('../helpers/showHelp')
 
 /**
@@ -23,7 +25,13 @@ const cli = meow(`
 function npm_offline() {
   showHelp(cli)
 
-  console.log("npm offline")
+  const res = child_process.spawnSync('npm', ['config', 'get', 'prefer-offline'], { encoding: 'utf8' })
+
+  const toggle = (res.stdout.trim() === 'true') ? 'false' : 'true'
+  
+  child_process.spawnSync('npm', ['config', 'set', 'prefer-offline', toggle], { stdio: 'inherit' })
+
+  console.log(`\nnpm config set prefer-offline ${chalk.green.bold(toggle)}`)
 }
 
 /**
