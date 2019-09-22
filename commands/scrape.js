@@ -39,6 +39,7 @@ const cli = meow(`
 
 async function launchPage() {
   const browser = await puppeteer.launch({
+    headless: false,
     defaultViewport: {
       width: 1024,
       height: 800
@@ -79,6 +80,10 @@ async function promptForCSSSelector(selector) {
  * Define script
  */
 
+function head(arr) {
+  return arr[0]
+}
+
 async function scrape() {
   requireConnectivity()
   showHelp(cli, [!cli.input[1]])
@@ -93,9 +98,13 @@ async function scrape() {
 
   try {
     const results = await page.evaluate(selector => {
-      return Array.from(document.querySelectorAll(selector))
-             .map(el => el.innerHTML)
+      const elements = 
+        Array.from(document.querySelectorAll(selector))
+        .map(el => el.outerHTML)
+        
+      return elements
     }, selector)
+    await page.waitFor(6000)
 
     const saveFilePrompt = await prompts({
       type: 'confirm',
