@@ -7,7 +7,6 @@
 const fs = require('fs')
 const url = require('url')
 const meow = require('meow')
-const chalk = require('chalk')
 const prompts = require('prompts')
 const puppeteer = require('puppeteer')
 const { requireConnectivity } = require('../helpers/connectivity')
