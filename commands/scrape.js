@@ -80,10 +80,6 @@ async function promptForCSSSelector(selector) {
  * Define script
  */
 
-function head(arr) {
-  return arr[0]
-}
-
 async function scrape() {
   requireConnectivity()
   showHelp(cli, [!cli.input[1]])
@@ -123,6 +119,8 @@ async function scrape() {
     }
 
     console.log('results:', results)
+
+    return results
   } catch(err) {
     console.error(err)
   } finally {
