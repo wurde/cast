@@ -50,10 +50,10 @@ async function launchPage() {
   return [browser, page]
 }
 
-function buildTargetURL(cli) {
-  let targetURL = url.parse(cli.input[1])
-  if (!targetURL.protocol) targetURL = url.parse('https://' + cli.input[1])
-  if (!targetURL.hostname) printError('Error: Invalid URL', cli)
+function buildTargetURL(target) {
+  let targetURL = url.parse(target)
+  if (!targetURL.protocol) targetURL = url.parse('https://' + target)
+  if (!targetURL.hostname) printError('Error: Invalid URL')
   return targetURL.href
 }
 
@@ -80,19 +80,30 @@ async function promptForCSSSelector(selector) {
  * Define script
  */
 
-async function scrape() {
-  console.log('process.argv', process.argv)
-  process.exit(0)
-  // If called from another script
-  // if (arguments.length) {
+async function scrape(options=null) {
+  if (options && typeof options === 'object') {
+    const { url, selector } = options
 
-  // const [browser, page] = await launchPage()
-  // await page.goto(buildTargetURL(cli))
-  // } else {
-  //     // If called from cli:  
-  // }
-  // Handle URL, SELECTOR.
-  // Handle prompt saving to file.
+    const [browser, page] = await launchPage()
+    await page.goto(buildTargetURL(url))
+
+    let results = []
+    try {
+      results = await page.evaluate(selector => {
+        const elements = 
+          Array.from(document.querySelectorAll(selector))
+          .map(el => el.outerHTML)
+          
+        return elements
+      }, selector)
+    } catch(err) {
+      console.error(err)
+      return err
+    } finally {
+      browser.close()
+      return results
+    }
+  }
   
   requireConnectivity()
   showHelp(cli, [!cli.input[1]])
@@ -103,7 +114,7 @@ async function scrape() {
   selector = await promptForCSSSelector(selector)
 
   const [browser, page] = await launchPage()
-  await page.goto(buildTargetURL(cli))
+  await page.goto(buildTargetURL(cli.input[1]))
 
   try {
     const results = await page.evaluate(selector => {

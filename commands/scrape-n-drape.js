@@ -21,10 +21,14 @@ const cli = meow(`
  * Define script
  */
 
-function scrape_n_drape() {
+async function scrape_n_drape() {
   showHelp(cli)
 
-  scrape('https://reddit.com')
+  const results = await scrape({
+    url: 'https://reddit.com',
+    selector: 'h2'
+  })
+  console.log('results', results)
 }
 
 /**
