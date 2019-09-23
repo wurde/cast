@@ -55,7 +55,7 @@ const script = require(script_path)
 
 if (script) {
   console.log(`Running script: ${script_path}`)
-  script(process.argv)
+  script()
 } else {
   console.error(`Script is not a function.`)
   process.exit(1)

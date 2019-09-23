@@ -81,6 +81,19 @@ async function promptForCSSSelector(selector) {
  */
 
 async function scrape() {
+  console.log('process.argv', process.argv)
+  process.exit(0)
+  // If called from another script
+  // if (arguments.length) {
+
+  // const [browser, page] = await launchPage()
+  // await page.goto(buildTargetURL(cli))
+  // } else {
+  //     // If called from cli:  
+  // }
+  // Handle URL, SELECTOR.
+  // Handle prompt saving to file.
+  
   requireConnectivity()
   showHelp(cli, [!cli.input[1]])
 
