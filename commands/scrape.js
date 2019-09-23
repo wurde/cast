@@ -134,21 +134,23 @@ async function scrape(options=null) {
       message: 'Do you want to save the results to a file? (Y/n)'
     })
 
+    let filename = null
     if (saveFilePrompt.saveFile) {
       var filenamePrompt = await prompts({
         type: 'text',
         name: 'filename',
         message: 'Enter the filename you\'d like to save to',
       })
+      filename = filenamePrompt.filename
 
-      fs.writeFileSync(filenamePrompt.filename, results)
+      fs.writeFileSync(filename, results)
     }
 
     console.log('\nResults:', results)
 
     return {
       results,
-      path: path.resolve(process.cwd(), filenamePrompt.filename)
+      path: (filename) ? path.resolve(process.cwd(), filename) : null
     }
   } catch(err) {
     console.error(err)
