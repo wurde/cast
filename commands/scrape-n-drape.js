@@ -24,11 +24,7 @@ const cli = meow(`
 async function scrape_n_drape() {
   showHelp(cli)
 
-  const results = await scrape({
-    url: 'https://reddit.com',
-    selector: 'h2'
-  })
-  console.log('results', results)
+  const results = await scrape()
 }
 
 /**
