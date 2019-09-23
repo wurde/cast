@@ -5,6 +5,7 @@
  */
 
 const meow = require('meow')
+const chalk = require('chalk')
 const showHelp = require('../helpers/showHelp')
 const scrape = require('./scrape')
 
@@ -25,6 +26,11 @@ async function scrape_n_drape() {
   showHelp(cli)
 
   const results = await scrape()
+
+  console.log(
+    chalk.white.bold('\nOpen in your browser: ') +
+    chalk.green.bold(`file://${results.path}`)
+  )
 }
 
 /**

@@ -5,6 +5,7 @@
  */
 
 const fs = require('fs')
+const path = require('path')
 const url = require('url')
 const meow = require('meow')
 const prompts = require('prompts')
@@ -134,7 +135,7 @@ async function scrape(options=null) {
     })
 
     if (saveFilePrompt.saveFile) {
-      const filenamePrompt = await prompts({
+      var filenamePrompt = await prompts({
         type: 'text',
         name: 'filename',
         message: 'Enter the filename you\'d like to save to',
@@ -143,9 +144,12 @@ async function scrape(options=null) {
       fs.writeFileSync(filenamePrompt.filename, results)
     }
 
-    console.log('results:', results)
+    console.log('\nResults:', results)
 
-    return results
+    return {
+      results,
+      path: path.resolve(process.cwd(), filenamePrompt.filename)
+    }
   } catch(err) {
     console.error(err)
   } finally {
