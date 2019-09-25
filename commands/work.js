@@ -55,7 +55,7 @@ async function close_database() {
  * Define script
  */
 
-async function work(argv) {
+async function work() {
   showHelp(cli)
 
   const command = cli.input[1]

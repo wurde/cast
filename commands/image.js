@@ -35,7 +35,7 @@ function hasImageMagick() {
  * Define script
  */
 
-async function image(argv) {
+async function image() {
   showHelp(cli)
 
   if (!hasImageMagick()) {

@@ -43,7 +43,7 @@ const cli = meow(`
  * Define script
  */
 
-async function rename(argv) {
+async function rename() {
   showHelp(cli)
 
   let isMatch

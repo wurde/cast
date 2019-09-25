@@ -68,7 +68,7 @@ function cleanup(browser) {
  * Define script
  */
 
-async function pdf(argv) {
+async function pdf() {
   showHelp(cli, [
     cli.input.length < 2,
     !fs.existsSync(cli.input[1]),

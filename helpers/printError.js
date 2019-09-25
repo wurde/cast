@@ -12,6 +12,7 @@ const chalk = require('chalk')
 
 function printError(message, cli) {
   console.error(chalk.red(message))
+  if (!cli) process.exit(1)
   cli.showHelp()
 }
 
