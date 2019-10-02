@@ -24,8 +24,12 @@ function release() {
     console.error(chalk.red.bold('Missing binary. Run `npm install` and try again.'))
     process.exit(1)
   }
-
-  child_process.fork(bin)
+  
+  if (process.argv.length === 3) {
+    child_process.fork(bin, ['help'])
+  } else {
+    child_process.fork(bin, process.argv.slice(3, process.argv.length))
+  }
 }
 
 /**
