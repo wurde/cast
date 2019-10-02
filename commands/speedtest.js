@@ -4,8 +4,9 @@
  * Dependencies
  */
 
-const path = require('path')
 const fs = require('fs')
+const path = require('path')
+const child_process = require('child_process')
 const chalk = require('chalk')
 
 /**
@@ -19,10 +20,12 @@ const bin = path.resolve(__dirname, '..', 'node_modules', '.bin', 'speed-test')
  */
 
 async function speedtest() {
-  if (fs.existsSync(bin)) {
+  if (!fs.existsSync(bin)) {
     console.error(chalk.red.bold('Missing speed-test binary. Run `npm install` and try again.'))
     process.exit(1)
   }
+
+  child_process.fork(bin)
 }
 
 /**
