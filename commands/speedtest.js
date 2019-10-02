@@ -1,11 +1,27 @@
 'use strict'
 
 /**
+ * Dependencies
+ */
+
+const path = require('path')
+const fs = require('fs')
+
+/**
+ * Constants
+ */
+
+const bin = path.resolve(__dirname, '..', 'node_modules', '.bin', 'speed-test')
+
+/**
  * Define script
  */
 
-function speedtest() {
-  console.log('speedtest')
+async function speedtest() {
+  if (fs.existsSync(bin)) {
+    console.error('Missing speed-test binary. Run `npm install` and try again.')
+    process.exit(1)
+  }
 }
 
 /**
