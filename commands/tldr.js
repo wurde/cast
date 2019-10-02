@@ -1,28 +1,17 @@
 'use strict'
 
 /**
- * Dependencies
- */
-
-const meow = require('meow')
-const showHelp = require('../helpers/showHelp')
-
-/**
- * Parse args
- */
-
-const cli = meow(`
-  Usage
-    $ cast tldr
-`)
-
-/**
  * Define script
  */
 
 function tldr() {
-  showHelp(cli)
-  console.log('tldr')
+  process.argv.splice(process.argv.indexOf('/usr/bin/cast'), 1)
+
+  if (process.argv.length === 2) {
+    process.argv.push('--help')
+  }
+
+  require('tldr')
 }
 
 /**
