@@ -43,6 +43,7 @@
     "prompts": "^2.2.1",
     "puppeteer": "^1.20.0",
     "sequelize": "^5.19.2",
+    "speed-test": "^2.1.0",
     "sqlite3": "^4.1.0",
     "strip-ansi": "^5.2.0",
     "table": "^5.4.6",
