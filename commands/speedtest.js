@@ -21,7 +21,7 @@ const bin = path.resolve(__dirname, '..', 'node_modules', '.bin', 'speed-test')
 
 async function speedtest() {
   if (!fs.existsSync(bin)) {
-    console.error(chalk.red.bold('Missing speed-test binary. Run `npm install` and try again.'))
+    console.error(chalk.red.bold('Missing binary. Run `npm install` and try again.'))
     process.exit(1)
   }
 
