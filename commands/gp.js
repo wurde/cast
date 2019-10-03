@@ -34,10 +34,10 @@ const cli = meow(`
 function gp() {
   showHelp(cli)
 
-  console.log(chalk.green.bold('git pull\n'))
+  console.log(chalk.green.bold('\ngit pull\n'))
   child_process.spawnSync('git', ['pull'], config)
 
-  console.log(chalk.green.bold('git push\n'))
+  console.log(chalk.green.bold('\ngit push\n'))
   child_process.spawnSync('git', ['push'], config)
 }
 
