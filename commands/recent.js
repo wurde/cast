@@ -4,8 +4,18 @@
  * Dependencies
  */
 
+const child_process = require('child_process')
 const meow = require('meow')
 const showHelp = require('../helpers/showHelp')
+
+/**
+ * Constants
+ */
+
+const config = {
+  cwd: process.cwd(),
+  stdio: [null, 'inherit', 'inherit']
+}
 
 /**
  * Parse args
@@ -13,7 +23,7 @@ const showHelp = require('../helpers/showHelp')
 
 const cli = meow(`
   Usage
-    $ cast recent
+    $ cast recent DAYS
 `)
 
 /**
@@ -21,8 +31,9 @@ const cli = meow(`
  */
 
 function recent() {
-  showHelp(cli)
-  console.log('recent')
+  showHelp(cli, [cli.input.length < 2])
+
+  child_process.spawnSync('find', ['.', '-maxdepth', '1', '-mtime', cli.input[1]], config)
 }
 
 /**
