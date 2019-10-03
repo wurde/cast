@@ -4,8 +4,18 @@
  * Dependencies
  */
 
+const child_process = require('child_process')
 const meow = require('meow')
 const showHelp = require('../helpers/showHelp')
+
+/**
+ * Constants
+ */
+
+const config = {
+  cwd: process.cwd(),
+  stdio: [null, 'inherit', 'inherit']
+}
 
 /**
  * Parse args
@@ -23,7 +33,8 @@ const cli = meow(`
 function gp() {
   showHelp(cli)
 
-  console.log('gp')
+  child_process.spawnSync('git', ['pull'], config)
+  child_process.spawnSync('git', ['push'], config)
 }
 
 /**
