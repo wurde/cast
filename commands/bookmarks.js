@@ -9,6 +9,7 @@ const meow = require('meow')
 const prompts = require('prompts')
 const showHelp = require('../helpers/showHelp')
 const Sequelize = require('sequelize')
+const { table } = require('table')
 
 /**
  * Constants
@@ -75,12 +76,30 @@ async function os_script() {
         message: 'Title:'
       })
 
-      await db.query('INSERT INTO bookmarks (url, title) VALUES (:title, :url)', {
+      await db.query('INSERT INTO bookmarks (title, url) VALUES (:title, :url)', {
         replacements: {
           title: res.title,
           url: cli.flags.add
         }
       })
+    } else {
+      const results = await db.query('SELECT * FROM bookmarks;')
+      const data = results[0].map(item => [item.title, item.url])
+
+      const config = {
+        columns: {
+          0: {
+            alignment: 'left'
+          },
+          1: {
+            alignment: 'left'
+          }
+        }
+      }
+
+      const output = table(data, config)
+
+      console.log(output)
     }
   } catch (err) {
     console.error(err)
