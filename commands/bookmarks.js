@@ -6,6 +6,7 @@
 
 const path = require('path')
 const meow = require('meow')
+const prompts = require('prompts')
 const showHelp = require('../helpers/showHelp')
 const Sequelize = require('sequelize')
 
@@ -68,7 +69,18 @@ async function os_script() {
     await setup_database()
 
     if (cli.flags.add) {
-      console.log("Add bookmark")
+      const res = await prompts({
+        type: 'text',
+        name: 'title',
+        message: 'Title:'
+      })
+
+      await db.query('INSERT INTO bookmarks (url, title) VALUES (:title, :url)', {
+        replacements: {
+          title: res.title,
+          url: cli.flags.add
+        }
+      })
     }
   } catch (err) {
     console.error(err)
