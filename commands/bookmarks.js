@@ -45,7 +45,17 @@ async function setup_database() {
 const cli = meow(`
   Usage
     $ cast bookmarks
-`)
+
+  Options:
+    --add, -a URL   Add a bookmark.
+`, {
+  flags: {
+    add: {
+      type: 'string',
+      alias: 'a'
+    }
+  }
+})
 
 /**
  * Define script
@@ -56,6 +66,10 @@ async function os_script() {
 
   try {
     await setup_database()
+
+    if (cli.flags.add) {
+      console.log("Add bookmark")
+    }
   } catch (err) {
     console.error(err)
   }
