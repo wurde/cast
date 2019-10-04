@@ -4,8 +4,39 @@
  * Dependencies
  */
 
+const path = require('path')
 const meow = require('meow')
 const showHelp = require('../helpers/showHelp')
+const Sequelize = require('sequelize')
+
+/**
+ * Constants
+ */
+
+const bookmarks_db = path.join(process.env.HOME, '.bookmarks.sqlite3')
+const db = new Sequelize({ dialect: 'sqlite', storage: bookmarks_db, logging: false })
+
+/**
+ * Setup database
+ */
+
+async function setup_database() {
+  try {
+    const [results, _] = await db.query("SELECT name FROM sqlite_master WHERE type='table' AND name='bookmarks';")
+
+    if (results.length === 0) {
+      await db.query(`
+        CREATE TABLE IF NOT EXISTS bookmarks (
+          id integer primary key,
+          url text,
+          title text
+        );
+      `)
+    }
+  } catch (err) {
+    console.error(err)
+  }
+}
 
 /**
  * Parse args
@@ -20,10 +51,14 @@ const cli = meow(`
  * Define script
  */
 
-function os_script() {
+async function os_script() {
   showHelp(cli)
 
-  console.log('bookmarks')
+  try {
+    await setup_database()
+  } catch (err) {
+    console.error(err)
+  }
 }
 
 /**
