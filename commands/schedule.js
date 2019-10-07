@@ -43,7 +43,13 @@ const cli = meow(`
 
     Learn more about cron patterns: https://crontab.guru
 `, {
-  description: 'Execute something on a schedule.'
+  description: 'Execute something on a schedule.',
+  flags: {
+    cron: {
+      type: 'string',
+      alias: 'c'
+    },
+  }
 })
 
 /**
@@ -52,13 +58,20 @@ const cli = meow(`
 
 async function schedule() {
   showHelp(cli, [cli.input.length < 2])
-
+  let job
+  
   const file = path.resolve(cli.input[1])
   if (!fs.existsSync(file)) printError(`File doesn't exist: ${file}`)
-
-  const job = cron.job('* * * * * *', () => {
+  
+  const execFile = () => {
     child_process.spawnSync('node', [file], config)
-  })
+  }
+  
+  if (cli.flags.cron || cli.flags.c) {
+    job = cron.job(cli.flags.cron, execFile)
+  } else {
+    job = cron.job('* * * * * *', execFile)
+  }
 
   job.start()
 }
