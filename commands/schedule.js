@@ -18,8 +18,8 @@ const cli = meow(`
 
   Cron Examples
     * * * * * *           Every second.
-    0 */10 * * * *        Every tenth minute.
     * 10 * * * *          Every ten minutes.
+    0 */10 * * * *        Every tenth minute.
     0 */30 9-17 * * *     Every 30 minutes between 9-17.
     * 4-22 * * 1-5        Every Minute Between hours 4-22, Monday through Friday.
 `)
