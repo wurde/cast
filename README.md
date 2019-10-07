@@ -21,6 +21,10 @@ Setup takes less than 1 minute on a good connection.
 
 There is a vision that guides development. Learn more in [VISION.md](VISION.md).
 
+## Roadmap
+
+For details on planned features and progress refer to our [Trello Board](https://trello.com/b/M8OvJPMb).
+
 ## License
 
 Scripts is released under the [MIT License](http://www.opensource.org/licenses/MIT).
