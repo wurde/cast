@@ -16,7 +16,9 @@ const scrape = require('./scrape')
 const cli = meow(`
   Usage
     $ cast scrape-n-drape
-`)
+`, {
+  description: 'Scrape web content and then display it.'
+})
 
 /**
  * Define script

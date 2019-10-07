@@ -44,7 +44,9 @@ let authors = [
 const cli = meow(`
   Usage
     $ cast qotd [AUTHOR,...AUTHOR]
-`)
+`, {
+  description: 'Quote of the day.'
+})
 
 /**
  * Define helpers

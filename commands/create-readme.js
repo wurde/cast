@@ -32,7 +32,9 @@ const responseNames = [
 const cli = meow(`
   Usage
     $ cast create-readme
-`)
+`, {
+  description: 'A README.md generator.'
+})
 
 /**
  * Define helper

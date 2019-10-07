@@ -24,7 +24,9 @@ const config = {
 const cli = meow(`
   Usage
     $ cast gitsync
-`)
+`, {
+  description: 'Complex update of remote refs.'
+})
 
 /**
  * Define script

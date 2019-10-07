@@ -51,6 +51,7 @@ const cli = meow(`
   Options:
     --add, -a URL   Add a bookmark.
 `, {
+  description: 'A bookmark manager.',
   flags: {
     add: {
       type: 'string',

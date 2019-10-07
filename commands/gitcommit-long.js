@@ -26,7 +26,9 @@ const config = {
 const cli = meow(`
   Usage
     $ cast gitcommit-long
-`)
+`, {
+  description: 'Create a git commit.'
+})
 
 /**
  * Define script

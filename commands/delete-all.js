@@ -23,6 +23,7 @@ const cli = meow(`
   Options:
     --destination, -d DIR   Destination to start removal.
 `, {
+  description: 'Remove all matching files.',
   flags: {
     destination: {
       type: 'string',

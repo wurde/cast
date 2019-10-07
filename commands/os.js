@@ -18,7 +18,9 @@ const showHelp = require('../helpers/showHelp')
 const cli = meow(`
   Usage
     $ cast os
-`)
+`, {
+  description: 'Print operating system information.'
+})
 
 /**
  * Define script

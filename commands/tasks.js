@@ -32,6 +32,7 @@ const cli = meow(`
     --done, -d  Mark task as done.
     --clear  Clear all tasks marked as done.
 `, {
+  description: 'Project task manager.',
   flags: {
     create: {
       type: 'boolean',

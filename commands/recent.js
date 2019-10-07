@@ -24,7 +24,9 @@ const config = {
 const cli = meow(`
   Usage
     $ cast recent DAYS
-`)
+`, {
+  description: 'Print most recent files.'
+})
 
 /**
  * Define script

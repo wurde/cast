@@ -30,6 +30,7 @@ const cli = meow(`
   Options
     --message, -m <message>  Commit message
 `, {
+  description: 'Create a git commit.',
   flags: {
     message: {
       type: 'string',

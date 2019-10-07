@@ -25,7 +25,9 @@ const config = {
 const cli = meow(`
   Usage
     $ cast gp
-`)
+`, {
+  description: 'Update remote refs.'
+})
 
 /**
  * Define script
