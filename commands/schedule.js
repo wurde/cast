@@ -18,7 +18,8 @@ const printError = require('../helpers/printError')
 
 const config = {
   cwd: process.cwd(),
-  stdio: [null, 'inherit', 'inherit']
+  stdio: [null, 'inherit', 'inherit'],
+  encoding: 'utf8',
 }
 
 /**
