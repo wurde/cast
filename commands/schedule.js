@@ -6,10 +6,20 @@
 
 const fs = require('fs')
 const path = require('path')
+const child_process = require('child_process')
 const meow = require('meow')
 const cron = require('cron')
 const showHelp = require('../helpers/showHelp')
 const printError = require('../helpers/printError')
+
+/**
+ * Constants
+ */
+
+const config = {
+  cwd: process.cwd(),
+  stdio: [null, 'inherit', 'inherit']
+}
 
 /**
  * Parse args
@@ -34,16 +44,14 @@ const cli = meow(`
  * Define script
  */
 
-function schedule() {
+async function schedule() {
   showHelp(cli, [cli.input.length < 2])
 
   const file = path.resolve(cli.input[1])
   if (!fs.existsSync(file)) printError(`File doesn't exist: ${file}`)
 
-  // TODO accept cron syntax
   const job = cron.job('* * * * * *', () => {
-    console.log('Every second.', file)
-    // TODO execute file
+    child_process.spawnSync('node', [file], config)
   })
 
   job.start()
