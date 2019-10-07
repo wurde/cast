@@ -4,9 +4,12 @@
  * Dependencies
  */
 
+const fs = require('fs')
+const path = require('path')
 const meow = require('meow')
 const cron = require('cron')
 const showHelp = require('../helpers/showHelp')
+const printError = require('../helpers/printError')
 
 /**
  * Parse args
@@ -32,10 +35,15 @@ const cli = meow(`
  */
 
 function schedule() {
-  showHelp(cli)
+  showHelp(cli, [cli.input.length < 2])
 
+  const file = path.resolve(cli.input[1])
+  if (!fs.existsSync(file)) printError(`File doesn't exist: ${file}`)
+
+  // TODO accept cron syntax
   const job = cron.job('* * * * * *', () => {
-    console.log('Every second.')
+    console.log('Every second.', file)
+    // TODO execute file
   })
 
   job.start()
