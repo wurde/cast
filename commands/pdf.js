@@ -24,6 +24,7 @@ const cli = meow(`
     --watch, -w   Automatically re-render when changes are detected (Default: false).
     --stylesheet  Path to a local CSS style sheet.
 `, {
+  description: 'Render a PDF from Markdown.',
   flags: {
     watch: {
       type: 'boolean',

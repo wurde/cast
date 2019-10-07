@@ -31,7 +31,9 @@ const TYPES = Object.keys(FORMATS)
 const cli = meow(`
   Usage
     $ cast organize
-`)
+`, {
+  description: 'Organize files by directories.'
+})
 
 /**
  * Define script

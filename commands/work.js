@@ -25,7 +25,9 @@ const cwd = process.cwd()
 const cli = meow(`
   Usage
     $ cast work
-`)
+`, {
+  description: 'Clock in and out of work.'
+})
 
 /**
  * Setup database

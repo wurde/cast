@@ -16,7 +16,9 @@ const showHelp = require('../helpers/showHelp')
 const cli = meow(`
   Usage
     $ cast npm-offline
-`)
+`, {
+  description: 'Toggle prefer-offline configuration.'
+})
 
 /**
  * Define script
