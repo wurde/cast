@@ -30,6 +30,7 @@ const cli = meow(`
     --secret       Provide a secret.
     --nonce-path   Path to file containing nonce.
 `, {
+  description: 'Decryption for encrypted messages.',
   flags: {
     secret: {
       type: 'text'

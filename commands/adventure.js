@@ -30,7 +30,9 @@ const directions = {
 const cli = meow(`
   Usage
     $ cast adventure
-`)
+`, {
+  description: 'A text-based dungion adventure game.'
+})
 
 /**
  * Define Player

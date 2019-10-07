@@ -29,6 +29,7 @@ const cli = meow(`
   Options
     --secret   Provide a secret.
 `, {
+  description: 'Encrypting messages.',
   flags: {
     secret: {
       type: 'text'

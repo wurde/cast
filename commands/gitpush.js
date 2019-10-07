@@ -24,7 +24,9 @@ const config = {
 const cli = meow(`
   Usage
     $ cast gitpush
-`)
+`, {
+  description: 'Update remote refs.'
+})
 
 /**
  * Define script

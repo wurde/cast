@@ -28,6 +28,7 @@ const cli = meow(`
   Options
     --unzip     Decompress file (Default: false).
 `, {
+  description: 'Compress and uncompress files.',
   flags: {
     unzip: {
       type: 'boolean',

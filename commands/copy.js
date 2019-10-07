@@ -7,7 +7,6 @@
 const fs = require('fs')
 const path = require('path')
 const meow = require('meow')
-const chalk = require('chalk')
 const showHelp = require('../helpers/showHelp')
 const printError = require('../helpers/printError')
 
@@ -24,7 +23,9 @@ const TEMPLATE_DIR = path.join(__dirname, '..', 'templates')
 const cli = meow(`
   Usage
     $ cast copy TEMPLATE
-`)
+`, {
+  description: 'Copy template files.'
+})
 
 /**
  * Define script
