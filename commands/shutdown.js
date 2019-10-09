@@ -14,7 +14,7 @@ const showHelp = require('../helpers/showHelp')
 
 const config = {
   cwd: process.cwd(),
-  stdio: 'ignore'
+  stdio: [null, 'inherit', 'inherit'],
 }
 
 /**
