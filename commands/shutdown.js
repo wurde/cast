@@ -39,10 +39,12 @@ const cli = meow(`
  * Define script
  */
 
-function shutdown() {
+function shutdown(argv) {
   showHelp(cli)
 
-  child_process.spawnSync('shutdown', process.argv.splice(3), config)
+  const args = argv ? argv : process.argv.splice(3)
+
+  child_process.spawnSync('shutdown', args, config)
 }
 
 /**
