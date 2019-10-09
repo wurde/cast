@@ -14,7 +14,7 @@ const showHelp = require('../helpers/showHelp')
 
 const config = {
   cwd: process.cwd(),
-  stdio: [null, 'inherit', 'inherit']
+  stdio: 'ignore'
 }
 
 /**
@@ -35,8 +35,7 @@ const cli = meow(`
 function shutdown() {
   showHelp(cli)
 
-  child_process.spawnSync('shutdown', ['--help'], config)
-  console.log('shutdown')
+  child_process.spawnSync('shutdown', process.argv.splice(3), config)
 }
 
 /**
