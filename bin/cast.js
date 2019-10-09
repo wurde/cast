@@ -8,6 +8,7 @@
 
 const fs = require('fs')
 const path = require('path')
+const didYouMean = require('../helpers/didYouMean')
 
 /**
  * Constants
@@ -15,6 +16,8 @@ const path = require('path')
 
 const command = process.argv[2]
 const script_path = path.join(__dirname, '..', 'commands', command + '.js')
+const commands = fs.readdirSync(path.join(__dirname, '..', 'commands'))
+  .map(file => path.basename(file, path.extname(file)))
 
 /**
  * Check command argument exists
@@ -27,11 +30,9 @@ if (!command) {
   `)
 
   console.error('  Commands')
-  fs.readdirSync(path.join(__dirname, '..', 'commands'))
-    .map(file => path.basename(file, path.extname(file)))
-    .forEach(command => console.error(`    ${command}`))
+  commands.forEach(command => console.error(`    ${command}`))
 
-    process.exit(1)
+  process.exit(1)
 }
 
 /**
@@ -40,6 +41,10 @@ if (!command) {
 
 if (!fs.existsSync(script_path)) {
   console.error(`Missing script: ${script_path}`)
+
+  console.log('Did you mean? ')
+  console.log('  ', didYouMean(commands, command).join('  '))
+
   process.exit(1)
 }
 
