@@ -4,6 +4,8 @@
  * Dependencies
  */
 
+const scrape = require('./scrape')
+const cheerio = require('cheerio')
 const meow = require('meow')
 const showHelp = require('../helpers/showHelp')
 
@@ -18,13 +20,17 @@ const cli = meow(`
   description: 'Search and download Google Images.'
 })
 
-/**
+ /**
  * Define script
  */
 
-function google_images() {
+async function google_images() {
   showHelp(cli)
-  console.log('google-images')
+
+  // TODO Scrape images search.
+  const result = await scrape('https://images.google.com')
+  // TODO Parse all image URLs on page.
+  // TODO Download all images.
 }
 
 /**
