@@ -23,7 +23,14 @@ const config = {
 
 const cli = meow(`
   Usage
-    $ cast shutdown
+    $ cast shutdown [OPTIONS] [TIME]
+
+  Options
+    -H --halt      Halt the machine
+    -P --poweroff  Power-off the machine
+    -r --reboot    Reboot the machine
+    -k             Don't halt/power-off/reboot, just send warnings
+    -c             Cancel a pending shutdown
 `, {
   description: 'Shut down the system.'
 })
