@@ -42,8 +42,11 @@ if (!command) {
 if (!fs.existsSync(script_path)) {
   console.error(`Missing script: ${script_path}`)
 
-  console.log('Did you mean? ')
-  console.log('  ', didYouMean(commands, command).join('  '))
+  const suggestions = didYouMean(commands, command)
+  if (suggestions.length > 0) {
+    console.log('Did you mean? ')
+    console.log('  ', suggestions.join('  '))
+  }
 
   process.exit(1)
 }
