@@ -10,12 +10,12 @@ const shutdown = require('./shutdown')
  * Define script
  */
 
-function restart() {
-  shutdown(['--reboot', 'now'])
+function poweroff() {
+  shutdown(['--poweroff', 'now'])
 }
 
 /**
  * Export script
  */
 
-module.exports = restart
+module.exports = poweroff
