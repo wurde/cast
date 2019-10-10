@@ -25,6 +25,7 @@ const cli = meow(`
   Options
     --selector, -s   Define the CSS selector.
 `, {
+  description: 'Scrape web content.',
   flags: {
     selector: {
       type: 'text',

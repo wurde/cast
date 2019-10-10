@@ -37,7 +37,9 @@ const cli = meow(`
       {{t}}        Time: The current time (Example: 0538).
       {{dt}}       Datetime: The current datetime (Example: 201908210538).
       {{g}}        GUID: A globally unique identifier.
-`)
+`, {
+  description: 'Rename files.'
+})
 
 /**
  * Define script

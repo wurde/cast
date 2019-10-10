@@ -34,7 +34,9 @@ const GAME_STATE = {
 const cli = meow(`
   Usage
     $ cast rock-paper-scissors
-`)
+`, {
+  description: 'Play rock-paper-scissors.'
+})
 
 /**
  * Define helper

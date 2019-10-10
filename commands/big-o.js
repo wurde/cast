@@ -15,7 +15,9 @@ const showHelp = require('../helpers/showHelp')
 const cli = meow(`
   Usage
     $ cast big-o
-`)
+`, {
+  description: 'A list of Big O classifications.'
+})
 
 /**
  * Define script

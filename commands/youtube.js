@@ -17,7 +17,9 @@ const showHelp = require('../helpers/showHelp')
 const cli = meow(`
   Usage
     $ cast youtube
-`)
+`, {
+  description: 'Download YouTube videos.'
+})
 
 /**
  * Define script

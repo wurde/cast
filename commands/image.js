@@ -16,7 +16,9 @@ const showHelp = require('../helpers/showHelp')
 const cli = meow(`
   Usage
     $ cast image
-`)
+`, {
+  description: 'Format images.'
+})
 
 /**
  * helpers
