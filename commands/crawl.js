@@ -42,6 +42,24 @@ async function launchPage() {
     return [browser, page]
 }
 
+class Queue {
+    constructor() {
+        this.queue = []
+    }
+
+    enqueue(value) {
+        this.queue.push(value)
+    }
+
+    dequeue() {
+        if (this.queue.length > 0) {
+            return this.queue.shift()
+        } else {
+            return null
+        }
+    }
+}
+
 /**
 * Define script
 */
@@ -58,7 +76,6 @@ async function crawl_script() {
         const $ = cheerio.load(pageContent)
         const links = []
         $('body a').each((i, element) => {
-            const a = $(this);
 
             if (element.attribs.href) {
                 const link = url.parse(element.attribs.href)
@@ -67,6 +84,33 @@ async function crawl_script() {
                 }
             }
         })
+
+        const q = new Queue()
+        links.forEach((link) => {
+            q.enqueue(link)
+        })
+
+        while (q.queue.length > 0) {
+            const link = q.dequeue()
+            await page.goto(link)
+            await page.waitFor(1000)
+            const pageContent = await page.content()
+            const $ = cheerio.load(pageContent)
+            const links = []
+            $('body a').each((i, element) => {
+
+                if (element.attribs.href) {
+                    const link = url.parse(element.attribs.href)
+                    if (link.hostname) {
+                        links.push(link.href)
+                    }
+                }
+            })
+            console.log(links, `LINK ${link}`)
+            links.forEach((link) => {
+                q.enqueue(link)
+            })
+        }
     } catch (error) {
         console.error(error)
     } finally {
