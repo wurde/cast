@@ -9,6 +9,8 @@ const showHelp = require('../helpers/showHelp')
 const isUrl = require('../helpers/isUrl')
 const buildTargetURL = require('../helpers/buildTargetURL')
 const puppeteer = require('puppeteer')
+const cheerio = require('cheerio')
+const url = require('url')
 
 /**
  * Parse args
@@ -27,13 +29,15 @@ const cli = meow(`
 
 async function launchPage() {
     const browser = await puppeteer.launch({
-        headless: false,
+        headless: true,
         defaultViewport: {
             width: 1024,
             height: 800
         }
     })
+
     const page = await browser.newPage()
+
 
     return [browser, page]
 }
@@ -48,8 +52,21 @@ async function crawl_script() {
     const [browser, page] = await launchPage()
     try {
         const rootUrl = buildTargetURL(cli.input[1])
-        console.log(rootUrl)
         await page.goto(rootUrl)
+        await page.waitFor(1000)
+        const pageContent = await page.content()
+        const $ = cheerio.load(pageContent)
+        const links = []
+        $('body a').each((i, element) => {
+            const a = $(this);
+
+            if (element.attribs.href) {
+                const link = url.parse(element.attribs.href)
+                if (link.hostname) {
+                    links.push(link.href)
+                }
+            }
+        })
     } catch (error) {
         console.error(error)
     } finally {
