@@ -13,7 +13,7 @@ const showHelp = require('../helpers/showHelp')
 
 const cli = meow(`
   Usage
-    $ cast crawl
+    $ cast crawl URL
 `, {
     description: 'Crawls websites for specific content.'
 })
@@ -23,9 +23,11 @@ const cli = meow(`
  */
 
 function crawl_script() {
-    showHelp(cli)
+    showHelp(cli, [cli.input.length < 2])
 
-    console.log("crawl")
+    const rootUrl = cli.input[1]
+
+    console.log(rootUrl)
 }
 
 /**
