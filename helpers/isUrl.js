@@ -10,9 +10,10 @@ const url = require("url")
  * Define helper
  */
 
-function isUrl(url) {
-    const result = url.parse(url)
+function isUrl(rootUrl) {
+    const result = url.parse(rootUrl)
 
+    console.log(result)
     return result.hostname ? true : false
 }
 

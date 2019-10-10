@@ -6,6 +6,7 @@
 
 const meow = require('meow')
 const showHelp = require('../helpers/showHelp')
+const isUrl = require('../helpers/isUrl')
 
 /**
  * Parse args
@@ -23,7 +24,7 @@ const cli = meow(`
  */
 
 function crawl_script() {
-    showHelp(cli, [cli.input.length < 2])
+    showHelp(cli, [cli.input.length < 2, isUrl(cli.input[1])])
 
     const rootUrl = cli.input[1]
 
