@@ -7,6 +7,8 @@
 const meow = require('meow')
 const showHelp = require('../helpers/showHelp')
 const isUrl = require('../helpers/isUrl')
+const buildTargetURL = require('../helpers/buildTargetURL')
+const puppeteer = require('puppeteer')
 
 /**
  * Parse args
@@ -20,15 +22,40 @@ const cli = meow(`
 })
 
 /**
- * Define script
+ * Define helpers
  */
 
-function crawl_script() {
-    showHelp(cli, [cli.input.length < 2, isUrl(cli.input[1])])
+async function launchPage() {
+    const browser = await puppeteer.launch({
+        headless: false,
+        defaultViewport: {
+            width: 1024,
+            height: 800
+        }
+    })
+    const page = await browser.newPage()
 
-    const rootUrl = cli.input[1]
+    return [browser, page]
+}
 
-    console.log(rootUrl)
+/**
+* Define script
+*/
+
+async function crawl_script() {
+    showHelp(cli, [cli.input.length < 2])
+
+    const [browser, page] = await launchPage()
+    try {
+        const rootUrl = buildTargetURL(cli.input[1])
+        console.log(rootUrl)
+        await page.goto(rootUrl)
+    } catch (error) {
+        console.error(error)
+    } finally {
+        browser.close()
+    }
+
 }
 
 /**

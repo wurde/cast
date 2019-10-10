@@ -5,6 +5,7 @@
  */
 
 const url = require("url");
+const printError = require('./printError');
 
 /**
  * Define helper
