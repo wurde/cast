@@ -36,7 +36,7 @@ const cli = meow(`
 
 // cb for [].prototype.filter
 function hasTitleandValidLink(packagedResult) {
-  const prefixedWithHttp = packagedResult.href.split('').slice(0, 4).join('') === 'http'
+  const prefixedWithHttp = packagedResult.href.startsWith('http')
   return packagedResult.title && prefixedWithHttp
 }
 
