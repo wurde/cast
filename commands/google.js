@@ -17,8 +17,17 @@ const chalk = require('chalk')
 const cli = meow(`
   Usage
     $ cast google QUERY
+
+  Options:
+    --count, -c   Set limit on results. (Default: 10)
 `, {
   description: 'Query Google for a list of results.',
+  flags: {
+    count: {
+      type: 'string',
+      alias: 'c'
+    }
+  }
 })
 
 /**
@@ -42,6 +51,13 @@ function formatResults(result) {
   }
 }
 
+function formatValidResults(scrapedResults) {
+  return scrapedResults
+    .slice(0, scrapedResults.length)
+    .map(formatResults)
+    .filter(hasTitleandValidLink)
+}
+
 function printResults(results) {
   results.forEach(result => {
     console.log(chalk.green.bold(result.title))
@@ -55,25 +71,37 @@ function printResults(results) {
  * Define script
  */
 
-async function google() {
-  showHelp(cli)
+async function google(options={}) {
+  showHelp(cli, [!options])
 
-  const query = cli.input.slice(1).join(' ')
-
-  const scrapeResults = await scrape({
-    url: `https://www.google.com/search?q=${query}`,
+  const query = options.query || cli.input.slice(1).join(' ')
+  const limit = options.count || cli.flags.count || 10
+  
+  const scrapeResults = async (query='', start=0) => await scrape({
+    url: `https://www.google.com/search?q=${query}&start=${start}`,
     selector: 'div.g'
   })
 
-  const formattedResults = scrapeResults
-    .map(formatResults)
-    .filter(hasTitleandValidLink)
+  let results = []
+  let remaining = limit
+  let counter = 0
+  while (remaining > 0) {
+    const scrapedResults = await scrapeResults(query, counter)
+    results = results.concat(formatValidResults(scrapedResults))
+    counter += scrapedResults.length
+    remaining -= scrapedResults.length
 
-  if (arguments.length === 0) {
-    printResults(formattedResults)
+    // trim off leftover results
+    if (remaining < 0) {
+      results = results.slice(0, results.length + remaining)
+    }
   }
 
-  return formattedResults
+  if (arguments.length === 0) {
+    printResults(results)
+  }
+
+  return results
 }
 
 /**
