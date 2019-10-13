@@ -13,7 +13,7 @@ const showHelp = require('../helpers/showHelp')
 
 const cli = meow(`
   Usage
-    $ cast google
+    $ cast google QUERY
 `, {
   description: 'Query Google for a list of results.',
 })
@@ -24,7 +24,8 @@ const cli = meow(`
 
 function google() {
   showHelp(cli)
-  console.log('Google')
+
+  const query = cli.input.slice(1).join(' ')
 }
 
 /**
