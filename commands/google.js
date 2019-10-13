@@ -93,7 +93,7 @@ async function google(options={}) {
 
     // trim off leftover results
     if (remaining < 0) {
-      results = results.slice(0, results.length + remaining)
+      results = results.slice(0, counter + remaining)
     }
   }
 
