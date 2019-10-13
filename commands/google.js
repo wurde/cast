@@ -6,6 +6,7 @@
 
 const meow = require('meow')
 const showHelp = require('../helpers/showHelp')
+const scrape = require('./scrape')
 
 /**
  * Parse args
@@ -22,10 +23,18 @@ const cli = meow(`
  * Define script
  */
 
-function google() {
+async function google() {
   showHelp(cli)
 
   const query = cli.input.slice(1).join(' ')
+
+  const results = await scrape({
+    url: `https://www.google.com/search?q=${query}`,
+    selector: 'div.g'
+  })
+  
+  console.log(results, results.length)
+  // TODO map and parse {title, href, description}
 }
 
 /**
