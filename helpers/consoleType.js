@@ -1,4 +1,10 @@
 /**
+ * Dependencies
+ */
+
+const sleep = require('./sleep')
+
+/**
  * Define helper
  */
 
