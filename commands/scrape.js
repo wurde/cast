@@ -84,7 +84,7 @@ async function promptForCSSSelector(selector) {
 
 async function scrape(options=null) {
   // Allow scrape to be called outside of cli
-  if (options && typeof options === 'object') {
+  if (arguments.length > 0) {
     const { url, selector } = options
 
     const [browser, page] = await launchPage()

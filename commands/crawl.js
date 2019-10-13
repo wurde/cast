@@ -76,7 +76,6 @@ async function crawl_script() {
         const $ = cheerio.load(pageContent)
         const links = []
         $('body a').each((i, element) => {
-
             if (element.attribs.href) {
                 const link = url.parse(element.attribs.href)
                 if (link.hostname) {
