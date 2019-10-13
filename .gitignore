@@ -21,3 +21,6 @@ env
 
 # Prevent gitsync conflicts
 .gitsync_lock
+
+# Ignore VS Code settings
+.vscode
