@@ -36,7 +36,7 @@ const cli = meow(`
 
 // cb for [].prototype.filter
 function hasTitleandValidLink(packagedResult) {
-  const prefixedWithHttp = packagedResult.href.split('').slice(0, 4).join('') === 'http'
+  const prefixedWithHttp = packagedResult.href.startsWith('http')
   return packagedResult.title && prefixedWithHttp
 }
 
@@ -93,7 +93,7 @@ async function google(options={}) {
 
     // trim off leftover results
     if (remaining < 0) {
-      results = results.slice(0, results.length + remaining)
+      results = results.slice(0, counter + remaining)
     }
   }
 
