@@ -5,8 +5,7 @@
 
  1.) Duplicate results
  2.) Results come in out of order
- 3.) No results printed/returned when the --count is less than the total number of CPUs; also the process never exits
-
+ 
 */
 
 /**
@@ -106,11 +105,13 @@ async function google(options={}, callback=a=>a) {
     const limitPerWorker = Math.floor(specifiedCount / coresAvailable)
     const leftovers = specifiedCount % coresAvailable
     
+    let onlyOneChildProcssForked = false
     let aggregatedResults = [] 
     let workers = []
 
-    console.log(limitPerWorker)
     if (limitPerWorker < 1) {
+      onlyOneChildProcssForked = true 
+
       workers[0] = cluster.fork()
       workers[0].send({index: 0, limit: specifiedCount, offset: 0})
 
@@ -136,7 +137,7 @@ async function google(options={}, callback=a=>a) {
 
     // every half-second, check to see if all the child processes have finished.
     const checkForEndOfAggregation = setInterval(() => {
-      if (aggregatedResults.length === coresAvailable) {
+      if (aggregatedResults.length === coresAvailable || (onlyOneChildProcssForked && aggregatedResults.length === 1 )) {
         /*
         aggregatedResults is an array of objects with this shape: { index: 1, results: [{}]}
         those objects are coming from the child processes, which are sending their position in the pool of workers (index), 
