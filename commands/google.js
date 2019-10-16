@@ -7,8 +7,10 @@
 const meow = require('meow')
 const showHelp = require('../helpers/showHelp')
 const scrape = require('./scrape')
+const os = require('./os')
 const cheerio = require('cheerio')
 const chalk = require('chalk')
+const cluster = require('cluster')
 
 /**
  * Parse args
@@ -72,6 +74,14 @@ function printResults(results) {
 
 async function google(options={}) {
   showHelp(cli, [!options])
+
+  if (cluster.isMaster) {
+    for (let i = 0; i < os().cpus; i++) {
+      cluster.fork();
+    }
+  } else {
+    // Do the thing.
+  }
 
   const query = options.query || cli.input.slice(1).join(' ')
   const limit = options.count || cli.flags.count || 10
