@@ -53,7 +53,6 @@ function formatResults(result) {
 
 function formatValidResults(scrapedResults) {
   return scrapedResults
-    .slice(0, scrapedResults.length)
     .map(formatResults)
     .filter(hasTitleandValidLink)
 }
