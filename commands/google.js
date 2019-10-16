@@ -78,9 +78,19 @@ async function google(options={}) {
   if (cluster.isMaster) {
     const workers = []
 
-    for (let i = 0; i < os({json: true}).cpus; i++) {
+    const coresAvailable = os({json: true}).cpus - 1
+    const limitPerWorker = Math.floor((options.count || cli.flags.count || 10) / coresAvailable)
+    const leftovers = (options.count || cli.flags.count || 10) % coresAvailable
+
+    for (let i = 0; i < coresAvailable; i++) {
       workers[i] = cluster.fork()
-      workers[i].send({index: i, count: 10})
+
+      if (i == coresAvailable) {
+        workers[i].send({index: i, limit: leftovers})
+      } else {
+        workers[i].send({index: i, limit: limitPerWorker})
+      }
+
       workers[i].on('message', (msg) => {
         console.log(`Master: ${msg}`)
       })
@@ -88,8 +98,8 @@ async function google(options={}) {
   } else if (cluster.isWorker) {
     // Do the thing.
     process.on('message', (msg) => {
-      console.log(`Worker: ${msg.index} getting ${msg.count} results.`);
-      process.send([{link: 1, href: 'http:/whatever.com', preview: 'cool website'}, { link: 2}]);
+      console.log(`Worker: ${msg.index} getting ${msg.limit} results.`);
+      process.send([{link: 1, href: 'http:/whatever.com', preview: 'cool website'}, { link: 2 }]);
     });
   }
 
