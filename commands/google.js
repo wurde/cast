@@ -1,5 +1,14 @@
 'use strict'
 
+/*
+ Here are the list of bugs with this current working version:
+
+ 1.) Duplicate results
+ 2.) Results come in out of order
+ 3.) No results printed/returned when the --count is less than the total number of CPUs; also the process never exits
+
+*/
+
 /**
  * Dependencies
  */
@@ -36,6 +45,14 @@ const cli = meow(`
  * Define helpers
  */
 
+Array.prototype.flatMap = function(mapperFn=x=>x, levels=1) {
+  if (levels === 0) return this
+
+  const flattenedArr = this.reduce((acc, cur) => acc.concat(mapperFn(cur)), [])
+
+  return flattenedArr.flatMap(mapperFn, levels - 1)
+}
+
 // cb for [].prototype.filter
 function hasTitleandValidLink(packagedResult) {
   const prefixedWithHttp = packagedResult.href.startsWith('http')
@@ -59,6 +76,13 @@ function formatValidResults(scrapedResults) {
     .filter(hasTitleandValidLink)
 }
 
+async function scrapeResults (query='', start=0) {
+  return await scrape({
+    url: `https://www.google.com/search?q=${query}&start=${start}`,
+    selector: 'div.g'
+  })
+}
+
 function printResults(results) {
   results.forEach(result => {
     console.log(chalk.green.bold(result.title))
@@ -72,65 +96,125 @@ function printResults(results) {
  * Define script
  */
 
-async function google(options={}) {
+async function google(options={}, callback=a=>a) {
   showHelp(cli, [!options])
+  const query = options.query || cli.input.slice(1).join(' ')
 
   if (cluster.isMaster) {
-    const workers = []
-
     const coresAvailable = os({json: true}).cpus - 1
-    const limitPerWorker = Math.floor((options.count || cli.flags.count || 10) / coresAvailable)
-    const leftovers = (options.count || cli.flags.count || 10) % coresAvailable
+    const specifiedCount = options.count || cli.flags.count || 10
+    const limitPerWorker = Math.floor(specifiedCount / coresAvailable)
+    const leftovers = specifiedCount % coresAvailable
+    
+    let aggregatedResults = [] 
+    let workers = []
 
-    for (let i = 0; i < coresAvailable; i++) {
-      workers[i] = cluster.fork()
+    console.log(limitPerWorker)
+    if (limitPerWorker < 1) {
+      workers[0] = cluster.fork()
+      workers[0].send({index: 0, limit: specifiedCount, offset: 0})
 
-      if (i == coresAvailable) {
-        workers[i].send({index: i, limit: leftovers})
-      } else {
-        workers[i].send({index: i, limit: limitPerWorker})
-      }
-
-      workers[i].on('message', (msg) => {
-        console.log(`Master: ${msg}`)
+      workers[0].on('message', msg => {
+        aggregatedResults.push(msg)
       })
+    } else { 
+      for (let i = 0; i < coresAvailable; i++) {
+        workers[i] = cluster.fork()
+        
+        const isLastProcess = i == coresAvailable - 1
+        if (isLastProcess) {
+          workers[i].send({index: i, limit: limitPerWorker + leftovers, offset: i * limitPerWorker})
+        } else {
+          workers[i].send({index: i, limit: limitPerWorker, offset: i * limitPerWorker})
+        }
+        
+        workers[i].on('message', (msg) => {
+          aggregatedResults.push(msg)
+        })
+      }
     }
+
+    // every half-second, check to see if all the child processes have finished.
+    const checkForEndOfAggregation = setInterval(() => {
+      if (aggregatedResults.length === coresAvailable) {
+        /*
+        aggregatedResults is an array of objects with this shape: { index: 1, results: [{}]}
+        those objects are coming from the child processes, which are sending their position in the pool of workers (index), 
+        and the results they scraped.
+
+        We want to first sort the aggregated results by the index of each worker, because
+        each worker was assigned an offset to start scraping from, and we want to preserve
+        the order of the results returned from Google. 
+        
+        After we've sorted the results, we want to get rid of the index field that's on each object,
+        and only print/return the scraped results. To do this, we have to map over each object
+        sent from the workers and only return the results, which is an array. Then the aggregated results will be
+        an array of arrays instead of an array of objects.
+
+        We then want to spit out to the user one big array of 
+        results, not an array of arrays of results. This is especially true of our `printResults` helper, 
+        which is expecting a one-dimensional array.
+        And because aggregtedResults is now an array of arrays, we need to flatten it.
+        */
+       
+        aggregatedResults = aggregatedResults
+          .sort((a,b) => a.index - b.index)
+          .flatMap(result => result.results) 
+         
+        if (arguments.length == 0) {
+          printResults(aggregatedResults)
+          process.exit(0)
+        } else {
+          clearInterval(checkForEndOfAggregation)
+          callback(aggregatedResults)
+        }
+      }
+    }, 100)
+
+    /*
+      We can't return the complete list of aggregated results from this function since
+      the return statement below executes before the interval that's checking if all the results
+      are aggregated clears. That's why in the interval we invoke the callback with the final 
+      results. In other words, the only way to use the aggregated results outside of this module is to 
+      create a closure and set it's value inside the callback passed to this function.
+
+      Here's an example:
+        // (Inside some other module...)
+        const google = require('./google')
+        const myGoogleResults = []
+
+        google({query: "Lambda School, count: 10"}, (aggregatedResults) => {
+          myGoogleResults = aggregatedResulsts
+        })
+    */ 
+   return 
+
   } else if (cluster.isWorker) {
     // Do the thing.
+
     process.on('message', (msg) => {
-      console.log(`Worker: ${msg.index} getting ${msg.limit} results.`);
-      process.send([{link: 1, href: 'http:/whatever.com', preview: 'cool website'}, { link: 2 }]);
-    });
+      // console.log(`Worker: ${msg.index} getting ${msg.limit} results. query: ${query}` )
+
+      (async () => {
+        let results = []
+        let remaining = msg.limit
+        let counter = msg.offset
+        while (remaining > 0) {
+          const scrapedResults = await scrapeResults(query, counter)
+          results = results.concat(formatValidResults(scrapedResults))
+          counter += scrapedResults.length
+          remaining -= scrapedResults.length
+          
+          // trim off leftover results
+          if (remaining < 0) {
+            results = results.slice(0, (counter - msg.offset) + remaining)
+          }
+        }
+        process.send({index: msg.index, results})
+        process.exit(0)
+      })()
+    })
   }
-
-  const query = options.query || cli.input.slice(1).join(' ')
-  const limit = options.count || cli.flags.count || 10
-  
-  const scrapeResults = async (query='', start=0) => await scrape({
-    url: `https://www.google.com/search?q=${query}&start=${start}`,
-    selector: 'div.g'
-  })
-
-  let results = []
-  let remaining = limit
-  let counter = 0
-  while (remaining > 0) {
-    const scrapedResults = await scrapeResults(query, counter)
-    results = results.concat(formatValidResults(scrapedResults))
-    counter += scrapedResults.length
-    remaining -= scrapedResults.length
-
-    // trim off leftover results
-    if (remaining < 0) {
-      results = results.slice(0, counter + remaining)
-    }
-  }
-
-  if (arguments.length === 0) {
-    printResults(results)
-  }
-
-  return results
 }
 
 /**
