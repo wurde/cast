@@ -76,11 +76,21 @@ async function google(options={}) {
   showHelp(cli, [!options])
 
   if (cluster.isMaster) {
-    for (let i = 0; i < os().cpus; i++) {
-      cluster.fork();
+    const workers = []
+
+    for (let i = 0; i < os({json: true}).cpus; i++) {
+      workers[i] = cluster.fork()
+      workers[i].send({index: i, count: 10})
+      workers[i].on('message', (msg) => {
+        console.log(`Master: ${msg}`)
+      })
     }
-  } else {
+  } else if (cluster.isWorker) {
     // Do the thing.
+    process.on('message', (msg) => {
+      console.log(`Worker: ${msg.index} getting ${msg.count} results.`);
+      process.send([{link: 1, href: 'http:/whatever.com', preview: 'cool website'}, { link: 2}]);
+    });
   }
 
   const query = options.query || cli.input.slice(1).join(' ')
