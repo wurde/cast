@@ -1,13 +1,5 @@
 'use strict'
 
-/*
- Here are the list of bugs with this current working version:
-
- 1.) Duplicate results
- 2.) Results come in out of order
- 
-*/
-
 /**
  * Dependencies
  */
