@@ -36,12 +36,8 @@ const cli = meow(`
  * Define helpers
  */
 
-Array.prototype.flatMap = function(mapperFn=x=>x, levels=1) {
-  if (levels === 0) return this
-
-  const flattenedArr = this.reduce((acc, cur) => acc.concat(mapperFn(cur)), [])
-
-  return flattenedArr.flatMap(mapperFn, levels - 1)
+Array.prototype.flatMap = function(mapperFn=x=>x) {
+  return this.reduce((acc, cur) => acc.concat(mapperFn(cur)), [])
 }
 
 // cb for [].prototype.filter
