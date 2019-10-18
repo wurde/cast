@@ -25,7 +25,7 @@ const cli = meow(`
 function run_eval() {
   showHelp(cli, [cli.input.length < 2])
 
-  console.log('eval')
+  console.log(eval(cli.input.slice(1).join(' ')))
 }
 
 /**
