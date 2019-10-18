@@ -23,7 +23,8 @@ const cli = meow(`
  */
 
 function run_eval() {
-  showHelp(cli)
+  showHelp(cli, [cli.input.length < 2])
+
   console.log('eval')
 }
 
