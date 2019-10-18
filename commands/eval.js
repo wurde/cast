@@ -5,6 +5,7 @@
  */
 
 const meow = require('meow')
+const chalk = require('chalk')
 const showHelp = require('../helpers/showHelp')
 
 /**
@@ -25,7 +26,20 @@ const cli = meow(`
 function run_eval() {
   showHelp(cli, [cli.input.length < 2])
 
-  console.log(eval(cli.input.slice(1).join(' ')))
+  const expression = cli.input.slice(1).join(' ')
+
+  try {
+    const x = eval(expression)
+
+    if (arguments.length === 0) {
+      console.log(`\n  ${chalk.green.bold(x)}\n`)
+    }
+    
+    return x
+  } catch(e) {
+    console.error(`\n  ${chalk.red.bold(e.message)}: ${chalk.white.bold(expression)}\n`)
+    return null
+  }
 }
 
 /**
