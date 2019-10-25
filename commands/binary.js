@@ -35,7 +35,6 @@ function binary(numbers=null, options={}) {
     for (let i = 32; i <= 126; i++) {
       ascii.push(String.fromCharCode(i))
     }
-    console.log(ascii)
 
     // Generate conversions
     let binaryNumbers = ascii.reduce((obj, glyph) => {
