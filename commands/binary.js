@@ -28,17 +28,17 @@ const cli = meow(`
  */
 
 function binary() {
-  console.log(cli.flags)
   if (cli.flags.ascii) {
     // Print conversion table for all ASCII characters.
     // TODO
   } else if (cli.flags.reverse || cli.flags.r) {
     // Filter for only binary numbers.
-    const binary = process.argv.filter(e => e.match(/^[01]+$/))
-    
+    let binaryNumbers  = process.argv.filter(e => e.match(/^[01]+$/))
+    let decimalNumbers = binaryNumbers.map(b => Number.parseInt(b, 2).toString(10))
+
     // Print conversion table
-    console.log(binary)
-    // TODO
+    console.log('binaryNumbers', binaryNumbers)
+    console.log('decimalNumbers', decimalNumbers)
   } else {
     showHelp(cli, [cli.input.length < 2])
 
