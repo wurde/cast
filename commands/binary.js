@@ -6,6 +6,7 @@
 
 const meow = require('meow')
 const chalk = require('chalk')
+const { table, getBorderCharacters } = require('table')
 const showHelp = require('../helpers/showHelp')
 
 /**
@@ -34,11 +35,35 @@ function binary() {
   } else if (cli.flags.reverse || cli.flags.r) {
     // Filter for only binary numbers.
     let binaryNumbers  = process.argv.filter(e => e.match(/^[01]+$/))
-    let decimalNumbers = binaryNumbers.map(b => Number.parseInt(b, 2).toString(10))
+    let decimalNumbers = binaryNumbers.reduce((obj,b) => {
+      obj[b] = parseInt(parseInt(b, 2).toString(10));
+      return obj
+    }, {})
 
-    // Print conversion table
-    console.log('binaryNumbers', binaryNumbers)
-    console.log('decimalNumbers', decimalNumbers)
+    // Sort numbers in ascending order.
+    let entries = Object.entries(decimalNumbers)
+    entries.sort((a,b) => a[1] - b[1])
+
+    // Format as a table.
+    const tableConfig = {
+      border: getBorderCharacters('void'),
+      columnDefault: {
+        paddingLeft: 2
+      },
+      columns: {
+        0: {
+          alignment: 'right'
+        },
+        1: {
+          alignment: 'left'
+        }
+      }
+    }
+    const output = table(entries, tableConfig)
+    
+    // Print table or return object.
+    console.log('')
+    console.log(chalk.green.bold(output))
   } else {
     showHelp(cli, [cli.input.length < 2])
 
