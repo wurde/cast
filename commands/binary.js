@@ -37,6 +37,8 @@ function binary(numbers=null, options={}) {
 
     // Filter for only binary numbers.
     let binaryNumbers  = argv.filter(e => e.match(/^[01]+$/))
+
+    // Generate conversions
     let decimalNumbers = binaryNumbers.reduce((obj,b) => {
       obj[b] = parseInt(parseInt(b, 2).toString(10));
       return obj
@@ -71,16 +73,47 @@ function binary(numbers=null, options={}) {
 
     return decimalNumbers
   } else {
-    showHelp(cli, [cli.input.length < 2])
+    showHelp(cli, [(!numbers && cli.input.length < 2)])
 
-    const decimalNumber = cli.input[1]
-    const binaryNumber = (decimalNumber >>> 0).toString(2)
+    let argv = (numbers) ? numbers : process.argv
 
+    // Filter for only decimal numbers.
+    let decimalNumbers = argv.filter(e => e.match(/^\d+$/))
+
+    // Generate conversions
+    let binaryNumbers = decimalNumbers.reduce((obj, d) => {
+      obj[parseInt(d)] = (d >>> 0).toString(2);
+      return obj
+    }, {})
+
+    // Sort numbers in ascending order.
+    let entries = Object.entries(binaryNumbers).map(e => [e[1], e[0]])
+    entries.sort((a, b) => a[1] - b[1])
+
+    // Format as a table.
+    const tableConfig = {
+      border: getBorderCharacters('void'),
+      columnDefault: {
+        paddingLeft: 2
+      },
+      columns: {
+        0: {
+          alignment: 'right'
+        },
+        1: {
+          alignment: 'left'
+        }
+      }
+    }
+    const output = table(entries, tableConfig)
+
+    // Print table or return object.
     if (arguments.length === 0) {
-      console.log(`\n  ${chalk.green.bold(binaryNumber)}\n`)
+      console.log('')
+      console.log(chalk.green.bold(output))
     }
   
-    return binaryNumber
+    return binaryNumbers
   }
 }
 
