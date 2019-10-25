@@ -6,7 +6,6 @@
 
 const meow = require('meow')
 const chalk = require('chalk')
-const hasFlag = require('has-flag')
 const showHelp = require('../helpers/showHelp')
 
 /**
@@ -15,7 +14,7 @@ const showHelp = require('../helpers/showHelp')
 
 const cli = meow(`
   Usage
-    $ cast binary NUMBER [options]
+    $ cast binary [OPTION]... NUMBER
 
   Options:
     --reverse, -r  Convert binary to decimal.
@@ -29,14 +28,16 @@ const cli = meow(`
  */
 
 function binary() {
+  console.log(cli.flags)
   if (cli.flags.ascii) {
     // Print conversion table for all ASCII characters.
     // TODO
-  } else if (hasFlag('--reverse')) {
+  } else if (cli.flags.reverse || cli.flags.r) {
     // Filter for only binary numbers.
     const binary = process.argv.filter(e => e.match(/^[01]+$/))
     
     // Print conversion table
+    console.log(binary)
     // TODO
   } else {
     showHelp(cli, [cli.input.length < 2])
