@@ -30,8 +30,47 @@ const cli = meow(`
 
 function binary(numbers=null, options={}) {
   if (options.ascii || cli.flags.ascii) {
-    // Print conversion table for all ASCII characters.
-    // TODO
+    const ascii = []
+
+    for (let i = 32; i <= 126; i++) {
+      ascii.push(String.fromCharCode(i))
+    }
+    console.log(ascii)
+
+    // Generate conversions
+    let binaryNumbers = ascii.reduce((obj, glyph) => {
+      obj[glyph] = (glyph.codePointAt() >>> 0).toString(2);
+      return obj
+    }, {})
+
+    // Sort numbers in ascending order.
+    let entries = Object.entries(binaryNumbers).map(e => [e[1], e[0]])
+    entries.sort((a, b) => a[0] - b[0])
+
+    // Format as a table.
+    const tableConfig = {
+      border: getBorderCharacters('void'),
+      columnDefault: {
+        paddingLeft: 2
+      },
+      columns: {
+        0: {
+          alignment: 'right'
+        },
+        1: {
+          alignment: 'left'
+        }
+      }
+    }
+    const output = table(entries, tableConfig)
+
+    // Print table or return object.
+    if (arguments.length === 0) {
+      console.log('')
+      console.log(chalk.green.bold(output))
+    }
+
+    return binaryNumbers
   } else if (options.reverse || cli.flags.reverse || cli.flags.r) {
     let argv = (numbers) ? numbers : process.argv
 
