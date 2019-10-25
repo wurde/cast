@@ -28,13 +28,15 @@ const cli = meow(`
  * Define script
  */
 
-function binary() {
-  if (cli.flags.ascii) {
+function binary(numbers=null, options={}) {
+  if (options.ascii || cli.flags.ascii) {
     // Print conversion table for all ASCII characters.
     // TODO
-  } else if (cli.flags.reverse || cli.flags.r) {
+  } else if (options.reverse || cli.flags.reverse || cli.flags.r) {
+    let argv = (numbers) ? numbers : process.argv
+
     // Filter for only binary numbers.
-    let binaryNumbers  = process.argv.filter(e => e.match(/^[01]+$/))
+    let binaryNumbers  = argv.filter(e => e.match(/^[01]+$/))
     let decimalNumbers = binaryNumbers.reduce((obj,b) => {
       obj[b] = parseInt(parseInt(b, 2).toString(10));
       return obj
@@ -62,8 +64,12 @@ function binary() {
     const output = table(entries, tableConfig)
     
     // Print table or return object.
-    console.log('')
-    console.log(chalk.green.bold(output))
+    if (arguments.length === 0) {
+      console.log('')
+      console.log(chalk.green.bold(output))
+    }
+
+    return decimalNumbers
   } else {
     showHelp(cli, [cli.input.length < 2])
 
