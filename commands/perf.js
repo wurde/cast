@@ -5,7 +5,7 @@
  */
 
 const meow = require('meow')
-const { table } = require('table')
+const launchBrowser = require('../helpers/launchBrowser')
 const showHelp = require('../helpers/showHelp')
 
 /**
@@ -23,10 +23,20 @@ const cli = meow(`
  * Define script
  */
 
-function perf() {
+async function perf() {
   showHelp(cli)
 
-  console.log('perf')
+  let browser
+  try {
+    browser = await launchBrowser()
+    const page = await browser.newPage()
+
+    console.log('perf')
+  } catch (err) {
+    console.error(err)
+  } finally {
+    (browser) ? browser.close() : null
+  }
 }
 
 /**
