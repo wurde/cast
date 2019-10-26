@@ -45,7 +45,6 @@ async function perf({ url, filter }={}) {
       obj[x.name] = x.value
       return obj
     }, {})
-
     
     // Print performance metrics.
     if (arguments.length === 0) {
