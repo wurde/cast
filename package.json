@@ -10,7 +10,6 @@
     "gp": "./bin/gp.js"
   },
   "scripts": {
-    "pretest": "npm run lint",
     "test": "jest",
     "preversion": "npm test",
     "lint": "eslint bin commands helpers"
