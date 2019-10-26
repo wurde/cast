@@ -9,10 +9,10 @@ const path = require('path')
 const url = require('url')
 const meow = require('meow')
 const prompts = require('prompts')
-const puppeteer = require('puppeteer')
 const { requireConnectivity } = require('../helpers/connectivity')
 const showHelp = require('../helpers/showHelp')
 const printError = require('../helpers/printError')
+const launchBrowser = require('../helpers/launchBrowser')
 
 /**
  * Parse args
@@ -40,13 +40,14 @@ const cli = meow(`
  */
 
 async function launchPage() {
-  const browser = await puppeteer.launch({
+  const browser = await launchBrowser({
     headless: true,
     defaultViewport: {
       width: 1024,
       height: 800
     }
   })
+
   const page = await browser.newPage()
 
   return [browser, page]
