@@ -5,6 +5,7 @@
  */
 
 const meow = require('meow')
+const chalk = require('chalk')
 const perf = require('./perf')
 const showHelp = require('../helpers/showHelp')
 
@@ -23,11 +24,23 @@ const cli = meow(`
  * Define script
  */
 
-function firstPaint() {
-  showHelp(cli)
+async function firstPaint({ url }={}) {
+  showHelp(cli, [(!url && cli.input.length < 2)])
 
-  console.log('first-paint')
-  // perf('url', { "FirstMeaningfulPaint": true })
+  const targetURL = (url) ? url : cli.input[1]
+
+  const FirstMeaningfulPaint = await perf({
+    url: targetURL,
+    filter: 'FirstMeaningfulPaint'
+  })
+
+  if (arguments.length === 0) {
+    console.log('')
+    console.log(' ', chalk.bold.green(FirstMeaningfulPaint))
+    console.log('')
+  }
+
+  return FirstMeaningfulPaint
 }
 
 /**
