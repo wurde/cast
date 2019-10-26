@@ -9,6 +9,9 @@
     "gc": "./bin/gc.js",
     "gp": "./bin/gp.js"
   },
+  "scripts": {
+    "lint": "eslint bin commands helpers"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/wurde/scripts.git"
