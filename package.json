@@ -10,6 +10,9 @@
     "gp": "./bin/gp.js"
   },
   "scripts": {
+    "pretest": "npm run lint",
+    "test": "jest",
+    "preversion": "npm test",
     "lint": "eslint bin commands helpers"
   },
   "repository": {
@@ -64,6 +67,7 @@
   "devDependencies": {
     "eslint": "^6.5.1",
     "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-plugin-import": "^2.18.2"
+    "eslint-plugin-import": "^2.18.2",
+    "jest": "^24.9.0"
   }
 }
