@@ -10,10 +10,11 @@
     "gp": "./bin/gp.js"
   },
   "scripts": {
+    "pretest": "npm run lint",
     "test": "jest",
     "preversion": "npm test",
     "lint": "eslint bin commands helpers"
-  },
+  },  
   "repository": {
     "type": "git",
     "url": "git+https://github.com/wurde/scripts.git"
