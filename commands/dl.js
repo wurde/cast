@@ -11,6 +11,7 @@ const axios = require('axios')
 const chalk = require('chalk')
 const meow = require('meow')
 const prompts = require('prompts')
+const file = require('./file')
 const showHelp = require('../helpers/showHelp')
 const printError = require('../helpers/printError')
 
@@ -65,11 +66,18 @@ async function dl(targetUrl=null) {
 
     // Fetch resource.
     axios.get(targetUrl, { responseType: 'stream' }).then((res) => {
-      res.data.pipe(fs.createWriteStream(filePath))
+      const fileWrite = fs.createWriteStream(filePath)
+      res.data.pipe(fileWrite)
 
-      if (arguments.length === 0) {
-        console.log(chalk.green.bold(`Successfully downloaded: ${filePath}`))
-      }
+      fileWrite.on('close', () => {
+        const mimeType = file(filePath)
+        // console.log('mimeType', mimeType)
+        // Use mimeType to set extension of file.
+  
+        if (arguments.length === 0) {
+          console.log(chalk.green.bold(`  Downloaded: ${filePath}\n`))
+        }
+      })
     })
   } catch (e) {
     console.error(e)
