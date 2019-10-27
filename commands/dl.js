@@ -10,6 +10,7 @@ const path = require('path')
 const axios = require('axios')
 const chalk = require('chalk')
 const meow = require('meow')
+const mime_types = require('mime-types')
 const prompts = require('prompts')
 const file = require('./file')
 const showHelp = require('../helpers/showHelp')
@@ -66,14 +67,23 @@ async function dl(targetUrl=null) {
 
     // Fetch resource.
     axios.get(targetUrl, { responseType: 'stream' }).then((res) => {
+      // Save file locally
       const fileWrite = fs.createWriteStream(filePath)
       res.data.pipe(fileWrite)
 
-      fileWrite.on('close', () => {
-        const mimeType = file(filePath)
-        // console.log('mimeType', mimeType)
-        // Use mimeType to set extension of file.
-  
+      fileWrite.on('close', () => {  
+        // Ensure a file extension exists.
+        let extname = path.extname(filePath)
+        if (!extname) {
+          const oldPath = filePath          
+          const mimeType = file(filePath)
+
+          extname = mime_types.extension(mimeType.type)
+          filePath = `${filePath}.${extname}`
+
+          fs.renameSync(oldPath, filePath)
+        }
+
         if (arguments.length === 0) {
           console.log(chalk.green.bold(`  Downloaded: ${filePath}\n`))
         }
