@@ -14,7 +14,7 @@
     "test": "jest",
     "preversion": "npm test",
     "lint": "eslint bin commands helpers"
-  },  
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/wurde/scripts.git"
@@ -28,6 +28,7 @@
   "license": "MIT",
   "homepage": "https://github.com/wurde/scripts#readme",
   "dependencies": {
+    "axios": "^0.19.0",
     "blessed": "^0.1.81",
     "chalk": "^2.4.2",
     "cheerio": "^1.0.0-rc.3",
