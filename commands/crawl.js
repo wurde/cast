@@ -6,7 +6,7 @@
 
 const meow = require('meow')
 const showHelp = require('../helpers/showHelp')
-const buildTargetURL = require('../helpers/buildTargetURL')
+const parseUrl = require('../helpers/parseUrl')
 const puppeteer = require('puppeteer')
 const cheerio = require('cheerio')
 const url = require('url')
@@ -76,20 +76,39 @@ async function crawl_script() {
 
     const [browser, page] = await launchPage()
     try {
-        const rootUrl = buildTargetURL(cli.input[1])
-        await page.goto(rootUrl)
+        /**
+         * Visit target URL.
+         */
+
+        const rootUrl = parseUrl(cli.input[1])
+        await page.goto(rootUrl.href)
         await page.waitFor(1000)
         const pageContent = await page.content()
+
+        /**
+         * Parse page content.
+         */
+        
         const $ = cheerio.load(pageContent)
         const links = []
         $('body a').each((i, element) => {
             if (element.attribs.href) {
                 const link = url.parse(element.attribs.href)
-                if (link.hostname) {
-                    links.push(link.href)
+                
+                // Filter out external links if --introspect is true
+                if (cli.flags.introspect) {
+                    if (!link.hostname) {
+                        links.push(link.href)
+                    }
+                } else {
+                    if (link.hostname) {
+                        links.push(link.href)
+                    }
                 }
             }
         })
+
+        // TODO get rid of duplicates
 
         const q = new Queue()
         links.forEach((link) => {
