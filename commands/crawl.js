@@ -18,8 +18,16 @@ const url = require('url')
 const cli = meow(`
   Usage
     $ cast crawl URL
+
+  Options
+    --introspect    Print only links within the given URL
 `, {
-    description: 'Crawls websites for specific content.'
+    description: 'Crawls websites for specific content.',
+    flags: {
+        introspect: {
+            type: 'boolean'
+        }
+    }
 })
 
 /**
