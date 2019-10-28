@@ -6,7 +6,6 @@
 
 const meow = require('meow')
 const showHelp = require('../helpers/showHelp')
-const isUrl = require('../helpers/isUrl')
 const buildTargetURL = require('../helpers/buildTargetURL')
 const puppeteer = require('puppeteer')
 const cheerio = require('cheerio')
