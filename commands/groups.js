@@ -38,7 +38,7 @@ async function groups(usernameInput=null) {
     const groupsList = await child_process.execSync(`groups ${username}`, {
       encoding: 'utf8',
       stdio: ['pipe', 'pipe', 'ignore']
-    }).split(' ').slice(2)
+    }).trim().split(' ').slice(2)
 
     if (arguments.length === 0) {
       console.log(`\n  ${chalk.green.bold(groupsList.join(' '))}`)
