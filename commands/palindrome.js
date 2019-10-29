@@ -13,7 +13,7 @@ const showHelp = require('../helpers/showHelp')
 
 const cli = meow(`
   Usage
-    $ cast palindrome WORD1 WORD2
+    $ cast palindrome WORD
 `, {
   description: 'A palindrome checker.'
 })
@@ -22,14 +22,12 @@ const cli = meow(`
  * Define script
  */
 
-function palindrome(word1=null, word2=null) {
-  showHelp(cli, [((!word1 || !word2) && cli.input.length < 3)])
+function palindrome(word=null) {
+  showHelp(cli, [(!word && cli.input.length < 2)])
 
-  word1 = (word1) ? word1 : cli.input[1]
-  word2 = (word2) ? word2 : cli.input[2]
+  word = (word) ? word : cli.input[1]
 
-  console.log('word1', word1)
-  console.log('word2', word2)
+  return word === word.split('').reverse().join('')
 }
 
 /**
