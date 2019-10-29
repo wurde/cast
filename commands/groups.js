@@ -24,16 +24,30 @@ const cli = meow(`
  * Define script
  */
 
-async function groups() {
+async function groups(usernameInput=null) {
   showHelp(cli)
+  let username = ''
 
-  const groupsList = await child_process.execSync('groups', { encoding: 'utf8' }).split(' ')
-
-  if (arguments.length === 0) {
-    console.log(`\n  ${chalk.green.bold(groupsList.join(' '))}`)
+  if (usernameInput) {
+    username = usernameInput
+  } else if (cli.input.length > 1) {
+    username = cli.input[1]
   }
 
-  return groupsList
+  try {
+    const groupsList = await child_process.execSync(`groups ${username}`, {
+      encoding: 'utf8',
+      stdio: ['pipe', 'pipe', 'ignore']
+    }).split(' ').slice(2)
+
+    if (arguments.length === 0) {
+      console.log(`\n  ${chalk.green.bold(groupsList.join(' '))}`)
+    }
+
+    return groupsList
+  } catch (err) {
+    console.error(`No such user '${username}'`)
+  }
 }
 
 /**
