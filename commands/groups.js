@@ -41,7 +41,7 @@ async function groups(usernameInput=null) {
     }).trim().split(' ').slice(2)
 
     if (arguments.length === 0) {
-      console.log(`\n  ${chalk.green.bold(groupsList.join(' '))}`)
+      console.log(`\n  ${chalk.green.bold(groupsList.join(' '))}\n`)
     }
 
     return groupsList
