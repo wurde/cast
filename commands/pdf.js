@@ -9,8 +9,8 @@ const path = require('path')
 const meow = require('meow')
 const marked = require('marked')
 const nodemon = require('nodemon')
-const puppeteer = require('puppeteer')
 const showHelp = require('../helpers/showHelp')
+const launchBrowser = require('../helpers/launchBrowser')
 
 /**
  * Parse args
@@ -78,7 +78,7 @@ async function pdf() {
 
   const basename = path.basename(cli.input[1], path.extname(cli.input[1]))
 
-  const browser = await puppeteer.launch()
+  const browser = await launchBrowser()
   const page = await browser.newPage()
 
   let html = marked(fs.readFileSync(cli.input[1], 'utf8'))

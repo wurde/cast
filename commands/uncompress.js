@@ -5,6 +5,7 @@
  */
 
 const fs = require('fs')
+const path = require('path')
 const zlib = require('zlib')
 const meow = require('meow')
 const showHelp = require('../helpers/showHelp')
@@ -13,7 +14,7 @@ const showHelp = require('../helpers/showHelp')
  * Constants
  */
 
-const gzip = zlib.createGzip()
+const gunzip = zlib.createGunzip()
 
 /**
  * Parse args
@@ -21,26 +22,27 @@ const gzip = zlib.createGzip()
 
 const cli = meow(`
   Usage
-    $ cast compress FILE...
+    $ cast uncompress FILE...
 `, {
-  description: 'Compress files into a ZIP archive.'
+  description: 'Extract compressed files in a ZIP archive.'
 })
 
 /**
  * Define script
  */
 
-function compress() {
+function uncompress() {
   showHelp(cli, [cli.input.length < 2])
 
   let files = cli.input.slice(1).filter(file => fs.existsSync(file))
   if (files.length < 1) cli.showHelp()
 
   for (let i = 0; i < files.length; i++) {
+    const filename = path.basename(files[i], path.extname(files[i]))
     const fileIn = fs.createReadStream(files[i])
-    const fileOut = fs.createWriteStream(`${files[i]}.gz`)
+    const fileOut = fs.createWriteStream(filename)
 
-    fileIn.pipe(gzip).pipe(fileOut)
+    fileIn.pipe(gunzip).pipe(fileOut)
   }
 }
 
@@ -48,4 +50,4 @@ function compress() {
  * Export script
  */
 
-module.exports = compress
+module.exports = uncompress
