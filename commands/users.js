@@ -5,6 +5,8 @@
  */
 
 const meow = require('meow')
+const chalk = require('chalk')
+const child_process = require('child_process')
 const showHelp = require('../helpers/showHelp')
 
 /**
@@ -22,10 +24,16 @@ const cli = meow(`
  * Define script
  */
 
-function users() {
+async function users() {
   showHelp(cli)
 
-  console.log('users')
+  const usersList = await child_process.execSync('users', { encoding: 'utf8' }).split(' ')
+
+  if (arguments.length === 0) {
+    console.log(`\n  ${chalk.green.bold(usersList.join(' '))}`)
+  }
+  
+  return usersList
 }
 
 /**
