@@ -27,7 +27,9 @@ const cli = meow(`
 async function users() {
   showHelp(cli)
 
-  const usersList = await child_process.execSync('users', { encoding: 'utf8' }).split(' ')
+  const usersList = await child_process.execSync('users', {
+    encoding: 'utf8'
+  }).trim().split(' ')
 
   if (arguments.length === 0) {
     console.log(`\n  ${chalk.green.bold(usersList.join(' '))}`)
