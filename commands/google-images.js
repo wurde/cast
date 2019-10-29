@@ -15,7 +15,7 @@ const showHelp = require('../helpers/showHelp')
 
 const cli = meow(`
   Usage
-    $ cast google-images
+    $ cast google-images QUERY
 `, {
   description: 'Search and download Google Images.'
 })
@@ -24,13 +24,28 @@ const cli = meow(`
  * Define script
  */
 
-async function google_images() {
-  showHelp(cli)
+async function google_images(query=null) {
+  showHelp(cli, [(!query && cli.input.length < 2)])
 
-  // TODO Scrape images search.
-  const result = await scrape('https://images.google.com')
-  // TODO Parse all image URLs on page.
-  // TODO Download all images.
+  if (!query) {
+    query = cli.input[1]
+  }
+
+  try {
+    const targetUrl = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(query)}`
+
+    // Scrape images from search.
+    const result = await scrape({
+      url: targetUrl,
+      selector: 'div#search img'
+    })
+    console.log('result', result)
+
+    // TODO Parse all image URLs on page.
+    // TODO Download all images.
+  } catch (err) {
+    console.error(err)
+  }
 }
 
 /**
