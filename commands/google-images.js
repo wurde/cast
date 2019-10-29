@@ -39,9 +39,15 @@ async function google_images(query=null) {
       url: targetUrl,
       selector: 'div#search img'
     })
-    console.log('result', result)
 
-    // TODO Parse all image URLs on page.
+    // Parse all image URLs on page.
+    const imageUrls = result.reduce((urls, imageHtml) => {
+      const match = imageHtml.match(/"(https.*?)"/)
+      if (match) urls.push(match[1])
+      return urls
+    }, [])
+    console.log('imageUrls', imageUrls)
+
     // TODO Download all images.
   } catch (err) {
     console.error(err)
