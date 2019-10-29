@@ -34,8 +34,7 @@ const cli = meow(`
 function uncompress() {
   showHelp(cli, [cli.input.length < 2])
 
-  let files = cli.input.slice(1, cli.input.length)
-  files = files.filter(file => fs.existsSync(file))
+  let files = cli.input.slice(1).filter(file => fs.existsSync(file))
   if (files.length < 1) cli.showHelp()
 
   for (let i = 0; i < files.length; i++) {
