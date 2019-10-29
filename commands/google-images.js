@@ -4,10 +4,11 @@
  * Dependencies
  */
 
-const scrape = require('./scrape')
-const cheerio = require('cheerio')
 const meow = require('meow')
+const dl = require('./dl')
+const scrape = require('./scrape')
 const showHelp = require('../helpers/showHelp')
+const sleep = require('../helpers/sleep')
 
 /**
  * Parse args
@@ -46,9 +47,12 @@ async function google_images(query=null) {
       if (match) urls.push(match[1])
       return urls
     }, [])
-    console.log('imageUrls', imageUrls)
 
-    // TODO Download all images.
+    // Download all images.
+    for (let i = 0; i < imageUrls.length; i++) {
+      dl(imageUrls[i])
+      await sleep(200)
+    }
   } catch (err) {
     console.error(err)
   }
