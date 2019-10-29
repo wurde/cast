@@ -32,7 +32,7 @@ async function users() {
   }).trim().split(' ')
 
   if (arguments.length === 0) {
-    console.log(`\n  ${chalk.green.bold(usersList.join(' '))}`)
+    console.log(`\n  ${chalk.green.bold(usersList.join(' '))}\n`)
   }
   
   return usersList
