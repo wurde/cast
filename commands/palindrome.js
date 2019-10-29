@@ -22,10 +22,14 @@ const cli = meow(`
  * Define script
  */
 
-function palindrome() {
-  showHelp(cli)
+function palindrome(word1=null, word2=null) {
+  showHelp(cli, [((!word1 || !word2) && cli.input.length < 3)])
 
-  console.log('palindrome')
+  word1 = (word1) ? word1 : cli.input[1]
+  word2 = (word2) ? word2 : cli.input[2]
+
+  console.log('word1', word1)
+  console.log('word2', word2)
 }
 
 /**
