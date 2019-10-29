@@ -5,7 +5,6 @@
  */
 
 const fs = require('fs')
-const path = require('path')
 const zlib = require('zlib')
 const meow = require('meow')
 const showHelp = require('../helpers/showHelp')
@@ -14,7 +13,6 @@ const showHelp = require('../helpers/showHelp')
  * Constants
  */
 
-const gunzip = zlib.createGunzip()
 const gzip = zlib.createGzip()
 
 /**
@@ -24,17 +22,8 @@ const gzip = zlib.createGzip()
 const cli = meow(`
   Usage
     $ cast compress FILE...
-
-  Options
-    --unzip     Decompress file (Default: false).
 `, {
-  description: 'Compress and uncompress files.',
-  flags: {
-    unzip: {
-      type: 'boolean',
-      default: false
-    }
-  }
+  description: 'Compress files into a ZIP archive.'
 })
 
 /**
@@ -48,21 +37,11 @@ function compress() {
   files = files.filter(file => fs.existsSync(file))
   if (files.length < 1) cli.showHelp()
 
-  if (cli.flags.unzip) {
-    for (let i = 0; i < files.length; i++) {
-      const filename = path.basename(files[i], path.extname(files[i]))
-      const fileIn = fs.createReadStream(files[i])
-      const fileOut = fs.createWriteStream(filename)
+  for (let i = 0; i < files.length; i++) {
+    const fileIn = fs.createReadStream(files[i])
+    const fileOut = fs.createWriteStream(`${files[i]}.gz`)
 
-      fileIn.pipe(gunzip).pipe(fileOut)
-    }
-  } else {
-    for (let i = 0; i < files.length; i++) {
-      const fileIn = fs.createReadStream(files[i])
-      const fileOut = fs.createWriteStream(`${files[i]}.gz`)
-
-      fileIn.pipe(gzip).pipe(fileOut)
-    }
+    fileIn.pipe(gzip).pipe(fileOut)
   }
 }
 
