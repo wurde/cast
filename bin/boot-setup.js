@@ -29,7 +29,7 @@ RemainAfterExit=no
 
 [Install]
 WantedBy=multi-user.target
-`.trim()
+`.trimLeft()
 
 /**
  * Define setup script
