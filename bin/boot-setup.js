@@ -15,8 +15,9 @@ const pidof = require('../helpers/pidof')
  * Constants
  */
 
-const userBootService = '/lib/systemd/system/boot-scripts1.service'
-const systemBootService = '/etc/systemd/system/boot-scripts1.service'
+const bootService = 'boot-scripts.service'
+const userBootService = `/lib/systemd/system/${bootService}`
+const systemBootService = `/etc/systemd/system/${bootService}`
 const bootCode = `
 [Unit]
 Description=Run /usr/bin/boot
@@ -28,7 +29,7 @@ RemainAfterExit=no
 
 [Install]
 WantedBy=multi-user.target
-`
+`.trim()
 
 /**
  * Define setup script
@@ -40,7 +41,7 @@ async function main() {
      * Check systemd is pid Eins.
      */
 
-    if (!pidof('/sbin/init').includes(pidof('systemdd').pop())) {
+    if (!pidof('/sbin/init').includes(pidof('systemd').pop())) {
       throw new Error('Systemd is required')
     }
 
@@ -49,12 +50,10 @@ async function main() {
      */
 
     if (!fs.existsSync(userBootService)) {
-      await fs.writeFileSync(userBootService, bootCode)
-
-      // TODO link userBootService to systemBootService
-      // sudo ln -sf /lib/systemd/system/boot-scripts.service /etc/systemd/system/boot-scripts.service
-      // sudo systemctl daemon-reload
-      // sudo systemctl enable boot-scripts.service
+      fs.writeFileSync(userBootService, bootCode)
+      fs.symlinkSync(userBootService, systemBootService)
+      child_process.execSync('sudo systemctl daemon-reload')
+      child_process.execSync(`sudo systemctl enable ${bootService}`)
     }
   } catch (err) {
     console.error('\n', chalk.red.bold(err), '\n')
