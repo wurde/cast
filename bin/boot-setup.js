@@ -14,7 +14,6 @@ const pidof = require('../helpers/pidof')
  * Constants
  */
 
-const bootBin = '/usr/bin/boot'
 const userBootService = '/lib/systemd/system/boot-scripts.service'
 const systemBootService = '/etc/systemd/system/boot-scripts.service'
 const bootCode = `
@@ -48,9 +47,13 @@ async function main() {
 
     if (!fs.existsSync(userBootService)) {
       await fs.writeFileSync(userBootService, bootCode)
+      // TODO link userBootService to systemBootService
+      // sudo ln -sf /lib/systemd/system/boot-scripts.service /etc/systemd/system/boot-scripts.service
+      // sudo systemctl daemon-reload
+      // sudo systemctl enable boot-scripts.service
     }
   } catch (err) {
-    console.error('Boot setup passed.\n')
+    console.error('Boot setup skipped.\n')
   }
 }
 
