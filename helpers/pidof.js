@@ -18,12 +18,13 @@ const hasPidof = which('pidof')
 function pidof(bin) {
   try {
     if (hasPidof) {
-      return child_process.execSync(`pidof ${bin}`, { encoding: 'utf8' }).trim()
+      const pids = child_process.execSync(`pidof ${bin}`, { encoding: 'utf8' }).trim()
+      return pids.split(' ').map(e => parseInt(e))
     } else {
-      return null
+      return []
     }
   } catch (e) {
-    return null
+    return []
   }
 }
 
