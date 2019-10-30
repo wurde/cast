@@ -6,7 +6,7 @@
 
 const meow = require('meow')
 const showHelp = require('../helpers/showHelp')
-const buildTargetURL = require('../helpers/buildTargetURL')
+const parseUrl = require('../helpers/parseUrl')
 const launchBrowser = require('../helpers/launchBrowser')
 const cheerio = require('cheerio')
 const url = require('url')
@@ -18,8 +18,16 @@ const url = require('url')
 const cli = meow(`
   Usage
     $ cast crawl URL
+
+  Options
+    --introspect    Print only links within the given URL
 `, {
-    description: 'Crawls websites for specific content.'
+    description: 'Crawls websites for specific content.',
+    flags: {
+        introspect: {
+            type: 'boolean'
+        }
+    }
 })
 
 /**
@@ -27,17 +35,17 @@ const cli = meow(`
  */
 
 async function launchPage() {
-    const browser = await launchBrowser({
-      headless: true,
-      defaultViewport: {
-        width: 1024,
-        height: 800
-      }
-    })
+  const browser = await launchBrowser({
+    headless: true,
+    defaultViewport: {
+      width: 1024,
+      height: 800
+    }
+  })
 
-    const page = await browser.newPage()
+  const page = await browser.newPage()
 
-    return [browser, page]
+  return [browser, page]
 }
 
 class Queue {
@@ -64,20 +72,41 @@ class Queue {
 
 async function crawl_script() {
   showHelp(cli, [cli.input.length < 2])
+  const visited = new Set()
 
   const [browser, page] = await launchPage()
   try {
-    const rootUrl = buildTargetURL(cli.input[1])
-    await page.goto(rootUrl)
-    await page.waitFor(1000)
+    /**
+     * Visit target URL.
+     */
+
+    const rootUrl = parseUrl(cli.input[1])
+    const rootHref= rootUrl.href.replace(/\/$/, '')
+    await page.goto(rootHref)
+    visited.add(rootHref)
+    await page.waitFor(300)
     const pageContent = await page.content()
+
+    /**
+     * Parse page content.
+     */
+    
     const $ = cheerio.load(pageContent)
     const links = []
     $('body a').each((i, element) => {
       if (element.attribs.href) {
         const link = url.parse(element.attribs.href)
-        if (link.hostname) {
-          links.push(link.href)
+        const fullHref = rootHref + link.href
+        
+        // Filter out external links if --introspect is true
+        if (cli.flags.introspect) {
+          if (!links.includes(fullHref) && !visited.has(fullHref) && !link.hostname) {
+            links.push(fullHref)
+          }
+        } else {
+          if (link.hostname) {
+            links.push(link.href)
+          }
         }
       }
     })
@@ -90,23 +119,30 @@ async function crawl_script() {
     while (q.queue.length > 0) {
       const link = q.dequeue()
       await page.goto(link)
-      await page.waitFor(1000)
+      visited.add(link)
+      await page.waitFor(300)
       const pageContent = await page.content()
       const $ = cheerio.load(pageContent)
       const links = []
       $('body a').each((i, element) => {
-
         if (element.attribs.href) {
           const link = url.parse(element.attribs.href)
-          if (link.hostname) {
-            links.push(link.href)
+          const fullHref = rootHref + link.href
+
+          // Filter out external links if --introspect is true
+          if (cli.flags.introspect) {
+            if (!links.includes(fullHref) && !visited.has(fullHref) && !link.hostname) {
+              links.push(fullHref)
+            }
+          } else {
+            if (link.hostname) {
+              links.push(link.href)
+            }
           }
         }
       })
       console.log(links, `LINK ${link}`)
-      links.forEach((link) => {
-        q.enqueue(link)
-      })
+      links.forEach((link) => q.enqueue(link))
     }
   } catch (error) {
     console.error(error)

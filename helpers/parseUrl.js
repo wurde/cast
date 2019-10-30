@@ -11,15 +11,15 @@ const printError = require('./printError');
  * Define helper
  */
 
-function buildTargetURL(target) {
+function parseUrl(target) {
     let targetURL = url.parse(target)
     if (!targetURL.protocol) targetURL = url.parse('https://' + target)
     if (!targetURL.hostname) printError('Error: Invalid URL')
-    return targetURL.href
+    return targetURL
 }
 
 /**
  * Export helper
  */
 
-module.exports = buildTargetURL
+module.exports = parseUrl
