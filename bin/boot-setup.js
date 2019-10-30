@@ -8,18 +8,15 @@
 
 const fs = require('fs')
 const child_process = require('child_process')
-const which = require('../helpers/which')
+const pidof = require('../helpers/pidof')
 
 /**
  * Constants
  */
 
-const initBin = '/sbin/init'
 const bootBin = '/usr/bin/boot'
 const userBootService = '/lib/systemd/system/boot-scripts.service'
 const systemBootService = '/etc/systemd/system/boot-scripts.service'
-const hasPidof = which('pidof')
-const hasSystemd = which('systemd')
 const bootCode = `
 [Unit]
 Description=Run /usr/bin/boot
@@ -43,12 +40,7 @@ async function main() {
      * Check systemd is pid Eins.
      */
 
-    if (!hasPidof) return
-    if (!hasSystemd) return
-    if (!fs.existsSync(initBin)) return
-    const initPid = child_process.execSync(`pidof ${initBin}`, { encoding: 'utf8' })
-    const systemdPid = child_process.execSync('pidof systemd', { encoding: 'utf8' })
-    if (initPid !== systemdPid) return
+    if (pidof('/sbin/init') !== pidof('systemd')) return
 
     /**
      * Hook into system boot sequence.
