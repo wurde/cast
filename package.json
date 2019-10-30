@@ -5,6 +5,7 @@
   "main": "bin/cast.js",
   "private": true,
   "bin": {
+    "boot": "./bin/boot.js",
     "cast": "./bin/cast.js",
     "gc": "./bin/gc.js",
     "gp": "./bin/gp.js"
@@ -13,7 +14,8 @@
     "pretest": "npm run lint",
     "test": "jest",
     "preversion": "npm test",
-    "lint": "eslint bin commands helpers"
+    "lint": "eslint bin commands helpers",
+    "bootsetup": "sudo node ./bin/boot-setup.js"
   },
   "repository": {
     "type": "git",

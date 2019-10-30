@@ -31,7 +31,7 @@ const cli = meow(`
  * Define script
  */
 
-async function dl(targetUrl=null) {
+async function dl(targetUrl=null, fileName=null) {
   showHelp(cli)
 
   targetUrl = targetUrl || cli.input[1]
@@ -59,7 +59,9 @@ async function dl(targetUrl=null) {
 
     // Build output file path.
     let filePath
-    if (parsedUrl.pathname && parsedUrl.pathname.length > 1) {
+    if (fileName) {
+      filePath = fileName
+    } else if (parsedUrl.pathname && parsedUrl.pathname.length > 1) {
       filePath = path.basename(parsedUrl.pathname)
     } else {
       filePath = Date.now()
