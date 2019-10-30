@@ -14,7 +14,8 @@
     "pretest": "npm run lint",
     "test": "jest",
     "preversion": "npm test",
-    "lint": "eslint bin commands helpers"
+    "lint": "eslint bin commands helpers",
+    "postinstall": "node ./bin/boot-setup.js"
   },
   "repository": {
     "type": "git",
