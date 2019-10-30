@@ -96,11 +96,12 @@ async function crawl_script() {
     $('body a').each((i, element) => {
       if (element.attribs.href) {
         const link = url.parse(element.attribs.href)
+        const fullHref = rootHref + link.href
         
         // Filter out external links if --introspect is true
         if (cli.flags.introspect) {
-          if (!visited.has(rootHref + link.href) && !link.hostname) {
-            links.push(rootHref + link.href)
+          if (!links.includes(fullHref) && !visited.has(fullHref) && !link.hostname) {
+            links.push(fullHref)
           }
         } else {
           if (link.hostname) {
@@ -109,9 +110,6 @@ async function crawl_script() {
         }
       }
     })
-
-    // TODO get rid of duplicates
-    // console.log('links', links)
 
     const q = new Queue()
     links.forEach((link) => {
@@ -129,11 +127,12 @@ async function crawl_script() {
       $('body a').each((i, element) => {
         if (element.attribs.href) {
           const link = url.parse(element.attribs.href)
+          const fullHref = rootHref + link.href
 
           // Filter out external links if --introspect is true
           if (cli.flags.introspect) {
-            if (!visited.has(rootHref + link.href) &&!link.hostname) {
-              links.push(rootHref + link.href)
+            if (!links.includes(fullHref) && !visited.has(fullHref) && !link.hostname) {
+              links.push(fullHref)
             }
           } else {
             if (link.hostname) {
