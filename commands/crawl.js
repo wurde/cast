@@ -72,6 +72,7 @@ class Queue {
 
 async function crawl_script() {
   showHelp(cli, [cli.input.length < 2])
+  // TODO store a visited list to avoid circular behiavor.
 
   const [browser, page] = await launchPage()
   try {
@@ -80,8 +81,8 @@ async function crawl_script() {
      */
 
     const rootUrl = parseUrl(cli.input[1])
-    console.log('page.goto', rootUrl.href)
-    await page.goto(rootUrl.href)
+    const rootHref= rootUrl.href.replace(/\/$/, '')
+    await page.goto(rootHref)
     await page.waitFor(1000)
     const pageContent = await page.content()
 
@@ -98,7 +99,7 @@ async function crawl_script() {
         // Filter out external links if --introspect is true
         if (cli.flags.introspect) {
           if (!link.hostname) {
-            links.push(link.href)
+            links.push(rootHref + link.href)
           }
         } else {
           if (link.hostname) {
@@ -110,7 +111,6 @@ async function crawl_script() {
 
     // TODO get rid of duplicates
     console.log('links', links)
-    process.exit(0)
 
     const q = new Queue()
     links.forEach((link) => {
@@ -131,7 +131,7 @@ async function crawl_script() {
           // Filter out external links if --introspect is true
           if (cli.flags.introspect) {
             if (!link.hostname) {
-              links.push(link.href)
+              links.push(rootHref + link.href)
             }
           } else {
             if (link.hostname) {
