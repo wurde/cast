@@ -13,7 +13,7 @@ const path = require('path')
  * Constants
  */
 
-const file_path = path.join('/home/wurde/boot.log')
+const file_path = path.join('/tmp/boot.log')
 
 /**
  * Append new log line
