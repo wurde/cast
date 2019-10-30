@@ -50,7 +50,7 @@ async function google_images(query=null) {
 
     // Download all images.
     for (let i = 0; i < imageUrls.length; i++) {
-      dl(imageUrls[i])
+      dl(imageUrls[i], `${i}`)
       await sleep(200)
     }
   } catch (err) {
