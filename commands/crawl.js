@@ -72,7 +72,7 @@ class Queue {
 
 async function crawl_script() {
   showHelp(cli, [cli.input.length < 2])
-  // TODO store a visited list to avoid circular behiavor.
+  const visited = new Set()
 
   const [browser, page] = await launchPage()
   try {
@@ -83,7 +83,8 @@ async function crawl_script() {
     const rootUrl = parseUrl(cli.input[1])
     const rootHref= rootUrl.href.replace(/\/$/, '')
     await page.goto(rootHref)
-    await page.waitFor(1000)
+    visited.add(rootHref)
+    await page.waitFor(300)
     const pageContent = await page.content()
 
     /**
@@ -98,7 +99,7 @@ async function crawl_script() {
         
         // Filter out external links if --introspect is true
         if (cli.flags.introspect) {
-          if (!link.hostname) {
+          if (!visited.has(rootHref + link.href) && !link.hostname) {
             links.push(rootHref + link.href)
           }
         } else {
@@ -110,7 +111,7 @@ async function crawl_script() {
     })
 
     // TODO get rid of duplicates
-    console.log('links', links)
+    // console.log('links', links)
 
     const q = new Queue()
     links.forEach((link) => {
@@ -120,7 +121,8 @@ async function crawl_script() {
     while (q.queue.length > 0) {
       const link = q.dequeue()
       await page.goto(link)
-      await page.waitFor(1000)
+      visited.add(link)
+      await page.waitFor(300)
       const pageContent = await page.content()
       const $ = cheerio.load(pageContent)
       const links = []
@@ -130,7 +132,7 @@ async function crawl_script() {
 
           // Filter out external links if --introspect is true
           if (cli.flags.introspect) {
-            if (!link.hostname) {
+            if (!visited.has(rootHref + link.href) &&!link.hostname) {
               links.push(rootHref + link.href)
             }
           } else {
