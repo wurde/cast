@@ -11,7 +11,7 @@ const shutdown = require('./shutdown')
  */
 
 function reboot() {
-  shutdown(['--reboot'])
+  shutdown(['--reboot', 'now'])
 }
 
 /**
