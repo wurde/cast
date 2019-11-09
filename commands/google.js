@@ -77,10 +77,10 @@ async function google(options={}) {
   const query = options.query || cli.input.slice(1).join(' ')
   const limit = options.count || cli.flags.count || 10
   
-  const scrapeResults = async (query='', start=0) => await scrape({
-    url: `https://www.google.com/search?q=${query}&start=${start}`,
-    selector: 'div.g'
-  })
+  const scrapeResults = async (query='', start=0) => await scrape(
+    `https://www.google.com/search?q=${query}&start=${start}`,
+    'div.g'
+  )
 
   let results = []
   let remaining = limit
