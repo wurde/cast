@@ -34,13 +34,12 @@ const cli = meow(`
  * Define helpers
  */
 
-function hasTitleandValidLink(packagedResult) {
-  const prefixedWithHttp = packagedResult.href.startsWith('http')
-  return packagedResult.title && prefixedWithHttp
+function hasTitleandValidLink(result) {
+  return result.title && result.href.startsWith('http');
 }
 
 function formatResults(result) {
-  const $ = cheerio.load(result)
+  const $ = cheerio.load(result);
 
   return {
     title: $('h3').text(),
