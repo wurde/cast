@@ -34,12 +34,7 @@ async function google_images(query=null) {
 
   try {
     const targetUrl = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(query)}`
-
-    // Scrape images from search.
-    const result = await scrape({
-      url: targetUrl,
-      selector: 'div#search img'
-    })
+    const result = await scrape(targetUrl, 'div#search img')
 
     // Parse all image URLs on page.
     const imageUrls = result.reduce((urls, imageHtml) => {
