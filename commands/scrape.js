@@ -4,8 +4,6 @@
  * Dependencies
  */
 
-const fs = require('fs')
-const path = require('path')
 const url = require('url')
 const meow = require('meow')
 const prompts = require('prompts')
@@ -66,6 +64,7 @@ const cli = meow(`
 
 async function scrape(url=null, selector=null) {
   showHelp(cli, [((!url || !selector) && cli.input.length < 2)]);
+  requireConnectivity();
 
   url = url ? url : cli.input[1];
   selector = selector ? selector : cli.flags.selector;
@@ -85,83 +84,27 @@ async function scrape(url=null, selector=null) {
         }
       }
     );
-    selector = selectorPrompt.value
+    selector = selectorPrompt.value;
   }
 
-
-  // if (arguments.length > 0) {
-  //   const { url, selector } = options
-
-  //   const [browser, page] = await launchPage()
-  //   await page.goto(buildTargetURL(url))
-
-  //   let results = []
-  //   try {
-  //     results = await page.evaluate(selector => {
-  //       const elements = 
-  //         Array.from(document.querySelectorAll(selector))
-  //         .map(el => el.outerHTML)
-          
-  //       return elements
-  //     }, selector)
-  //   } catch(err) {
-  //     console.error(err)
-  //     return err
-  //   } finally {
-  //     browser.close()
-  //     return results
-  //   }
-  // }
-  
-  // requireConnectivity()
-  // showHelp(cli, [!cli.input[1]])
-
-  // let selector = cli.flags.selector
-
-  // console.log('')
-  // selector = await promptForCSSSelector(selector)
-
   // const [browser, page] = await launchPage()
-  // await page.goto(buildTargetURL(cli.input[1]))
+  // await page.goto(buildTargetURL(url))
 
+  // let results = []
   // try {
-  //   const results = await page.evaluate(selector => {
+  //   results = await page.evaluate(selector => {
   //     const elements = 
   //       Array.from(document.querySelectorAll(selector))
   //       .map(el => el.outerHTML)
         
   //     return elements
   //   }, selector)
-
-  //   const saveFilePrompt = await prompts({
-  //     type: 'confirm',
-  //     name: 'saveFile',
-  //     initial: true,
-  //     message: 'Do you want to save the results to a file? (Y/n)'
-  //   })
-
-  //   let filename = null
-  //   if (saveFilePrompt.saveFile) {
-  //     var filenamePrompt = await prompts({
-  //       type: 'text',
-  //       name: 'filename',
-  //       message: 'Enter the filename you\'d like to save to',
-  //     })
-  //     filename = filenamePrompt.filename
-
-  //     fs.writeFileSync(filename, results)
-  //   }
-
-  //   console.log('\n  Results:', results)
-
-  //   return {
-  //     results,
-  //     path: (filename) ? path.resolve(process.cwd(), filename) : null
-  //   }
   // } catch(err) {
   //   console.error(err)
+  //   return err
   // } finally {
   //   browser.close()
+  //   return results
   // }
 }
 
