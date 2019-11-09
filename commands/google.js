@@ -4,11 +4,12 @@
  * Dependencies
  */
 
-const meow = require('meow')
-const showHelp = require('../helpers/showHelp')
-const scrape = require('./scrape')
-const cheerio = require('cheerio')
-const chalk = require('chalk')
+const meow = require('meow');
+const scrape = require('./scrape');
+const cheerio = require('cheerio');
+const chalk = require('chalk');
+const showHelp = require('../helpers/showHelp');
+const launchBrowser = require('../helpers/launchBrowser');
 
 /**
  * Parse args
@@ -34,15 +35,12 @@ const cli = meow(`
  * Define helpers
  */
 
-// cb for [].prototype.filter
-function hasTitleandValidLink(packagedResult) {
-  const prefixedWithHttp = packagedResult.href.startsWith('http')
-  return packagedResult.title && prefixedWithHttp
+function hasTitleandValidLink(result) {
+  return result.title && result.href.startsWith('http');
 }
 
-// cb for [].prototype.map
 function formatResults(result) {
-  const $ = cheerio.load(result)
+  const $ = cheerio.load(result);
 
   return {
     title: $('h3').text(),
@@ -71,37 +69,57 @@ function printResults(results) {
  * Define script
  */
 
-async function google(options={}) {
-  showHelp(cli, [!options])
+async function google(query=null, limit=null) {
+  showHelp(cli, [(!query && cli.input.length < 2)]);
 
-  const query = options.query || cli.input.slice(1).join(' ')
-  const limit = options.count || cli.flags.count || 10
-  
-  const scrapeResults = async (query='', start=0) => await scrape({
-    url: `https://www.google.com/search?q=${query}&start=${start}`,
-    selector: 'div.g'
-  })
+  query = query ? query : cli.input.slice(1).join(' ');
+  limit = limit || cli.flags.count || 10;
 
-  let results = []
-  let remaining = limit
-  let counter = 0
-  while (remaining > 0) {
-    const scrapedResults = await scrapeResults(query, counter)
-    results = results.concat(formatValidResults(scrapedResults))
-    counter += scrapedResults.length
-    remaining -= scrapedResults.length
-
-    // trim off leftover results
-    if (remaining < 0) {
-      results = results.slice(0, counter + remaining)
+  const browser = await launchBrowser({
+    headless: true,
+    defaultViewport: {
+      width: 1024,
+      height: 800
     }
-  }
+  });
 
-  if (arguments.length === 0) {
-    printResults(results)
-  }
+  const scrapeResults = async (query='', start=0) => await scrape(
+    `https://www.google.com/search?q=${query}&start=${start}`,
+    'div.g',
+    browser
+  )
 
-  return results
+  let results = [];
+  let remaining = limit;
+  let counter = 0;
+
+  try {
+    while (remaining > 0) {
+      const scrapedResults = await scrapeResults(query, counter);
+      results = results.concat(formatValidResults(scrapedResults));
+      counter += scrapedResults.length;
+      remaining -= scrapedResults.length;
+
+      // trim off leftover results
+      if (remaining < 0) {
+        results = results.slice(0, counter + remaining);
+      }
+    }
+
+    if (arguments.length === 0) {
+      if (limit < 20) {
+        printResults(results);
+      } else {
+        console.log(JSON.stringify(results))
+      }
+    }
+  } catch (err) {
+    console.error(err);
+    return err;
+  } finally {
+    browser.close();
+    return results;
+  }
 }
 
 /**
