@@ -23,7 +23,7 @@ const cli = meow(`
     $ cast scrape URL
 
   Options
-    --selector, -s   Define the CSS selector.
+    --selector, -s PATTERN   Define the CSS selector.
 `, {
   description: 'Scrape web content.',
   flags: {
@@ -39,126 +39,131 @@ const cli = meow(`
  * Define helper
  */
 
-async function launchPage() {
-  const browser = await launchBrowser({
-    headless: true,
-    defaultViewport: {
-      width: 1024,
-      height: 800
-    }
-  })
+// async function launchPage() {
+//   const browser = await launchBrowser({
+//     headless: true,
+//     defaultViewport: {
+//       width: 1024,
+//       height: 800
+//     }
+//   })
 
-  const page = await browser.newPage()
+//   const page = await browser.newPage()
 
-  return [browser, page]
-}
+//   return [browser, page]
+// }
 
-function buildTargetURL(target) {
-  let targetURL = url.parse(target)
-  if (!targetURL.protocol) targetURL = url.parse('https://' + target)
-  if (!targetURL.hostname) printError('Error: Invalid URL')
-  return targetURL.href
-}
+// function buildTargetURL(target) {
+//   let targetURL = url.parse(target)
+//   if (!targetURL.protocol) targetURL = url.parse('https://' + target)
+//   if (!targetURL.hostname) printError('Error: Invalid URL')
+//   return targetURL.href
+// }
 
-async function promptForCSSSelector(selector) {
-  if (!selector || selector.length === 0) {
-    const selectorPrompt = await prompts({
-      type: 'text',
-      name: 'value',
-      message: 'Enter a CSS selector to scrape the page',
-      validate: value => value.length === 0 ? 'Minimum 1 character' : true,
-    }, {
-      onCancel: () => {
-        console.log('onCancel')
-        process.exit(1)
-      }
-    })
+// async function promptForCSSSelector(selector) {
+//   if (!selector || selector.length === 0) {
+//     const selectorPrompt = await prompts({
+//       type: 'text',
+//       name: 'value',
+//       message: 'Enter a CSS selector to scrape the page',
+//       validate: value => value.length === 0 ? 'Minimum 1 character' : true,
+//     }, {
+//       onCancel: () => {
+//         console.log('onCancel')
+//         process.exit(1)
+//       }
+//     })
 
-    selector = selectorPrompt.value
-  }
-  return selector
-}
+//     selector = selectorPrompt.value
+//   }
+//   return selector
+// }
 
 /**
  * Define script
  */
 
-async function scrape(options=null) {
-  // Allow scrape to be called outside of cli
-  if (arguments.length > 0) {
-    const { url, selector } = options
+async function scrape(url=null, selector=null) {
+  showHelp(cli, [((!url || !selector) && cli.input.length < 2)]);
 
-    const [browser, page] = await launchPage()
-    await page.goto(buildTargetURL(url))
+  url = (url && selector) ? url : cli.input[1];
+  console.log('scrape', url);
 
-    let results = []
-    try {
-      results = await page.evaluate(selector => {
-        const elements = 
-          Array.from(document.querySelectorAll(selector))
-          .map(el => el.outerHTML)
+
+  // if (arguments.length > 0) {
+  //   const { url, selector } = options
+
+  //   const [browser, page] = await launchPage()
+  //   await page.goto(buildTargetURL(url))
+
+  //   let results = []
+  //   try {
+  //     results = await page.evaluate(selector => {
+  //       const elements = 
+  //         Array.from(document.querySelectorAll(selector))
+  //         .map(el => el.outerHTML)
           
-        return elements
-      }, selector)
-    } catch(err) {
-      console.error(err)
-      return err
-    } finally {
-      browser.close()
-      return results
-    }
-  }
+  //       return elements
+  //     }, selector)
+  //   } catch(err) {
+  //     console.error(err)
+  //     return err
+  //   } finally {
+  //     browser.close()
+  //     return results
+  //   }
+  // }
   
-  requireConnectivity()
-  showHelp(cli, [!cli.input[1]])
+  // requireConnectivity()
+  // showHelp(cli, [!cli.input[1]])
 
-  let selector = cli.flags.selector
+  // let selector = cli.flags.selector
 
-  console.log('')
-  selector = await promptForCSSSelector(selector)
+  // console.log('')
+  // selector = await promptForCSSSelector(selector)
 
-  const [browser, page] = await launchPage()
-  await page.goto(buildTargetURL(cli.input[1]))
+  // const [browser, page] = await launchPage()
+  // await page.goto(buildTargetURL(cli.input[1]))
 
-  try {
-    const results = await page.evaluate(selector => {
-      const elements = 
-        Array.from(document.querySelectorAll(selector))
-        .map(el => el.outerHTML)
+  // try {
+  //   const results = await page.evaluate(selector => {
+  //     const elements = 
+  //       Array.from(document.querySelectorAll(selector))
+  //       .map(el => el.outerHTML)
         
-      return elements
-    }, selector)
+  //     return elements
+  //   }, selector)
 
-    const saveFilePrompt = await prompts({
-      type: 'confirm',
-      name: 'saveFile',
-      initial: true,
-      message: 'Do you want to save the results to a file? (Y/n)'
-    })
+  //   const saveFilePrompt = await prompts({
+  //     type: 'confirm',
+  //     name: 'saveFile',
+  //     initial: true,
+  //     message: 'Do you want to save the results to a file? (Y/n)'
+  //   })
 
-    let filename = null
-    if (saveFilePrompt.saveFile) {
-      var filenamePrompt = await prompts({
-        type: 'text',
-        name: 'filename',
-        message: 'Enter the filename you\'d like to save to',
-      })
-      filename = filenamePrompt.filename
+  //   let filename = null
+  //   if (saveFilePrompt.saveFile) {
+  //     var filenamePrompt = await prompts({
+  //       type: 'text',
+  //       name: 'filename',
+  //       message: 'Enter the filename you\'d like to save to',
+  //     })
+  //     filename = filenamePrompt.filename
 
-      fs.writeFileSync(filename, results)
-    }
+  //     fs.writeFileSync(filename, results)
+  //   }
 
-    console.log('\n  Results:', results)
+  //   console.log('\n  Results:', results)
 
-    return {
-      results,
-      path: (filename) ? path.resolve(process.cwd(), filename) : null
-    }
-  } catch(err) {
-    console.error(err)
-  } finally {
-    browser.close()
-  }
+  //   return {
+  //     results,
+  //     path: (filename) ? path.resolve(process.cwd(), filename) : null
+  //   }
+  // } catch(err) {
+  //   console.error(err)
+  // } finally {
+  //   browser.close()
+  // }
 }
 
 /**
