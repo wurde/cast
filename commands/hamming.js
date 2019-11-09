@@ -24,11 +24,11 @@ const cli = meow(`
  * Define script
  */
 
-function hamming() {
-  showHelp(cli, [cli.input.length < 3]);
+function hamming(n1=null, n2=null) {
+  showHelp(cli, [((!n1 && !n2) && cli.input.length < 3)]);
 
-  const n1 = cli.input[1];
-  const n2 = cli.input[2];
+  n1 = (n1 && n2) ? n1 : cli.input[1];
+  n2 = (n1 && n2) ? n2 : cli.input[2];
   const binaryInput = binary([n1, n2]);
   const binaryN1 = parseInt(binaryInput[n1], 2);
   const binaryN2 = parseInt(binaryInput[n2], 2);
