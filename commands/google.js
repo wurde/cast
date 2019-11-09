@@ -34,13 +34,11 @@ const cli = meow(`
  * Define helpers
  */
 
-// cb for [].prototype.filter
 function hasTitleandValidLink(packagedResult) {
   const prefixedWithHttp = packagedResult.href.startsWith('http')
   return packagedResult.title && prefixedWithHttp
 }
 
-// cb for [].prototype.map
 function formatResults(result) {
   const $ = cheerio.load(result)
 
@@ -81,23 +79,21 @@ async function google(query=null, limit=null) {
     `https://www.google.com/search?q=${query}&start=${start}`,
     'div.g'
   )
-  const scrapedResults = await scrapeResults(query, 0);
-  console.log('scrapedResults', scrapedResults);
 
   let results = []
   let remaining = limit
   let counter = 0
-  // while (remaining > 0) {
-  //   const scrapedResults = await scrapeResults(query, counter)
-  //   results = results.concat(formatValidResults(scrapedResults))
-  //   counter += scrapedResults.length
-  //   remaining -= scrapedResults.length
+  while (remaining > 0) {
+    const scrapedResults = await scrapeResults(query, counter)
+    results = results.concat(formatValidResults(scrapedResults))
+    counter += scrapedResults.length
+    remaining -= scrapedResults.length
 
-  //   // trim off leftover results
-  //   if (remaining < 0) {
-  //     results = results.slice(0, counter + remaining)
-  //   }
-  // }
+    // trim off leftover results
+    if (remaining < 0) {
+      results = results.slice(0, counter + remaining)
+    }
+  }
 
   if (arguments.length === 0) {
     printResults(results)
