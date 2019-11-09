@@ -71,31 +71,33 @@ function printResults(results) {
  * Define script
  */
 
-async function google(options={}) {
-  showHelp(cli, [!options])
+async function google(query=null, limit=null) {
+  showHelp(cli, [(!query && cli.input.length < 2)])
 
-  const query = options.query || cli.input.slice(1).join(' ')
-  const limit = options.count || cli.flags.count || 10
+  query = query ? query : cli.input.slice(1).join(' ');
+  limit = limit || cli.flags.count || 10;
   
   const scrapeResults = async (query='', start=0) => await scrape(
     `https://www.google.com/search?q=${query}&start=${start}`,
     'div.g'
   )
+  const scrapedResults = await scrapeResults(query, 0);
+  console.log('scrapedResults', scrapedResults);
 
   let results = []
   let remaining = limit
   let counter = 0
-  while (remaining > 0) {
-    const scrapedResults = await scrapeResults(query, counter)
-    results = results.concat(formatValidResults(scrapedResults))
-    counter += scrapedResults.length
-    remaining -= scrapedResults.length
+  // while (remaining > 0) {
+  //   const scrapedResults = await scrapeResults(query, counter)
+  //   results = results.concat(formatValidResults(scrapedResults))
+  //   counter += scrapedResults.length
+  //   remaining -= scrapedResults.length
 
-    // trim off leftover results
-    if (remaining < 0) {
-      results = results.slice(0, counter + remaining)
-    }
-  }
+  //   // trim off leftover results
+  //   if (remaining < 0) {
+  //     results = results.slice(0, counter + remaining)
+  //   }
+  // }
 
   if (arguments.length === 0) {
     printResults(results)
