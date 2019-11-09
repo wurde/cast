@@ -76,7 +76,7 @@ async function google(query=null, limit=null) {
   limit = limit || cli.flags.count || 10;
 
   const browser = await launchBrowser({
-    headless: false,
+    headless: true,
     defaultViewport: {
       width: 1024,
       height: 800
@@ -107,7 +107,11 @@ async function google(query=null, limit=null) {
     }
 
     if (arguments.length === 0) {
-      printResults(results);
+      if (limit < 20) {
+        printResults(results);
+      } else {
+        console.log(JSON.stringify(results))
+      }
     }
   } catch (err) {
     console.error(err);
