@@ -78,12 +78,16 @@ async function scrape(url=null, selector=null, browser=null) {
 
   let results = []
   try {
-    results = await page.evaluate(selector => {
-      const elements = Array.from(document.querySelectorAll(selector))
-        .map(el => el.outerHTML)
-        
-      return elements
-    }, selector)
+    if (typeof selector === 'function') {
+      results = await page.evaluate(selector);
+    } else {
+      results = await page.evaluate(selector => {
+        const elements = Array.from(document.querySelectorAll(selector))
+          .map(el => el.outerHTML)
+          
+        return elements
+      }, selector)
+    }
 
     if (arguments.length === 0) {
       console.log(JSON.stringify(results))
