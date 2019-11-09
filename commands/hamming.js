@@ -29,8 +29,15 @@ function hamming() {
   const n1 = cli.input[1];
   const n2 = cli.input[2];
   const binaryInput = binary([n1, n2]);
+  const binaryN1 = parseInt(binaryInput[n1], 2);
+  const binaryN2 = parseInt(binaryInput[n2], 2);
+  const xor = ((binaryN1 ^ binaryN2) >>> 0).toString(2);
+  const bits = xor.replace(/0/g, '');
+  const hammingDistance = bits.length;
 
-  console.log('binaryInput', binaryInput[n1], binaryInput[n2]);
+  console.log(
+    `\n  Hamming distance between ${n1} and ${n2} is ${hammingDistance}.\n`
+  );
 }
 
 /**
