@@ -5,6 +5,7 @@
  */
 
 const meow = require('meow')
+const chalk = require('chalk')
 const binary = require('./binary')
 const showHelp = require('../helpers/showHelp')
 
@@ -35,9 +36,15 @@ function hamming() {
   const bits = xor.replace(/0/g, '');
   const hammingDistance = bits.length;
 
-  console.log(
-    `\n  Hamming distance between ${n1} and ${n2} is ${hammingDistance}.\n`
-  );
+  if (arguments.length === 0) {
+    console.log(
+      '\n  ',
+      chalk.white.bold(`Hamming distance between ${n1} and ${n2} is`),
+      `${chalk.green.bold(hammingDistance)}.\n`
+    );
+  }
+
+  return hammingDistance;
 }
 
 /**
