@@ -4,11 +4,12 @@
  * Dependencies
  */
 
-const meow = require('meow')
-const showHelp = require('../helpers/showHelp')
-const scrape = require('./scrape')
-const cheerio = require('cheerio')
-const chalk = require('chalk')
+const meow = require('meow');
+const scrape = require('./scrape');
+const cheerio = require('cheerio');
+const chalk = require('chalk');
+const showHelp = require('../helpers/showHelp');
+const launchBrowser = require('../helpers/launchBrowser');
 
 /**
  * Parse args
@@ -69,36 +70,52 @@ function printResults(results) {
  */
 
 async function google(query=null, limit=null) {
-  showHelp(cli, [(!query && cli.input.length < 2)])
+  showHelp(cli, [(!query && cli.input.length < 2)]);
 
   query = query ? query : cli.input.slice(1).join(' ');
   limit = limit || cli.flags.count || 10;
-  
+
+  const browser = await launchBrowser({
+    headless: false,
+    defaultViewport: {
+      width: 1024,
+      height: 800
+    }
+  });
+
   const scrapeResults = async (query='', start=0) => await scrape(
     `https://www.google.com/search?q=${query}&start=${start}`,
-    'div.g'
+    'div.g',
+    browser
   )
 
-  let results = []
-  let remaining = limit
-  let counter = 0
-  while (remaining > 0) {
-    const scrapedResults = await scrapeResults(query, counter)
-    results = results.concat(formatValidResults(scrapedResults))
-    counter += scrapedResults.length
-    remaining -= scrapedResults.length
+  let results = [];
+  let remaining = limit;
+  let counter = 0;
 
-    // trim off leftover results
-    if (remaining < 0) {
-      results = results.slice(0, counter + remaining)
+  try {
+    while (remaining > 0) {
+      const scrapedResults = await scrapeResults(query, counter);
+      results = results.concat(formatValidResults(scrapedResults));
+      counter += scrapedResults.length;
+      remaining -= scrapedResults.length;
+
+      // trim off leftover results
+      if (remaining < 0) {
+        results = results.slice(0, counter + remaining);
+      }
     }
-  }
 
-  if (arguments.length === 0) {
-    printResults(results)
+    if (arguments.length === 0) {
+      printResults(results);
+    }
+  } catch (err) {
+    console.error(err);
+    return err;
+  } finally {
+    browser.close();
+    return results;
   }
-
-  return results
 }
 
 /**

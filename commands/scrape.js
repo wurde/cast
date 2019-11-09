@@ -62,7 +62,9 @@ async function scrape(url=null, selector=null, browser=null) {
 
   const parsedUrl = parseUrl(url).href;
 
+  let keepBrowserAlive;
   if (!browser) {
+    keepBrowserAlive = false;
     browser = await launchBrowser({
       headless: true,
       defaultViewport: {
@@ -70,6 +72,8 @@ async function scrape(url=null, selector=null, browser=null) {
         height: 800
       }
     });
+  } else {
+    keepBrowserAlive = true;
   }
 
   const page = await browser.newPage();
@@ -96,7 +100,11 @@ async function scrape(url=null, selector=null, browser=null) {
     console.error(err)
     return err
   } finally {
-    browser.close()
+    if (keepBrowserAlive) {
+      page.close();
+    } else {
+      browser.close();
+    }
     return results
   }
 }
