@@ -5,6 +5,7 @@
  */
 
 const meow = require('meow')
+const binary = require('./binary')
 const showHelp = require('../helpers/showHelp')
 
 /**
@@ -25,7 +26,7 @@ const cli = meow(`
 function hamming() {
   showHelp(cli)
 
-  console.log('hamming')
+  console.log('hamming', binary([25, 20]));
 }
 
 /**

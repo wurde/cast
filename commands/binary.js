@@ -74,7 +74,7 @@ function binary(numbers=null, options={}) {
     let argv = (numbers) ? numbers : process.argv
 
     // Filter for only binary numbers.
-    let binaryNumbers  = argv.filter(e => e.match(/^[01]+$/))
+    let binaryNumbers  = argv.filter(e => Number.isInteger(e) ? e : e.match(/^[01]+$/))
 
     // Generate conversions
     let decimalNumbers = binaryNumbers.reduce((obj,b) => {
@@ -116,7 +116,9 @@ function binary(numbers=null, options={}) {
     let argv = (numbers) ? numbers : process.argv
 
     // Filter for only decimal numbers.
-    let decimalNumbers = argv.filter(e => e.match(/^\d+$/))
+    let decimalNumbers = argv.filter(e =>
+      Number.isInteger(e) ? e : e.match(/^\d+$/)
+    );
 
     // Generate conversions
     let binaryNumbers = decimalNumbers.reduce((obj, d) => {
