@@ -8,6 +8,7 @@ const url = require('url')
 const meow = require('meow')
 const prompts = require('prompts')
 const { requireConnectivity } = require('../helpers/connectivity')
+const parseUrl = require('../helpers/parseUrl')
 const showHelp = require('../helpers/showHelp')
 const printError = require('../helpers/printError')
 const launchBrowser = require('../helpers/launchBrowser')
@@ -51,13 +52,6 @@ const cli = meow(`
 //   return [browser, page]
 // }
 
-// function buildTargetURL(target) {
-//   let targetURL = url.parse(target)
-//   if (!targetURL.protocol) targetURL = url.parse('https://' + target)
-//   if (!targetURL.hostname) printError('Error: Invalid URL')
-//   return targetURL.href
-// }
-
 /**
  * Define script
  */
@@ -86,6 +80,8 @@ async function scrape(url=null, selector=null) {
     );
     selector = selectorPrompt.value;
   }
+
+  const parsedUrl = parseUrl(url).href;
 
   // const [browser, page] = await launchPage()
   // await page.goto(buildTargetURL(url))
