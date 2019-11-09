@@ -4,7 +4,6 @@
  * Dependencies
  */
 
-const url = require('url')
 const meow = require('meow')
 const prompts = require('prompts')
 const { requireConnectivity } = require('../helpers/connectivity')
@@ -32,30 +31,11 @@ const cli = meow(`
   }
 })
 
-
-/**
- * Define helper
- */
-
-// async function launchPage() {
-//   const browser = await launchBrowser({
-//     headless: true,
-//     defaultViewport: {
-//       width: 1024,
-//       height: 800
-//     }
-//   })
-
-//   const page = await browser.newPage()
-
-//   return [browser, page]
-// }
-
 /**
  * Define script
  */
 
-async function scrape(url=null, selector=null) {
+async function scrape(url=null, selector=null, browser=null) {
   showHelp(cli, [((!url || !selector) && cli.input.length < 2)]);
   requireConnectivity();
 
@@ -82,25 +62,39 @@ async function scrape(url=null, selector=null) {
 
   const parsedUrl = parseUrl(url).href;
 
-  // const [browser, page] = await launchPage()
-  // await page.goto(buildTargetURL(url))
+  if (!browser) {
+    browser = await launchBrowser({
+      headless: true,
+      defaultViewport: {
+        width: 1024,
+        height: 800
+      }
+    });
+  }
 
-  // let results = []
-  // try {
-  //   results = await page.evaluate(selector => {
-  //     const elements = 
-  //       Array.from(document.querySelectorAll(selector))
-  //       .map(el => el.outerHTML)
+  const page = await browser.newPage();
+  
+  await page.goto(parsedUrl);
+
+  let results = []
+  try {
+    results = await page.evaluate(selector => {
+      const elements = Array.from(document.querySelectorAll(selector))
+        .map(el => el.outerHTML)
         
-  //     return elements
-  //   }, selector)
-  // } catch(err) {
-  //   console.error(err)
-  //   return err
-  // } finally {
-  //   browser.close()
-  //   return results
-  // }
+      return elements
+    }, selector)
+
+    if (arguments.length === 0) {
+      console.log(JSON.stringify(results))
+    }
+  } catch(err) {
+    console.error(err)
+    return err
+  } finally {
+    browser.close()
+    return results
+  }
 }
 
 /**
