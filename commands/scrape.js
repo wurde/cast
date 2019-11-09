@@ -60,25 +60,6 @@ const cli = meow(`
 //   return targetURL.href
 // }
 
-// async function promptForCSSSelector(selector) {
-//   if (!selector || selector.length === 0) {
-//     const selectorPrompt = await prompts({
-//       type: 'text',
-//       name: 'value',
-//       message: 'Enter a CSS selector to scrape the page',
-//       validate: value => value.length === 0 ? 'Minimum 1 character' : true,
-//     }, {
-//       onCancel: () => {
-//         console.log('onCancel')
-//         process.exit(1)
-//       }
-//     })
-
-//     selector = selectorPrompt.value
-//   }
-//   return selector
-// }
-
 /**
  * Define script
  */
@@ -86,8 +67,26 @@ const cli = meow(`
 async function scrape(url=null, selector=null) {
   showHelp(cli, [((!url || !selector) && cli.input.length < 2)]);
 
-  url = (url && selector) ? url : cli.input[1];
-  console.log('scrape', url);
+  url = url ? url : cli.input[1];
+  selector = selector ? selector : cli.flags.selector;
+
+  if (!selector) {
+    console.log('')
+    const selectorPrompt = await prompts(
+      {
+        type: 'text',
+        name: 'value',
+        message: 'Enter a CSS selector',
+        validate: value => (value.length === 0 ? 'Minimum 1 character' : true)
+      },
+      {
+        onCancel: () => {
+          process.exit(1);
+        }
+      }
+    );
+    selector = selectorPrompt.value
+  }
 
 
   // if (arguments.length > 0) {
