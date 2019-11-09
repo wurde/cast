@@ -148,7 +148,7 @@ async function scrape(options=null) {
       fs.writeFileSync(filename, results)
     }
 
-    console.log('\nResults:', results)
+    console.log('\n  Results:', results)
 
     return {
       results,
