@@ -10,7 +10,6 @@ const prompts = require('prompts')
 const { requireConnectivity } = require('../helpers/connectivity')
 const parseUrl = require('../helpers/parseUrl')
 const showHelp = require('../helpers/showHelp')
-const printError = require('../helpers/printError')
 const launchBrowser = require('../helpers/launchBrowser')
 
 /**
