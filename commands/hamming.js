@@ -24,9 +24,13 @@ const cli = meow(`
  */
 
 function hamming() {
-  showHelp(cli)
+  showHelp(cli, [cli.input.length < 3]);
 
-  console.log('hamming', binary([25, 20]));
+  const n1 = cli.input[1];
+  const n2 = cli.input[2];
+  const binaryInput = binary([n1, n2]);
+
+  console.log('binaryInput', binaryInput[n1], binaryInput[n2]);
 }
 
 /**
