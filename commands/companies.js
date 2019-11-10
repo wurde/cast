@@ -4,15 +4,19 @@
  * Dependencies
  */
 
+const fs = require('fs');
+const path = require('path');
 const meow = require('meow');
-const showHelp = require('../helpers/showHelp');
+const cheerio = require('cheerio');
 const scrape = require('./scrape');
+const showHelp = require('../helpers/showHelp');
 
 /**
  * Constants
  */
 
 const REF_URL = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies';
+const CACHE_PATH = path.join(process.env.HOME, '.companies.html')
 
 /**
  * Parse args
@@ -34,7 +38,18 @@ async function companies() {
 
   const table = await scrape(REF_URL, 'table.wikitable');
 
-  console.log('table', table);
+  fs.writeFileSync(CACHE_PATH, table, { encoding: 'utf8' });
+
+  // const companyRefs = [];
+
+  // const $ = cheerio.load(table);
+
+  // $('table > tbody > tr').each((i, element) => {
+  //   console.log(element)
+  //   console.log('')
+  // })
+
+  // console.log('companyRefs', companyRefs);
 }
 
 /**
