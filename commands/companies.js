@@ -26,7 +26,7 @@ const CACHE_PATH = path.join(process.env.HOME, '.companies.html')
 
 const cli = meow(`
   Usage
-    $ cast companies
+    $ cast companies [FILTER]
 
   Options:
     --json   Return information in JSON format.
@@ -45,6 +45,8 @@ const cli = meow(`
 
 async function companies() {
   showHelp(cli);
+
+  const filter = cli.input.slice(1).join(' ');
 
   let fetchResults = true;
   if (fs.existsSync(CACHE_PATH)) {
@@ -67,6 +69,7 @@ async function companies() {
   let $ = cheerio.load(table);
 
   $('table tbody tr').each((i, element) => {
+    if (i === 0) return;
     companyRefs.push($(element).html().trim());
   })
 
@@ -96,13 +99,16 @@ async function companies() {
     return data;
   });
 
+  if (filter.length > 0) {
+    companyRefs = companyRefs.filter(c => c['name'].match(filter));
+  }
+
   if (arguments.length === 0) {
     if (cli.flags.json) {
       console.log(JSON.stringify(companyRefs));
     } else {
-      console.log(chalk.white.bold('Companies:\n'))
+      console.log(chalk.white.bold('\nCompanies:\n'))
       companyRefs.forEach(c => {
-        if (!c['symbol']) return;
         console.log(`  Symbol: ${chalk.green.bold(c['symbol'])}`);
         console.log(`  Name: ${chalk.green.bold(c['name'])}`);
         console.log(`  Sector: ${chalk.green.bold(c['sector'])}`);
