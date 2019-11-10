@@ -48,23 +48,46 @@ async function companies() {
 
   let table;
   if (fetchResults) {
-    table = await scrape(REF_URL, 'table.wikitable');
+    table = await scrape(REF_URL, 'table#constituents');
     fs.writeFileSync(CACHE_PATH, table, { encoding: 'utf8' });
   } else {
     table = fs.readFileSync(CACHE_PATH, { encoding: 'utf8' });
   }
-  console.log('table', table);
 
-  // const companyRefs = [];
+  let companyRefs = [];
+  let $ = cheerio.load(table);
 
-  // const $ = cheerio.load(table);
+  $('table tbody tr').each((i, element) => {
+    companyRefs.push($(element).html().trim());
+  })
 
-  // $('table > tbody > tr').each((i, element) => {
-  //   console.log(element)
-  //   console.log('')
-  // })
+  companyRefs = companyRefs.map(companyRef => {
+    const data = {
+      "symbol": null,
+      "name": null,
+      "sector": null,
+      "subSector": null,
+      "headquarters": null,
+      "dateAdded": null,
+      "cik": null,
+      "founded": null,
+    }
 
-  // console.log('companyRefs', companyRefs);
+    $('td', companyRef).each((i, col) => {
+      if (i === 0) data["symbol"] = $(col).text().trim();
+      if (i === 1) data["name"] = $(col).text().trim();
+      if (i === 3) data["sector"] = $(col).text().trim();
+      if (i === 4) data["subSector"] = $(col).text().trim();
+      if (i === 5) data["headquarters"] = $(col).text().trim();
+      if (i === 6) data["dateAdded"] = $(col).text().trim();
+      if (i === 7) data["cik"] = $(col).text().trim();
+      if (i === 8) data["founded"] = $(col).text().trim();
+    })
+
+    return data;
+  });
+
+  console.log('companyRefs', companyRefs);
 }
 
 /**
