@@ -8,15 +8,15 @@ const fs = require('fs');
  * Define helper
  */
 
-function lastModified(path) {
+function lastAccessed(path) {
   const stats = fs.statSync(path);
   const now = Date.now();
 
-  return now - stats.mtimeMs;
+  return now - stats.atimeMs;
 }
 
 /**
  * Export helper
  */
 
-module.exports = lastModified
+module.exports = lastAccessed
