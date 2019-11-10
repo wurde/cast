@@ -6,6 +6,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const chalk = require('chalk');
 const meow = require('meow');
 const cheerio = require('cheerio');
 const scrape = require('./scrape');
@@ -26,8 +27,16 @@ const CACHE_PATH = path.join(process.env.HOME, '.companies.html')
 const cli = meow(`
   Usage
     $ cast companies
+
+  Options:
+    --json   Return information in JSON format.
 `, {
-  description: 'Lookup table for companies in the S&P 500.'
+  description: 'Lookup table for companies in the S&P 500.',
+  flags: {
+    json: {
+      type: 'boolean',
+    }
+  }
 })
 
 /**
@@ -87,7 +96,26 @@ async function companies() {
     return data;
   });
 
-  console.log('companyRefs', companyRefs);
+  if (arguments.length === 0) {
+    if (cli.flags.json) {
+      console.log(JSON.stringify(companyRefs));
+    } else {
+      console.log(chalk.white.bold('Companies:\n'))
+      companyRefs.forEach(c => {
+        if (!c['symbol']) return;
+        console.log(`  Symbol: ${chalk.green.bold(c['symbol'])}`);
+        console.log(`  Name: ${chalk.green.bold(c['name'])}`);
+        console.log(`  Sector: ${chalk.green.bold(c['sector'])}`);
+        console.log(`  Sub-Sector: ${chalk.green.bold(c['subSector'])}`);
+        if (c['dateAdded']) console.log(`  Date Added: ${chalk.green.bold(c['dateAdded'])}`);
+        console.log(`  CIK: ${chalk.green.bold(c['cik'])}`);
+        if (c['founded']) console.log(`  Founded: ${chalk.green.bold(c['founded'])}`);
+        console.log('')
+      })
+    }
+  }
+
+  return companyRefs
 }
 
 /**
