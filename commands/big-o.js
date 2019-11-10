@@ -4,9 +4,9 @@
  * Dependencies
  */
 
-const meow = require('meow')
-const chalk = require('chalk')
-const showHelp = require('../helpers/showHelp')
+const meow = require('meow');
+const chalk = require('chalk');
+const showHelp = require('../helpers/showHelp');
 
 /**
  * Parse args
