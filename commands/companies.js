@@ -37,14 +37,23 @@ const cli = meow(`
 async function companies() {
   showHelp(cli);
 
-  const ms = lastModified(CACHE_PATH);
-  const stats = fs.statSync(CACHE_PATH);
-  console.log('stats', stats);
-  console.log('ms', ms);
+  let fetchResults = true;
+  if (fs.existsSync(CACHE_PATH)) {
+    const ms = lastModified(CACHE_PATH);
+    const month = 1000 * 60 * 60 * 24 * 30;
+    if (ms < month) {
+      fetchResults = false;
+    }
+  }
 
-  // const table = await scrape(REF_URL, 'table.wikitable');
-
-  // fs.writeFileSync(CACHE_PATH, table, { encoding: 'utf8' });
+  let table;
+  if (fetchResults) {
+    table = await scrape(REF_URL, 'table.wikitable');
+    fs.writeFileSync(CACHE_PATH, table, { encoding: 'utf8' });
+  } else {
+    table = fs.readFileSync(CACHE_PATH, { encoding: 'utf8' });
+  }
+  console.log('table', table);
 
   // const companyRefs = [];
 
