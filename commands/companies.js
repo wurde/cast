@@ -4,8 +4,15 @@
  * Dependencies
  */
 
-const meow = require('meow')
-const showHelp = require('../helpers/showHelp')
+const meow = require('meow');
+const showHelp = require('../helpers/showHelp');
+const scrape = require('./scrape');
+
+/**
+ * Constants
+ */
+
+const REF_URL = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies';
 
 /**
  * Parse args
@@ -22,10 +29,12 @@ const cli = meow(`
  * Define script
  */
 
-function companies() {
-  showHelp(cli)
+async function companies() {
+  showHelp(cli);
 
-  console.log('companies')
+  const table = await scrape(REF_URL, 'table.wikitable');
+
+  console.log('table', table);
 }
 
 /**
