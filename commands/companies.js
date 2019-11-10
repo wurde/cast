@@ -10,6 +10,7 @@ const meow = require('meow');
 const cheerio = require('cheerio');
 const scrape = require('./scrape');
 const showHelp = require('../helpers/showHelp');
+const lastModified = require('../helpers/lastModified');
 
 /**
  * Constants
@@ -36,9 +37,14 @@ const cli = meow(`
 async function companies() {
   showHelp(cli);
 
-  const table = await scrape(REF_URL, 'table.wikitable');
+  const ms = lastModified(CACHE_PATH);
+  const stats = fs.statSync(CACHE_PATH);
+  console.log('stats', stats);
+  console.log('ms', ms);
 
-  fs.writeFileSync(CACHE_PATH, table, { encoding: 'utf8' });
+  // const table = await scrape(REF_URL, 'table.wikitable');
+
+  // fs.writeFileSync(CACHE_PATH, table, { encoding: 'utf8' });
 
   // const companyRefs = [];
 
