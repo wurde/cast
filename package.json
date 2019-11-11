@@ -30,6 +30,7 @@
   "license": "MIT",
   "homepage": "https://github.com/wurde/scripts#readme",
   "dependencies": {
+    "@tensorflow/tfjs": "^1.1.2",
     "axios": "^0.19.0",
     "blessed": "^0.1.81",
     "chalk": "^2.4.2",
