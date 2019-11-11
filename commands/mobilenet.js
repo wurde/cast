@@ -7,8 +7,9 @@
 const fs = require('fs');
 const path = require('path');
 const meow = require('meow');
-const showHelp = require('../helpers/showHelp');
 const tf = require('@tensorflow/tfjs-node');
+const file = require('./file');
+const showHelp = require('../helpers/showHelp');
 
 /**
  * Constants
@@ -74,7 +75,14 @@ async function mobilenet() {
 
   const files = fs.readdirSync('.')
     .map(file => path.join(process.cwd(), file))
-    // filter for images only
+    .filter(filePath => {
+      const mimeType = file(filePath);
+      if (mimeType.type === 'image/jpeg') {
+        return true
+      } else {
+        return false
+      }
+    })
 
   console.log('files', files);
 }

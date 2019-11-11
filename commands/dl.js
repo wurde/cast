@@ -77,7 +77,7 @@ async function dl(targetUrl=null, fileName=null) {
         // Ensure a file extension exists.
         let extname = path.extname(filePath)
         if (!extname) {
-          const oldPath = filePath          
+          const oldPath = filePath
           const mimeType = file(filePath)
 
           extname = mime_types.extension(mimeType.type)
