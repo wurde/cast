@@ -41,12 +41,23 @@ class ImageClassifier {
     await this.ensureModelLoaded();
   }
 
-  async ensureModelLoaded(loadingCallback) {
+  async ensureModelLoaded() {
     if (this.model !== null) return;
 
     console.log('Loading image classifier model...');
-    console.log(`file://${CACHE_PATH}`);
-    // this.model = await tf.loadLayersModel(`file://${CACHE_PATH}`);
+
+    if (fs.existsSync(CACHE_PATH)) {
+      this.model = await tf.loadLayersModel(`file://${CACHE_PATH}`);
+    } else {
+      this.model = await tf.loadLayersModel(MOBILENET_MODEL_URL);
+
+      try {
+        await this.model.save(`file://${CACHE_PATH}`);
+        console.log(`Cached model at ${CACHE_PATH}`);
+      } catch (e) {
+        console.warn(`Failed to save model at ${CACHE_PATH}`);
+      }
+    }
   }
 }
 
