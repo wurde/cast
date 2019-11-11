@@ -127,13 +127,13 @@ class ImageClassifier {
  * Define script
  */
 
-async function mobilenet() {
+async function mobilenet(dirPath='.') {
   showHelp(cli);
 
   const imageClassifier = new ImageClassifier();
   await imageClassifier.ensureModelLoaded();
 
-  const files = fs.readdirSync('.')
+  const files = fs.readdirSync(dirPath)
     .map(file => path.join(process.cwd(), file))
     .filter(filePath => {
       const mimeType = file(filePath);
