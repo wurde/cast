@@ -28,8 +28,16 @@ const CACHE_PATH = path.join(process.env.HOME, '.mobilenet');
 const cli = meow(`
   Usage
     $ cast mobilenet IMAGE_PATH
+
+  Options:
+    --json   Return information in JSON format.
 `, {
-  description: 'Generates labels for images via the MobileNetv2 model.'
+  description: 'Generates labels for images via the MobileNetV2 model.',
+  flags: {
+    json: {
+      type: 'boolean',
+    }
+  }
 })
 
 /**
@@ -155,7 +163,15 @@ async function mobilenet() {
   const classNamesAndProbs = await imageClassifier.classify(batchImageTensor);
   const tElapsedMillis = tf.util.now() - t0;
 
-  console.log('classNamesAndProbs', classNamesAndProbs, tElapsedMillis);
+  if (arguments.length === 0) {
+    if (cli.flags.json) {
+      console.log(JSON.stringify(classNamesAndProbs));
+    } else {
+      console.log(classNamesAndProbs);
+    }
+  }
+
+  return classNamesAndProbs;
 }
 
 /**
