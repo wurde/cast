@@ -8,6 +8,7 @@ const fs = require('fs');
 const path = require('path');
 const meow = require('meow');
 const tf = require('@tensorflow/tfjs-node');
+const Jimp = require('jimp');
 const file = require('./file');
 const showHelp = require('../helpers/showHelp');
 
@@ -61,6 +62,30 @@ class ImageClassifier {
       }
     }
   }
+
+  async readImageAsTensor(filePath, height, width) {
+    return new Promise((resolve, reject) => {
+      Jimp.read(filePath, (err, image) => {
+        if (err) {
+          reject(err);
+        } else {
+          const h = image.bitmap.height;
+          const w = image.bitmap.width;
+          const buffer = tf.buffer([1, h, w, 3], 'float32');
+          image.scan(0, 0, w, h, function(x, y, index) {
+            buffer.set(image.bitmap.data[index], 0, y, x, 0);
+            buffer.set(image.bitmap.data[index + 1], 0, y, x, 1);
+            buffer.set(image.bitmap.data[index + 2], 0, y, x, 2);
+          });
+          resolve(
+            tf.tidy(() =>
+              tf.image.resizeBilinear(buffer.toTensor(), [height, width]).div(255)
+            )
+          );
+        }
+      });
+    });
+  }
 }
 
 /**
@@ -84,12 +109,16 @@ async function mobilenet() {
       }
     })
   
-  const height = this.model.inputs[0].shape[1];
-  const width = this.model.inputs[0].shape[2];
+  const height = imageClassifier.model.inputs[0].shape[1];
+  const width = imageClassifier.model.inputs[0].shape[2];
   const imageTensors = [];
 
   for (let i = 0; i < files.length; i++) {
-    const imageTensor = await readImageAsTensor(file, height, width);
+    const imageTensor = await imageClassifier.readImageAsTensor(
+      files[i],
+      height,
+      width
+    );
     imageTensors.push(imageTensor);
   }
 
