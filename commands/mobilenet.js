@@ -122,7 +122,10 @@ async function mobilenet() {
     imageTensors.push(imageTensor);
   }
 
-  console.log('imageTensors', imageTensors);
+  const axis = 0;
+  const batchImageTensor = tf.concat(imageTensors, axis);
+
+  console.log('batchImageTensor', batchImageTensor);
 }
 
 /**
