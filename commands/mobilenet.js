@@ -8,6 +8,7 @@ const fs = require('fs');
 const path = require('path');
 const meow = require('meow');
 const showHelp = require('../helpers/showHelp');
+const tf = require('@tensorflow/tfjs-node');
 
 /**
  * Constants
@@ -15,7 +16,7 @@ const showHelp = require('../helpers/showHelp');
 
 const MOBILENET_MODEL_URL =
   'https://storage.googleapis.com/tfjs-models/tfjs/mobilenet_v1_1.0_224/model.json';
-const CACHE_PATH = path.join(process.env.HOME, '.mobilenet.json');
+const CACHE_PATH = path.join(process.env.HOME, '.mobilenet');
 
 /**
  * Parse args
