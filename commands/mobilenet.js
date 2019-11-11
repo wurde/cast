@@ -15,7 +15,7 @@ const showHelp = require('../helpers/showHelp');
 
 const MOBILENET_MODEL_URL =
   'https://storage.googleapis.com/tfjs-models/tfjs/mobilenet_v1_1.0_224/model.json';
-const CACHE_PATH = path.join(process.env.HOME, 'mobilenet.json');
+const CACHE_PATH = path.join(process.env.HOME, '.mobilenet.json');
 
 /**
  * Parse args
@@ -45,6 +45,8 @@ class ImageClassifier {
     if (this.model !== null) return;
 
     console.log('Loading image classifier model...');
+    console.log(`file://${CACHE_PATH}`);
+    // this.model = await tf.loadLayersModel(`file://${CACHE_PATH}`);
   }
 }
 
@@ -52,9 +54,11 @@ class ImageClassifier {
  * Define script
  */
 
-function mobilenet() {
+async function mobilenet() {
   showHelp(cli);
-  console.log('mobilenet');
+
+  const imageClassifier = new ImageClassifier();
+  await imageClassifier.ensureModelLoaded();
 }
 
 /**
