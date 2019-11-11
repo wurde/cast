@@ -48,7 +48,7 @@ class ImageClassifier {
     console.log('Loading image classifier model...');
 
     if (fs.existsSync(CACHE_PATH)) {
-      this.model = await tf.loadLayersModel(`file://${CACHE_PATH}`);
+      this.model = await tf.loadLayersModel(`file://${CACHE_PATH}/model.json`);
     } else {
       this.model = await tf.loadLayersModel(MOBILENET_MODEL_URL);
 
