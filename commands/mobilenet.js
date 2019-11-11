@@ -71,6 +71,12 @@ async function mobilenet() {
 
   const imageClassifier = new ImageClassifier();
   await imageClassifier.ensureModelLoaded();
+
+  const files = fs.readdirSync('.')
+    .map(file => path.join(process.cwd(), file))
+    // filter for images only
+
+  console.log('files', files);
 }
 
 /**
