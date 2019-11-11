@@ -11,6 +11,7 @@ const tf = require('@tensorflow/tfjs-node');
 const Jimp = require('jimp');
 const file = require('./file');
 const showHelp = require('../helpers/showHelp');
+const IMAGENET_CLASSES = require('../data/imagenet_classes');
 
 /**
  * Constants
@@ -40,8 +41,31 @@ class ImageClassifier {
     this.model = null;
   }
 
-  async classify() {
+  async classify(images, topK = 5) {
     await this.ensureModelLoaded();
+
+    return tf.tidy(() => {
+      const probs = this.model.predict(images);
+      const sorted = true;
+      const { values, indices } = tf.topk(probs, topK, sorted);
+
+      const classProbs = values.arraySync();
+      const classIndices = indices.arraySync();
+
+      const results = [];
+      classIndices.forEach((indices, i) => {
+        const classesAndProbs = [];
+        indices.forEach((index, j) => {
+          classesAndProbs.push({
+            className: IMAGENET_CLASSES[index],
+            prob: classProbs[i][j]
+          });
+        });
+        results.push(classesAndProbs);
+      });
+
+      return results;
+    });
   }
 
   async ensureModelLoaded() {
@@ -79,7 +103,9 @@ class ImageClassifier {
           });
           resolve(
             tf.tidy(() =>
-              tf.image.resizeBilinear(buffer.toTensor(), [height, width]).div(255)
+              tf.image
+                .resizeBilinear(buffer.toTensor(), [height, width])
+                .div(255)
             )
           );
         }
@@ -125,7 +151,11 @@ async function mobilenet() {
   const axis = 0;
   const batchImageTensor = tf.concat(imageTensors, axis);
 
-  console.log('batchImageTensor', batchImageTensor);
+  const t0 = tf.util.now();
+  const classNamesAndProbs = await imageClassifier.classify(batchImageTensor);
+  const tElapsedMillis = tf.util.now() - t0;
+
+  console.log('classNamesAndProbs', classNamesAndProbs, tElapsedMillis);
 }
 
 /**
