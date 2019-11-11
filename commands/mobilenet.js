@@ -8,6 +8,13 @@ const meow = require('meow');
 const showHelp = require('../helpers/showHelp');
 
 /**
+ * Constants
+ */
+
+const MOBILENET_MODEL_URL =
+  'https://storage.googleapis.com/tfjs-models/tfjs/mobilenet_v1_1.0_224/model.json';
+
+/**
  * Parse args
  */
 
