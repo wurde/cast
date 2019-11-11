@@ -83,8 +83,17 @@ async function mobilenet() {
         return false
       }
     })
+  
+  const height = this.model.inputs[0].shape[1];
+  const width = this.model.inputs[0].shape[2];
+  const imageTensors = [];
 
-  console.log('files', files);
+  for (let i = 0; i < files.length; i++) {
+    const imageTensor = await readImageAsTensor(file, height, width);
+    imageTensors.push(imageTensor);
+  }
+
+  console.log('imageTensors', imageTensors);
 }
 
 /**
