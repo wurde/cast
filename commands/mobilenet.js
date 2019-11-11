@@ -6,6 +6,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const chalk = require('chalk');
 const meow = require('meow');
 const tf = require('@tensorflow/tfjs-node');
 const Jimp = require('jimp');
@@ -167,6 +168,7 @@ async function mobilenet() {
     if (cli.flags.json) {
       console.log(JSON.stringify(classNamesAndProbs));
     } else {
+      console.log(chalk.white.bold(`\nMobileNetV2 results (elapsed milliseconds: ${Math.ceil(tElapsedMillis)}):\n`));
       console.log(classNamesAndProbs);
     }
   }
