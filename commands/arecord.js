@@ -6,7 +6,6 @@
 
 const fs = require('fs');
 const meow = require('meow');
-const path = require('path');
 const child_process = require('child_process');
 const showHelp = require('../helpers/showHelp');
 const which = require('../helpers/which');
@@ -35,8 +34,7 @@ const cli = meow(`
 function arecord(file=null) {
   showHelp(cli, [(!file && cli.input.length < 2)]);
 
-  let cwd = process.cwd();
-  file = file || cli.input[1] || path.join(cwd, 'output.wav');
+  file = file || cli.input[1];
 
   if (hasArecord) {
     const result = child_process.spawnSync('arecord');

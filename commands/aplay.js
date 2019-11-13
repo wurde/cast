@@ -30,12 +30,13 @@ const cli = meow(`
  * Define script
  */
 
-function aplay() {
-  showHelp(cli)
+function aplay(file=null) {
+  showHelp(cli, [!file && cli.input.length < 2]);
+
+  file = file || cli.input[1];
 
   if (hasAplay) {
-    const filePath = path.join(process.cwd(), 'output.wav');
-    child_process.spawnSync('aplay', [filePath]);
+    child_process.spawnSync('aplay', [file]);
   } else {
     throw new Error('Requires ALSA soundcard driver.')
   }
