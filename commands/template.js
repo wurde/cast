@@ -22,7 +22,7 @@ const TEMPLATE_DIR = path.join(__dirname, '..', 'templates')
 
 const cli = meow(`
   Usage
-    $ cast copy TEMPLATE
+    $ cast template NAME
 `, {
   description: 'Copy template files.'
 })
@@ -31,7 +31,7 @@ const cli = meow(`
  * Define script
  */
 
-function copy() {
+function template() {
   showHelp(cli, [cli.input.length < 2])
 
   const file = cli.input[1]
@@ -48,4 +48,4 @@ function copy() {
  * Export script
  */
 
-module.exports = copy
+module.exports = template
