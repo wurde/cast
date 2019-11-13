@@ -5,6 +5,7 @@
  */
 
 const meow = require('meow');
+const child_process = require('child_process');
 const showHelp = require('../helpers/showHelp');
 const which = require('../helpers/which');
 
