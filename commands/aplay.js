@@ -6,6 +6,13 @@
 
 const meow = require('meow');
 const showHelp = require('../helpers/showHelp');
+const which = require('../helpers/which');
+
+/**
+ * Constants
+ */
+
+const hasAplay = which('aplay');
 
 /**
  * Parse args
@@ -25,7 +32,11 @@ const cli = meow(`
 function aplay() {
   showHelp(cli)
 
-  console.log('aplay');
+  if (hasAplay) {
+    console.log('aplay');
+  } else {
+    throw new Error('Requires ALSA soundcard driver.')
+  }
 }
 
 /**

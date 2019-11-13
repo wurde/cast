@@ -8,6 +8,12 @@ const meow = require('meow');
 const showHelp = require('../helpers/showHelp');
 
 /**
+ * Constants
+ */
+
+const hasArecord = which('arecord');
+
+/**
  * Parse args
  */
 
@@ -25,7 +31,11 @@ const cli = meow(`
 function arecord() {
   showHelp(cli)
 
-  console.log('arecord');
+  if (hasArecord) {
+    console.log('arecord');
+  } else {
+    throw new Error('Requires ALSA soundcard driver.');
+  }
 }
 
 /**
