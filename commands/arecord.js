@@ -23,7 +23,7 @@ const hasArecord = which('arecord');
 
 const cli = meow(`
   Usage
-    $ cast arecord
+    $ cast arecord FILE
 `, {
   description: 'Record sound.',
 });
@@ -32,12 +32,15 @@ const cli = meow(`
  * Define script
  */
 
-function arecord() {
-  showHelp(cli)
+function arecord(file=null) {
+  showHelp(cli, [(!file && cli.input.length < 2)]);
+
+  let cwd = process.cwd();
+  file = file || cli.input[1] || path.join(cwd, 'output.wav');
 
   if (hasArecord) {
     const result = child_process.spawnSync('arecord');
-    fs.writeFileSync(path.join(process.cwd(), 'output.wav'), result.stdout)
+    fs.writeFileSync(file, result.stdout);
   } else {
     throw new Error('Requires ALSA soundcard driver.');
   }

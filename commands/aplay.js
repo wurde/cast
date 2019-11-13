@@ -34,7 +34,8 @@ function aplay() {
   showHelp(cli)
 
   if (hasAplay) {
-    console.log('aplay');
+    const filePath = path.join(process.cwd(), 'output.wav');
+    child_process.spawnSync('aplay', [filePath]);
   } else {
     throw new Error('Requires ALSA soundcard driver.')
   }
