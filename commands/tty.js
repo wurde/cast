@@ -5,6 +5,8 @@
  */
 
 const meow = require('meow');
+const chalk = require('chalk');
+const child_process = require('child_process');
 const showHelp = require('../helpers/showHelp');
 
 /**
@@ -24,7 +26,14 @@ const cli = meow(`
 
 function tty() {
   showHelp(cli)
-  console.log('tty')
+
+  const tty = child_process.execSync('tty', { stdio: ['inherit', 'pipe', 'pipe'], encoding: 'utf8' });
+
+  if (arguments.length === 0) {
+    console.log('\n', chalk.white.bold('Current terminal: '), chalk.green.bold(tty));
+  }
+
+  return tty;
 }
 
 /**
