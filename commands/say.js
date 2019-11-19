@@ -22,8 +22,19 @@ const hasSpdSay = which('spd-say');
 const cli = meow(`
   Usage
     $ cast say MESSAGE
+  
+  Options:
+    -t --voice-type    Set the preferred voice type.
+                       (male1, male2, male3, female1, female2
+                        female3, child_male, child_female)
 `, {
   description: 'Send text-to-speech output to speech-dispatcher.',
+  flags: {
+    voiceType: {
+      type: 'string',
+      alias: 't'
+    }
+  }
 })
 
 /**
@@ -39,7 +50,13 @@ function say(msg=null) {
     throw new Error('Missing dependency: `spd-say`');
   }
 
-  child_process.execSync(`spd-say '${msg}'`, { encoding: 'utf8' });
+  const args = [`'${msg}'`];
+
+  if (cli.flags.voiceType) {
+    args.push(`--voice-type=${cli.flags.voiceType}`);
+  }
+
+  child_process.spawnSync(`spd-say`, args, { encoding: 'utf8' });
 }
 
 /**
