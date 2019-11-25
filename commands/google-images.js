@@ -84,6 +84,9 @@ async function google_images(query=null, count=null, label=null, options={}) {
       infiniteScroll: true,
       browser
     });
+    console.log('result', result);
+    browser.close()
+    process.exit(0);
 
     // Parse all image URLs on page.
     imageUrls = imageUrls.concat(

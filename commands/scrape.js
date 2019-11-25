@@ -18,10 +18,14 @@ const launchBrowser = require('../helpers/launchBrowser');
 async function parsePage(page, selector) {
   if (typeof selector === 'function') {
     return await page.evaluate(selector);
-  } else {
+  } else if (typeof selector === 'string') {
     return await page.evaluate(selector => {
-      return Array.from(document.querySelectorAll(selector)).map(el => el.outerHTML)
-    }, selector)
+      return Array.from(document.querySelectorAll(selector)).map(
+        el => el.outerHTML
+      );
+    }, selector);
+  } else {
+    return await page.content();
   }
 };
 
@@ -79,7 +83,7 @@ async function scrape(url=null, options={}) {
 
   const results = [];
   try {
-    if (selector) results.push(parsePage(page, selector));
+    results.push(await parsePage(page, selector));
     if (arguments.length === 0) console.log(JSON.stringify(results));
   } catch(err) {
     console.error(err);
