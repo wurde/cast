@@ -4,12 +4,12 @@
  * Dependencies
  */
 
-const meow = require('meow')
-const prompts = require('prompts')
-const { requireConnectivity } = require('../helpers/connectivity')
-const parseUrl = require('../helpers/parseUrl')
-const showHelp = require('../helpers/showHelp')
-const launchBrowser = require('../helpers/launchBrowser')
+const meow = require('meow');
+const prompts = require('prompts');
+const { requireConnectivity } = require('../helpers/connectivity');
+const parseUrl = require('../helpers/parseUrl');
+const showHelp = require('../helpers/showHelp');
+const launchBrowser = require('../helpers/launchBrowser');
 
 /**
  * Parse args
@@ -20,13 +20,22 @@ const cli = meow(`
     $ cast scrape URL
 
   Options
-    --selector, -s PATTERN   Define the CSS selector.
+    --selector, -s PATTERN   CSS selector to filter page content.
+    --count, -c NUMBER       How many selector matches to return.
+    --infinite-scroll        Scroll down the page for more content.
 `, {
   description: 'Scrape web content.',
   flags: {
     selector: {
       type: 'text',
       alias: 's'
+    },
+    count: {
+      type: 'integer',
+      alias: 'c'
+    },
+    infiniteScroll: {
+      type: 'boolean'
     }
   }
 })

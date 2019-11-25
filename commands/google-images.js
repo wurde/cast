@@ -77,11 +77,12 @@ async function google_images(query=null, count=null, label=null, options={}) {
   try {
     let imageUrls = [];
     const targetUrl = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(query)}`;
-    console.log(targetUrl);
-    process.exit(1)
     // TODO I need to press PageDown to see more image results.
     // await page.keyboard.press('PageDown');
-    const result = await scrape(targetUrl, 'div#search img', browser);
+    const result = await scrape(targetUrl, {
+      selector: 'div#search img',
+      browser
+    });
 
     // Parse all image URLs on page.
     imageUrls = imageUrls.concat(
