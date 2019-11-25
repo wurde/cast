@@ -49,19 +49,19 @@ const cli = meow(`
  * Define script
  */
 
-function gitcommit() {
+function gitcommit(message, options={}) {
   showHelp(cli);
 
   const result = git(['add', '-A']);
 
   if (result.status === 0) {
-    const message = cli.flags.message;
+    message = message || cli.flags.message;
     const args = ['commit'];
 
-    if (cli.flags.amend) args.push('--amend');
+    if (options.amend || cli.flags.amend) args.push('--amend');
     args.push('-m');
 
-    if (cli.flags.message) {
+    if (message) {
       git(args.concat(message));
     } else {
       prompt.message = '';
