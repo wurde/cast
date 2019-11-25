@@ -16,7 +16,22 @@ const sleep = require('../helpers/sleep')
 
 const cli = meow(`
   Usage
-    $ cast google-images QUERY
+    $ cast google-images [OPTIONS] QUERY
+  
+  Options
+    --size SIZE        Filter results by image size.
+                       Large, Medium, Icon, Larger than 2MP,8MP,40MP,70MP.
+    --color COLOR      Filter results by image size.
+                       Black and white, red, orange, yellow, green, purple, pink,
+                       grey, white, black.
+    --time TIME        Filter results by time.
+                       Past 24 hours, past week, past month, past year.
+    --type TYPE        Filter results by type.
+                       Face, photo, clip art, line drawing, animated.
+    --region REGION    Filter results by region.
+                       United Kingdom, United States, Uruguay, ...
+    --format FORMAT    Filter results by file format.
+                       JPG, PNG, GIF, BMP, SVG, ICO.
 `, {
   description: 'Search and download Google Images.'
 })
@@ -25,7 +40,7 @@ const cli = meow(`
  * Define script
  */
 
-async function google_images(query=null) {
+async function google_images(query=null, options={}) {
   showHelp(cli, [(!query && cli.input.length < 2)])
 
   query = query || cli.input[1];
