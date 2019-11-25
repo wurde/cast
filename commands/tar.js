@@ -54,9 +54,13 @@ function tar(files=null, options={}) {
 
   files = files.filter(file => fs.existsSync(file));
 
-  const output = cli.flags.file || 'output.tar';
+  const output = cli.flags.file || options.file || 'output.tar';
 
-  tarSync(['cf', output, ...files]);
+  if (files.length > 0) {
+    return tarSync(['cf', output, ...files]);
+  } else {
+    return null;
+  }
 }
 
 /**
