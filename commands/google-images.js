@@ -4,11 +4,12 @@
  * Dependencies
  */
 
-const meow = require('meow')
-const dl = require('./dl')
-const scrape = require('./scrape')
-const showHelp = require('../helpers/showHelp')
-const sleep = require('../helpers/sleep')
+const camelcase = require('camelcase');
+const meow = require('meow');
+const dl = require('./dl');
+const scrape = require('./scrape');
+const showHelp = require('../helpers/showHelp');
+const sleep = require('../helpers/sleep');
 const launchBrowser = require('../helpers/launchBrowser');
 
 /**
@@ -51,10 +52,11 @@ const cli = meow(`
  * Define script
  */
 
-async function google_images(query=null, options={}) {
+async function google_images(query=null, label=null, options={}) {
   showHelp(cli, [(!query && cli.input.length < 2)])
 
   query = query || cli.input.slice(1);
+  label = label || camelcase(query, { pascalCase: true });
   const size = options.size || cli.flags.size;
   const color = options.color || cli.flags.color;
   const time = options.time || cli.flags.time;
@@ -84,7 +86,7 @@ async function google_images(query=null, options={}) {
 
     // Download all images.
     for (let i = 0; i < imageUrls.length; i++) {
-      dl(imageUrls[i], `${i}`)
+      dl(imageUrls[i], `${label}-${i}`)
       await sleep(200)
     }
   } catch (err) {
