@@ -11,13 +11,15 @@ const meow = require('meow');
 const showHelp = require('../helpers/showHelp');
 
 /**
- * Constants
+ * Define helpers
  */
 
-const config = {
-  cwd: process.cwd(),
-  stdio: [null, 'inherit', 'inherit']
-};
+function git(args) {
+  return child_process.spawnSync('git', args, {
+    cwd: process.cwd(),
+    stdio: [null, 'inherit', 'inherit']
+  });
+}
 
 /**
  * Parse args
@@ -50,13 +52,13 @@ const cli = meow(`
 function gitcommit() {
   showHelp(cli);
 
-  const result = child_process.spawnSync('git', ['add', '-A'], config);
+  const result = git(['add', '-A']);
 
   if (result.status === 0) {
     const message = cli.flags.message;
 
     if (cli.flags.message) {
-      child_process.spawnSync('git', ['commit', '-m', message], config);
+      git(['commit', '-m', message]);
     } else {
       prompt.message = '';
       prompt.get({
@@ -64,7 +66,7 @@ function gitcommit() {
         description: chalk.white.bold('Message'),
         required: true
       }, (err, result) => {
-        child_process.spawnSync('git', ['commit', '-m', result.message], config);
+        git(['commit', '-m', result.message]);
       })
     }
   }
