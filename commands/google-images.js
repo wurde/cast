@@ -74,21 +74,23 @@ async function google_images(query=null, label=null, options={}) {
   });
 
   try {
+    const imageUrls = [];
     const targetUrl = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(query)}`
     const result = await scrape(targetUrl, 'div#search img', browser);
 
     // Parse all image URLs on page.
-    const imageUrls = result.reduce((urls, imageHtml) => {
-      const match = imageHtml.match(/"(https.*?)"/)
-      if (match) urls.push(match[1])
-      return urls
-    }, [])
+    imageUrls.push(result.reduce((urls, imageHtml) => {
+      const match = imageHtml.match(/"(https.*?images.*?)"/);
+      if (match) urls.push(match[1]);
+      return urls;
+    }, []));
 
-    // Download all images.
-    for (let i = 0; i < imageUrls.length; i++) {
-      dl(imageUrls[i], `${label}-${i}`)
-      await sleep(200)
-    }
+    console.log('imageUrls', imageUrls);
+    // // Download all images.
+    // for (let i = 0; i < imageUrls.length; i++) {
+    //   dl(imageUrls[i], `${label}-${i}`)
+    //   await sleep(200)
+    // }
   } catch (err) {
     console.error(err)
   } finally {
