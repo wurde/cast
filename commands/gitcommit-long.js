@@ -6,7 +6,7 @@
 
 const child_process = require('child_process')
 const prompt = require('prompt')
-const colors = require('colors')
+const chalk = require('chalk')
 const meow = require('meow')
 const showHelp = require('../helpers/showHelp')
 
@@ -45,11 +45,11 @@ function gitcommit() {
 
     prompt.get([{
       name: 'message',
-      description: colors.white.bold('Message'),
+      description: chalk.white.bold('Message'),
       required: true
     }, {
       name: 'description',
-      description: colors.white.bold('Description (be as detailed as possible)')
+      description: chalk.white.bold('Description (be as detailed as possible)')
     }], (err, result) => {
         let args = ['commit', '-m', result.message]
 
