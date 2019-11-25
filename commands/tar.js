@@ -5,6 +5,7 @@
  */
 
 const meow = require('meow');
+const fs = require('fs');
 const child_process = require('child_process');
 const showHelp = require('../helpers/showHelp');
 
@@ -26,9 +27,18 @@ function tarSync(args) {
 const cli = meow(`
   Usage
     $ cast tar FILE...
+
+  Option
+    -f, --file ARCHIVE   Use archive file (Default output.tar).
 `,
   {
-    description: 'An archiving utility.'
+    description: 'An archiving utility.',
+    flags: {
+      file: {
+        type: 'string',
+        alias: 'f'
+      }
+    }
   }
 );
 
@@ -42,7 +52,9 @@ function tar(files=null, options={}) {
   if (files && files.constructor !== Array) files = files.split(' ');
   files = files || cli.input.slice(1);
 
-  const output = 'output.tar';
+  files = files.filter(file => fs.existsSync(file));
+
+  const output = cli.flags.file || 'output.tar';
 
   tarSync(['cf', output, ...files]);
 }
