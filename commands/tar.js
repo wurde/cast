@@ -5,7 +5,19 @@
  */
 
 const meow = require('meow');
+const child_process = require('child_process');
 const showHelp = require('../helpers/showHelp');
+
+/**
+ * Define helpers
+ */
+
+function tarSync(args) {
+  return child_process.spawnSync('tar', args, {
+    cwd: process.cwd(),
+    stdio: [null, 'inherit', 'inherit']
+  });
+}
 
 /**
  * Parse args
@@ -27,10 +39,12 @@ const cli = meow(`
 function tar(files=null, options={}) {
   showHelp(cli, [!files && cli.input.length < 2]);
 
-  if (files.constructor !== Array) files = files.split(' ');
+  if (files && files.constructor !== Array) files = files.split(' ');
   files = files || cli.input.slice(1);
 
-  console.log('files', files, files.constructor);
+  const output = 'output.tar';
+
+  tarSync(['cf', output, ...files]);
 }
 
 /**
