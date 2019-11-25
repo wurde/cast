@@ -30,6 +30,8 @@ const cli = meow(`
 
   Option
     -f, --file ARCHIVE   Use archive file (Default output.tar).
+    --list               List the contents of an archive.
+    --extract            Extract files from an archive.
 `,
   {
     description: 'An archiving utility.',
@@ -37,6 +39,12 @@ const cli = meow(`
       file: {
         type: 'string',
         alias: 'f'
+      },
+      list: {
+        type: 'boolean'
+      },
+      extract: {
+        type: 'boolean'
       }
     }
   }
@@ -57,7 +65,17 @@ function tar(files=null, options={}) {
   const output = cli.flags.file || options.file || 'output.tar';
 
   if (files.length > 0) {
-    return tarSync(['cf', output, ...files]);
+    const args = [output, ...files];
+
+    if (options.list || cli.flags.list) {
+      args.shift() && args.unshift('tvf');
+    } else if (options.extract || cli.flags.extract) {
+      args.shift() && args.unshift('xvf');
+    } else {
+      args.unshift('cvaf');
+    }
+
+    return tarSync(args);
   } else {
     return null;
   }
