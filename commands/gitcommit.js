@@ -29,12 +29,16 @@ const cli = meow(`
 
   Options
     --message, -m <message>  Commit message
+    --amend                  Amend previous commit
 `, {
   description: 'Create a git commit.',
   flags: {
     message: {
       type: 'string',
       alias: 'm'
+    }
+    amend: {
+      type: 'boolean'
     }
   }
 })
