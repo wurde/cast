@@ -13,7 +13,7 @@ const showHelp = require('../helpers/showHelp');
 
 const cli = meow(`
   Usage
-    $ cast tar
+    $ cast tar FILE...
 `,
   {
     description: 'An archiving utility.'
@@ -24,9 +24,13 @@ const cli = meow(`
  * Define script
  */
 
-function tar() {
-  showHelp(cli);
-  console.log('tar');
+function tar(files=null, options={}) {
+  showHelp(cli, [!files && cli.input.length < 2]);
+
+  if (files.constructor !== Array) files = files.split(' ');
+  files = files || cli.input.slice(1);
+
+  console.log('files', files, files.constructor);
 }
 
 /**
