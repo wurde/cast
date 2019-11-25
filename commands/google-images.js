@@ -9,6 +9,7 @@ const dl = require('./dl')
 const scrape = require('./scrape')
 const showHelp = require('../helpers/showHelp')
 const sleep = require('../helpers/sleep')
+const launchBrowser = require('../helpers/launchBrowser');
 
 /**
  * Parse args
@@ -61,18 +62,17 @@ async function google_images(query=null, options={}) {
   const region = options.region || cli.flags.region;
   const format = options.format || cli.flags.format;
 
+  const browser = await launchBrowser({
+    headless: false,
+    delay: 200,
+    defaultViewport: {
+      width: 1024,
+      height: 800
+    }
+  });
+
   try {
     const targetUrl = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(query)}`
-
-    const browser = await launchBrowser({
-      headless: false,
-      delay: 10000,
-      defaultViewport: {
-        width: 1024,
-        height: 800
-      }
-    });
-
     const result = await scrape(targetUrl, 'div#search img', browser);
 
     // Parse all image URLs on page.
@@ -89,6 +89,8 @@ async function google_images(query=null, options={}) {
     }
   } catch (err) {
     console.error(err)
+  } finally {
+    browser.close();
   }
 }
 
