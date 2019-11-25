@@ -6,7 +6,7 @@
 
 const child_process = require('child_process');
 const prompt = require('prompt');
-const colors = require('colors');
+const chalk = require('chalk');
 const meow = require('meow');
 const showHelp = require('../helpers/showHelp');
 
@@ -61,7 +61,7 @@ function gitcommit() {
       prompt.message = '';
       prompt.get({
         name: 'message',
-        description: colors.white.bold('Message'),
+        description: chalk.white.bold('Message'),
         required: true
       }, (err, result) => {
         child_process.spawnSync('git', ['commit', '-m', result.message], config);
