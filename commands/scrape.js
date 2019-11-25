@@ -12,6 +12,20 @@ const showHelp = require('../helpers/showHelp');
 const launchBrowser = require('../helpers/launchBrowser');
 
 /**
+ * Define helpers
+ */
+
+async function parsePage(page, selector) {
+  if (typeof selector === 'function') {
+    return await page.evaluate(selector);
+  } else {
+    return await page.evaluate(selector => {
+      return Array.from(document.querySelectorAll(selector)).map(el => el.outerHTML)
+    }, selector)
+  }
+};
+
+/**
  * Parse args
  */
 
@@ -60,37 +74,24 @@ async function scrape(url=null, options={}) {
     }
   });
 
-  const parsedUrl = parseUrl(url).href;
   const page = await browser.newPage();
-  await page.goto(parsedUrl);
+  await page.goto(parseUrl(url).href);
 
-  browser.close();
-  process.exit(1);
-
-  let results = []
+  const results = [];
   try {
-    if (typeof selector === 'function') {
-      results = await page.evaluate(selector);
-    } else {
-      results = await page.evaluate(selector => {
-        const elements = Array.from(document.querySelectorAll(selector))
-          .map(el => el.outerHTML)
-        return elements
-      }, selector)
-    }
-
-    if (arguments.length === 0) console.log(JSON.stringify(results))
+    if (selector) results.push(parsePage(page, selector));
+    if (arguments.length === 0) console.log(JSON.stringify(results));
   } catch(err) {
-    console.error(err)
-    return err
+    console.error(err);
+    return err;
   } finally {
     options.browser ? page.close() : browser.close();
-    return results
+    return results;
   }
-}
+};
 
 /**
  * Export script
  */
 
-module.exports = scrape
+module.exports = scrape;
