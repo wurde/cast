@@ -28,9 +28,7 @@ const cli = meow(`
 async function google_images(query=null) {
   showHelp(cli, [(!query && cli.input.length < 2)])
 
-  if (!query) {
-    query = cli.input[1]
-  }
+  query = query || cli.input[1];
 
   try {
     const targetUrl = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(query)}`
