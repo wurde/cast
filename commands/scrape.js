@@ -44,7 +44,7 @@ const cli = meow(`
  * Define script
  */
 
-async function scrape(url=null, options) {
+async function scrape(url=null, options={}) {
   showHelp(cli, [(!url && cli.input.length < 2)]);
   requireConnectivity();
 
@@ -64,6 +64,9 @@ async function scrape(url=null, options) {
   const page = await browser.newPage();
   await page.goto(parsedUrl);
 
+  browser.close();
+  process.exit(1);
+
   let results = []
   try {
     if (typeof selector === 'function') {
@@ -72,7 +75,6 @@ async function scrape(url=null, options) {
       results = await page.evaluate(selector => {
         const elements = Array.from(document.querySelectorAll(selector))
           .map(el => el.outerHTML)
-          
         return elements
       }, selector)
     }
