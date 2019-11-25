@@ -6,7 +6,7 @@
 
 const camelcase = require('camelcase');
 const meow = require('meow');
-const dl = require('./dl');
+const download = require('./dl');
 const scrape = require('./scrape');
 const showHelp = require('../helpers/showHelp');
 const sleep = require('../helpers/sleep');
@@ -52,10 +52,11 @@ const cli = meow(`
  * Define script
  */
 
-async function google_images(query=null, label=null, options={}) {
+async function google_images(query=null, count=null, label=null, options={}) {
   showHelp(cli, [(!query && cli.input.length < 2)])
 
   query = query || cli.input.slice(1);
+  count = count || cli.flags.count || 80;
   label = label || camelcase(query, { pascalCase: true });
   const size = options.size || cli.flags.size;
   const color = options.color || cli.flags.color;
@@ -74,21 +75,27 @@ async function google_images(query=null, label=null, options={}) {
   });
 
   try {
-    const imageUrls = [];
-    const targetUrl = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(query)}`
+    let imageUrls = [];
+    const targetUrl = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(query)}`;
+    console.log(targetUrl);
+    process.exit(1)
+    // TODO I need to press PageDown to see more image results.
+    // await page.keyboard.press('PageDown');
     const result = await scrape(targetUrl, 'div#search img', browser);
 
     // Parse all image URLs on page.
-    imageUrls.push(result.reduce((urls, imageHtml) => {
-      const match = imageHtml.match(/"(https.*?images.*?)"/);
-      if (match) urls.push(match[1]);
-      return urls;
-    }, []));
+    imageUrls = imageUrls.concat(
+      result.reduce((urls, imageHtml) => {
+        const match = imageHtml.match(/"(https.*?images.*?)"/);
+        if (match) urls.push(match[1]);
+        return urls;
+      }, [])
+    );
 
-    console.log('imageUrls', imageUrls);
+    console.log('imageUrls', imageUrls, imageUrls.length);
     // // Download all images.
     // for (let i = 0; i < imageUrls.length; i++) {
-    //   dl(imageUrls[i], `${label}-${i}`)
+    //   download(imageUrls[i], `${label}-${i}`)
     //   await sleep(200)
     // }
   } catch (err) {
