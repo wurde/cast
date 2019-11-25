@@ -19,6 +19,7 @@ const cli = meow(`
     $ cast google-images [OPTIONS] QUERY
   
   Options
+    --count COUNT      Specify how many images to download.
     --size SIZE        Filter results by image size.
                        Large, Medium, Icon, Larger than 2MP,8MP,40MP,70MP.
     --color COLOR      Filter results by image size.
@@ -35,24 +36,13 @@ const cli = meow(`
 `, {
   description: 'Search and download Google Images.',
   flags: {
-    size: {
-      type: 'string'
-    },
-    color: {
-      type: 'string'
-    },
-    time: {
-      type: 'string'
-    },
-    type: {
-      type: 'string'
-    },
-    region: {
-      type: 'string'
-    },
-    format: {
-      type: 'string'
-    }
+    count:  { type: 'integer' },
+    size:   { type: 'string' },
+    color:  { type: 'string' },
+    time:   { type: 'string' },
+    type:   { type: 'string' },
+    region: { type: 'string' },
+    format: { type: 'string' }
   }
 })
 
@@ -63,7 +53,7 @@ const cli = meow(`
 async function google_images(query=null, options={}) {
   showHelp(cli, [(!query && cli.input.length < 2)])
 
-  query = query || cli.input[1];
+  query = query || cli.input.slice(1);
   const size = options.size || cli.flags.size;
   const color = options.color || cli.flags.color;
   const time = options.time || cli.flags.time;
@@ -73,7 +63,17 @@ async function google_images(query=null, options={}) {
 
   try {
     const targetUrl = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(query)}`
-    const result = await scrape(targetUrl, 'div#search img')
+
+    const browser = await launchBrowser({
+      headless: false,
+      delay: 10000,
+      defaultViewport: {
+        width: 1024,
+        height: 800
+      }
+    });
+
+    const result = await scrape(targetUrl, 'div#search img', browser);
 
     // Parse all image URLs on page.
     const imageUrls = result.reduce((urls, imageHtml) => {
