@@ -56,9 +56,13 @@ function gitcommit() {
 
   if (result.status === 0) {
     const message = cli.flags.message;
+    const args = ['commit'];
+
+    if (cli.flags.amend) args.push('--amend');
+    args.push('-m');
 
     if (cli.flags.message) {
-      git(['commit', '-m', message]);
+      git(args.concat(message));
     } else {
       prompt.message = '';
       prompt.get({
@@ -66,7 +70,7 @@ function gitcommit() {
         description: chalk.white.bold('Message'),
         required: true
       }, (err, result) => {
-        git(['commit', '-m', result.message]);
+        git(args.concat(result.message));
       })
     }
   }
