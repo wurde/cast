@@ -81,6 +81,7 @@ async function google_images(query=null, count=null, label=null, options={}) {
     // await page.keyboard.press('PageDown');
     const result = await scrape(targetUrl, {
       selector: 'div#search img',
+      infiniteScroll: true,
       browser
     });
 

@@ -17,7 +17,7 @@ const launchBrowser = require('../helpers/launchBrowser');
 
 const cli = meow(`
   Usage
-    $ cast scrape URL
+    $ cast scrape URL [OPTIONS]
 
   Options
     --selector, -s PATTERN   CSS selector to filter page content.
@@ -44,49 +44,24 @@ const cli = meow(`
  * Define script
  */
 
-async function scrape(url=null, selector=null, browser=null) {
-  showHelp(cli, [((!url || !selector) && cli.input.length < 2)]);
+async function scrape(url=null, options) {
+  showHelp(cli, [(!url && cli.input.length < 2)]);
   requireConnectivity();
 
-  url = url ? url : cli.input[1];
-  selector = selector ? selector : cli.flags.selector;
-
-  if (!selector) {
-    console.log('')
-    const selectorPrompt = await prompts(
-      {
-        type: 'text',
-        name: 'value',
-        message: 'Enter a CSS selector',
-        validate: value => (value.length === 0 ? 'Minimum 1 character' : true)
-      },
-      {
-        onCancel: () => {
-          process.exit(1);
-        }
-      }
-    );
-    selector = selectorPrompt.value;
-  }
+  url = url || cli.input[1];
+  const selector = options.selector || cli.flags.selector;
+  const count = options.count || cli.flags.count;
+  const infiniteScroll = options.infiniteScroll || cli.flags.infiniteScroll;
+  const browser = options.browser || await launchBrowser({
+    headless: true,
+    defaultViewport: {
+      width: 1024,
+      height: 800
+    }
+  });
 
   const parsedUrl = parseUrl(url).href;
-
-  let keepBrowserAlive;
-  if (!browser) {
-    keepBrowserAlive = false;
-    browser = await launchBrowser({
-      headless: true,
-      defaultViewport: {
-        width: 1024,
-        height: 800
-      }
-    });
-  } else {
-    keepBrowserAlive = true;
-  }
-
   const page = await browser.newPage();
-  
   await page.goto(parsedUrl);
 
   let results = []
@@ -102,18 +77,12 @@ async function scrape(url=null, selector=null, browser=null) {
       }, selector)
     }
 
-    if (arguments.length === 0) {
-      console.log(JSON.stringify(results))
-    }
+    if (arguments.length === 0) console.log(JSON.stringify(results))
   } catch(err) {
     console.error(err)
     return err
   } finally {
-    if (keepBrowserAlive) {
-      page.close();
-    } else {
-      browser.close();
-    }
+    options.browser ? page.close() : browser.close();
     return results
   }
 }
