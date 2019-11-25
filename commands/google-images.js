@@ -33,7 +33,27 @@ const cli = meow(`
     --format FORMAT    Filter results by file format.
                        JPG, PNG, GIF, BMP, SVG, ICO.
 `, {
-  description: 'Search and download Google Images.'
+  description: 'Search and download Google Images.',
+  flags: {
+    size: {
+      type: 'string'
+    },
+    color: {
+      type: 'string'
+    },
+    time: {
+      type: 'string'
+    },
+    type: {
+      type: 'string'
+    },
+    region: {
+      type: 'string'
+    },
+    format: {
+      type: 'string'
+    }
+  }
 })
 
  /**
@@ -44,6 +64,12 @@ async function google_images(query=null, options={}) {
   showHelp(cli, [(!query && cli.input.length < 2)])
 
   query = query || cli.input[1];
+  const size = options.size || cli.flags.size;
+  const color = options.color || cli.flags.color;
+  const time = options.time || cli.flags.time;
+  const type = options.type || cli.flags.type;
+  const region = options.region || cli.flags.region;
+  const format = options.format || cli.flags.format;
 
   try {
     const targetUrl = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(query)}`
