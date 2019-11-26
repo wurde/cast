@@ -77,7 +77,8 @@ async function google(query = null, options={}) {
 
   const browser = await launchBrowser({
     headless: false,
-    delay: 5000,
+    delay: 400,
+    timeout: 0,
     defaultViewport: {
       width: 1024,
       height: 800

@@ -117,6 +117,10 @@ async function scrape(url = null, options = {}) {
 
   // Detect captcha
   const hasCaptcha = await page.$('#recaptcha') ? true : false;
+  if (hasCaptcha) {
+    sleep(600000);
+    throw Error('CaptchaError: Prove you are a human.');
+  }
 
   let results;
   try {
