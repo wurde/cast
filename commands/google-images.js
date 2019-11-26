@@ -161,7 +161,6 @@ async function google_images(query = null, options = {}) {
       minCount,
       browser
     });
-    console.log('result', result, result.length);
     browser.close();
 
     // Parse all image URLs on page.
