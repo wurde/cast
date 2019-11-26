@@ -69,14 +69,15 @@ function printResults(results) {
  * Define script
  */
 
-async function google(query = null, options) {
+async function google(query = null, options={}) {
   showHelp(cli, [(!query && cli.input.length < 2)]);
 
   query = query ? query : cli.input.slice(1).join(' ');
   const limit = options.limit || cli.flags.count || 10;
 
   const browser = await launchBrowser({
-    headless: true,
+    headless: false,
+    delay: 5000,
     defaultViewport: {
       width: 1024,
       height: 800
@@ -115,8 +116,7 @@ async function google(query = null, options) {
       }
     }
   } catch (err) {
-    console.error(err);
-    return err;
+    console.error(err); return err;
   } finally {
     browser.close();
     return results;
