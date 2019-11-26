@@ -84,9 +84,10 @@ async function google(query=null, limit=null) {
   });
 
   const scrapeResults = async (query='', start=0) => await scrape(
-    `https://www.google.com/search?q=${query}&start=${start}`,
-    'div.g',
-    browser
+    `https://www.google.com/search?q=${query}&start=${start}`, {
+      selector: 'div.g',
+      browser
+    }
   )
 
   let results = [];

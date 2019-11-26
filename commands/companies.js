@@ -59,7 +59,7 @@ async function companies() {
 
   let table;
   if (fetchResults) {
-    table = await scrape(REF_URL, 'table#constituents');
+    table = await scrape(REF_URL, { selector: 'table#constituents' });
     fs.writeFileSync(CACHE_PATH, table, { encoding: 'utf8' });
   } else {
     table = fs.readFileSync(CACHE_PATH, { encoding: 'utf8' });
