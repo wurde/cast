@@ -21,24 +21,24 @@ const cli = meow(`
     $ cast google-images [OPTIONS] QUERY
   
   Options
-    --count COUNT      Specify how many images to download.
-    --size SIZE        Filter results by image size.
-                       Large, Medium, Icon, Larger than 2MP,8MP,40MP,70MP.
-    --color COLOR      Filter results by image size.
-                       Black and white, red, orange, yellow, green, purple, pink,
-                       grey, white, black.
-    --time TIME        Filter results by time.
-                       Past 24 hours, past week, past month, past year.
-    --type TYPE        Filter results by type.
-                       Face, photo, clip art, line drawing, animated.
-    --region REGION    Filter results by region.
-                       United Kingdom, United States, Uruguay, ...
-    --format FORMAT    Filter results by file format.
-                       JPG, PNG, GIF, BMP, SVG, ICO.
+    --min-count COUNT    Minimum number of images to download.
+    --size SIZE          Filter results by image size.
+                         Large, Medium, Icon, Larger than 2MP,8MP,40MP,70MP.
+    --color COLOR        Filter results by image size.
+                         Black and white, red, orange, yellow, green, purple, pink,
+                         grey, white, black.
+    --time TIME          Filter results by time.
+                         Past 24 hours, past week, past month, past year.
+    --type TYPE          Filter results by type.
+                         Face, photo, clip art, line drawing, animated.
+    --region REGION      Filter results by region.
+                         United Kingdom, United States, Uruguay, ...
+    --format FORMAT      Filter results by file format.
+                         JPG, PNG, GIF, BMP, SVG, ICO.
 `, {
   description: 'Search and download Google Images.',
   flags: {
-    count:  { type: 'integer' },
+    minCount:  { type: 'integer' },
     size:   { type: 'string' },
     color:  { type: 'string' },
     time:   { type: 'string' },
@@ -56,7 +56,7 @@ async function google_images(query = null, options = {}) {
   showHelp(cli, [(!query && cli.input.length < 2)])
 
   query = query || cli.input.slice(1);
-  const count = options.count || cli.flags.count || 80;
+  const minCount = options.minCount || cli.flags.minCount || 80;
   const label = options.label || camelcase(query, { pascalCase: true });
   const size = options.size || cli.flags.size;
   const color = options.color || cli.flags.color;
@@ -81,12 +81,9 @@ async function google_images(query = null, options = {}) {
     const result = await scrape(targetUrl, {
       selector: 'div#search img',
       infiniteScroll: true,
-      count,
+      minCount,
       browser
     });
-    console.log('result', result, result.length);
-    browser.close();
-    process.exit(0);
 
     // Parse all image URLs on page.
     imageUrls = imageUrls.concat(
@@ -97,12 +94,11 @@ async function google_images(query = null, options = {}) {
       }, [])
     );
 
-    console.log('imageUrls', imageUrls, imageUrls.length);
-    // // Download all images.
-    // for (let i = 0; i < imageUrls.length; i++) {
-    //   download(imageUrls[i], `${label}-${i}`)
-    //   await sleep(200)
-    // }
+    // Download all images.
+    for (let i = 0; i < imageUrls.length; i++) {
+      download(imageUrls[i], `${label}-${i}`)
+      await sleep(200)
+    }
   } catch (err) {
     console.error(err);
   } finally {

@@ -51,10 +51,10 @@ async function scrollToPageBottom(page) {
   }
 };
 
-async function checkResultCount(page, selector, count) {
-  const result = await parsePage(page, selector)
+async function checkResultCount(page, selector, minCount) {
+  const result = await parsePage(page, selector);
   const resultCount = result.length;
-  return resultCount < count
+  return resultCount < minCount;
 }
 
 /**
@@ -68,7 +68,7 @@ const cli = meow(
 
   Options
     --selector, -s PATTERN   CSS selector to filter page content.
-    --count, -c NUMBER       How many selector matches to return.
+    --min-count, -c NUMBER   Minimum number of selector matches to return.
     --infinite-scroll        Scroll down the page for more content.
 `,
   {
@@ -78,7 +78,7 @@ const cli = meow(
         type: 'text',
         alias: 's'
       },
-      count: {
+      minCount: {
         type: 'integer',
         alias: 'c'
       },
@@ -99,7 +99,7 @@ async function scrape(url = null, options = {}) {
 
   url = url || cli.input[1];
   const selector = options.selector || cli.flags.selector;
-  const count = options.count || cli.flags.count;
+  const minCount = options.minCount || cli.flags.minCount;
   const infiniteScroll = options.infiniteScroll || cli.flags.infiniteScroll;
   const browser =
     options.browser ||
@@ -121,7 +121,9 @@ async function scrape(url = null, options = {}) {
 
       while (isScrolling) {
         isScrolling = await scrollToPageBottom(page);
-        if (count) isScrolling = await checkResultCount(page, selector, count);
+        if (minCount) {
+          isScrolling = await checkResultCount(page, selector, minCount);
+        }
       }
     }
 
