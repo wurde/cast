@@ -29,8 +29,8 @@ const cli = meow(`
 
   Options
     --create, -c  Create a task.
-    --done, -d  Mark task as done.
-    --clear  Clear all tasks marked as done.
+    --done, -d    Mark task as done.
+    --clear       Clear all tasks marked as done.
 `, {
   description: 'Project task manager.',
   flags: {
@@ -126,16 +126,17 @@ async function tasks() {
       }
     } else {
       console.log('Project:', cwd, '\n')
-      console.log('  Printing tasks...')
+      console.log('  Tasks:')
       const [alltasks_result, _] = await db.query(`SELECT * FROM tasks WHERE working_directory = '${cwd}' ORDER BY done_at;`)
 
       for (let i = 0; i < alltasks_result.length; i++) {
         if (alltasks_result[i].done_at) {
-          console.log(`  ${chalk.green('\u2713')}  ${alltasks_result[i].description}`)
+          console.log(`    ${chalk.green('\u2713')}  ${alltasks_result[i].description}`)
         } else {
-          console.log(`  ${chalk.white('\u25A2')}  ${alltasks_result[i].description}`)
+          console.log(`    ${chalk.white('\u25A2')}  ${alltasks_result[i].description}`)
         }
       }
+      console.log('')
     }
 
     await close_database()
