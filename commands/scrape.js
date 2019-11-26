@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 /**
  * Dependencies
@@ -29,11 +29,23 @@ async function parsePage(page, selector) {
   }
 };
 
+async function scrollToPageBottom(page) {
+  // Get current scrollHeight.
+  const scrollHeight = await page.evaluate(() => document.body.scrollHeight);
+  // Scroll to the bottom of the page.
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  // Wait for scroll height to increase.
+  await page.waitForFunction(`document.body.scrollHeight > ${scrollHeight}`);
+  // Wait for 2 seconds.
+  page.waitFor(2000);
+};
+
 /**
  * Parse args
  */
 
-const cli = meow(`
+const cli = meow(
+  `
   Usage
     $ cast scrape URL [OPTIONS]
 
@@ -41,58 +53,62 @@ const cli = meow(`
     --selector, -s PATTERN   CSS selector to filter page content.
     --count, -c NUMBER       How many selector matches to return.
     --infinite-scroll        Scroll down the page for more content.
-`, {
-  description: 'Scrape web content.',
-  flags: {
-    selector: {
-      type: 'text',
-      alias: 's'
-    },
-    count: {
-      type: 'integer',
-      alias: 'c'
-    },
-    infiniteScroll: {
-      type: 'boolean'
+`,
+  {
+    description: 'Scrape web content.',
+    flags: {
+      selector: {
+        type: 'text',
+        alias: 's'
+      },
+      count: {
+        type: 'integer',
+        alias: 'c'
+      },
+      infiniteScroll: {
+        type: 'boolean'
+      }
     }
   }
-})
+);
 
 /**
  * Define script
  */
 
-async function scrape(url=null, options={}) {
-  showHelp(cli, [(!url && cli.input.length < 2)]);
+async function scrape(url = null, options = {}) {
+  showHelp(cli, [!url && cli.input.length < 2]);
   requireConnectivity();
 
   url = url || cli.input[1];
   const selector = options.selector || cli.flags.selector;
   const count = options.count || cli.flags.count;
   const infiniteScroll = options.infiniteScroll || cli.flags.infiniteScroll;
-  const browser = options.browser || await launchBrowser({
-    headless: true,
-    defaultViewport: {
-      width: 1024,
-      height: 800
-    }
-  });
+  const browser =
+    options.browser ||
+    (await launchBrowser({
+      headless: true,
+      defaultViewport: {
+        width: 1024,
+        height: 800
+      }
+    }));
 
   const page = await browser.newPage();
   await page.goto(parseUrl(url).href);
 
   const results = [];
   try {
+    await scrollToPageBottom(page);
     results.push(await parsePage(page, selector));
     if (arguments.length === 0) console.log(JSON.stringify(results));
-  } catch(err) {
-    console.error(err);
-    return err;
+  } catch (err) {
+    console.error(err); return err;
   } finally {
     options.browser ? page.close() : browser.close();
     return results;
   }
-};
+}
 
 /**
  * Export script

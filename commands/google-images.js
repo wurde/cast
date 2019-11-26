@@ -52,12 +52,12 @@ const cli = meow(`
  * Define script
  */
 
-async function google_images(query=null, count=null, label=null, options={}) {
+async function google_images(query=null, options={}) {
   showHelp(cli, [(!query && cli.input.length < 2)])
 
   query = query || cli.input.slice(1);
-  count = count || cli.flags.count || 80;
-  label = label || camelcase(query, { pascalCase: true });
+  const count = options.count || cli.flags.count || 80;
+  const label = options.label || camelcase(query, { pascalCase: true });
   const size = options.size || cli.flags.size;
   const color = options.color || cli.flags.color;
   const time = options.time || cli.flags.time;
@@ -67,7 +67,7 @@ async function google_images(query=null, count=null, label=null, options={}) {
 
   const browser = await launchBrowser({
     headless: false,
-    delay: 200,
+    delay: 400,
     defaultViewport: {
       width: 1024,
       height: 800
@@ -77,15 +77,14 @@ async function google_images(query=null, count=null, label=null, options={}) {
   try {
     let imageUrls = [];
     const targetUrl = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(query)}`;
-    // TODO I need to press PageDown to see more image results.
-    // await page.keyboard.press('PageDown');
     const result = await scrape(targetUrl, {
       selector: 'div#search img',
       infiniteScroll: true,
+      count,
       browser
     });
-    console.log('result', result);
-    browser.close()
+    console.log('result', result, result.length);
+    browser.close();
     process.exit(0);
 
     // Parse all image URLs on page.
@@ -104,7 +103,7 @@ async function google_images(query=null, count=null, label=null, options={}) {
     //   await sleep(200)
     // }
   } catch (err) {
-    console.error(err)
+    console.error(err);
   } finally {
     browser.close();
   }
