@@ -28,7 +28,7 @@ const cli = meow(`
                          red, blue, orange, yellow, green, purple, pink,
                          grey, white, black.
     --time TIME          Filter results by time.
-                         Past 24 hours, past week, past month, past year.
+                         day, week, month, year.
     --type TYPE          Filter results by type.
                          Face, photo, clip art, line drawing, animated.
     --region REGION      Filter results by region.
@@ -114,6 +114,19 @@ async function google_images(query = null, options = {}) {
         targetUrl += 'ic:specific,isc:black,';
       }
     }
+
+    if (time) {
+      if (time.match(/day/i)) {
+        targetUrl += 'qdr:d,';
+      } else if (time.match(/week/i)) {
+        targetUrl += 'qdr:w,';
+      } else if (time.match(/month/i)) {
+        targetUrl += 'qdr:m,';
+      } else if (time.match(/year/i)) {
+        targetUrl += 'qdr:y,';
+      }
+    }
+
     browser.close()
     console.log('targetUrl', targetUrl);
     process.exit(1);
