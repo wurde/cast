@@ -25,7 +25,7 @@ const cli = meow(`
     --size SIZE          Filter results by image size.
                          Large, Medium, Icon, Larger than 2MP,8MP,40MP,70MP.
     --color COLOR        Filter results by image size.
-                         Black and white, red, orange, yellow, green, purple, pink,
+                         red, blue, orange, yellow, green, purple, pink,
                          grey, white, black.
     --time TIME          Filter results by time.
                          Past 24 hours, past week, past month, past year.
@@ -77,17 +77,41 @@ async function google_images(query = null, options = {}) {
 
   try {
     let imageUrls = [];
-    let targetUrl = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(query)}`;
+    let targetUrl = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(query)}&tbs=`;
 
     if (size) {
       if (size.match(/large/i) || size.match('l')) {
-        targetUrl += '&tbs=isz:l';
+        targetUrl += 'isz:l,';
       } else if (size.match(/medium/i) || size.match('m')) {
-        targetUrl += '&tbs=isz:m';
+        targetUrl += 'isz:m,';
       } else if (size.match(/icon/i) || size.match('i')) {
-        targetUrl += '&tbs=isz:i';
+        targetUrl += 'isz:i,';
       } else {
-        targetUrl += '&tbs=isz:l';
+        targetUrl += 'isz:l,';
+      }
+    }
+
+    if (color) {
+      if (color.match(/red/i)) {
+        targetUrl += 'ic:specific,isc:red,';
+      } else if (color.match(/blue/i)) {
+        targetUrl += 'ic:specific,isc:blue,';
+      } else if (color.match(/orange/i)) {
+        targetUrl += 'ic:specific,isc:orange,';
+      } else if (color.match(/yellow/i)) {
+        targetUrl += 'ic:specific,isc:yellow,';
+      } else if (color.match(/green/i)) {
+        targetUrl += 'ic:specific,isc:green,';
+      } else if (color.match(/purple/i)) {
+        targetUrl += 'ic:specific,isc:purple,';
+      } else if (color.match(/pink/i)) {
+        targetUrl += 'ic:specific,isc:pink,';
+      } else if (color.match(/grey/i)) {
+        targetUrl += 'ic:specific,isc:grey,';
+      } else if (color.match(/white/i)) {
+        targetUrl += 'ic:specific,isc:white,';
+      } else if (color.match(/black/i)) {
+        targetUrl += 'ic:specific,isc:black,';
       }
     }
     browser.close()
@@ -100,6 +124,7 @@ async function google_images(query = null, options = {}) {
       minCount,
       browser
     });
+    console.log('result', result, result.length);
     browser.close();
 
     // Parse all image URLs on page.
