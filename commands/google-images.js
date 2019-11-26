@@ -23,14 +23,14 @@ const cli = meow(`
   Options
     --min-count COUNT    Minimum number of images to download.
     --size SIZE          Filter results by image size.
-                         Large, Medium, Icon, Larger than 2MP,8MP,40MP,70MP.
+                           large, medium, icon, 2mp, 8mp, 40mp, 70mp.
     --color COLOR        Filter results by image size.
-                         red, blue, orange, yellow, green, purple, pink,
-                         grey, white, black.
+                           red, blue, orange, yellow, green, purple, pink,
+                           grey, white, black.
     --time TIME          Filter results by time.
-                         day, week, month, year.
+                           day, week, month, year.
     --type TYPE          Filter results by type.
-                         Face, photo, clip art, line drawing, animated.
+                           face, photo, clipart, lineart, animated.
     --region REGION      Filter results by region.
                          United Kingdom, United States, Uruguay, ...
     --format FORMAT      Filter results by file format.
@@ -124,6 +124,20 @@ async function google_images(query = null, options = {}) {
         targetUrl += 'qdr:m,';
       } else if (time.match(/year/i)) {
         targetUrl += 'qdr:y,';
+      }
+    }
+
+    if (type) {
+      if (type.match(/face/i)) {
+        targetUrl += 'itp:face,';
+      } else if (type.match(/photo/i)) {
+        targetUrl += 'itp:photo,';
+      } else if (type.match(/clipart/i)) {
+        targetUrl += 'itp:clipart,';
+      } else if (type.match(/lineart/i)) {
+        targetUrl += 'itp:lineart,';
+      } else if (type.match(/animated/i)) {
+        targetUrl += 'itp:animated,';
       }
     }
 
