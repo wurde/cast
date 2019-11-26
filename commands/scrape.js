@@ -9,7 +9,9 @@ const prompts = require('prompts');
 const { requireConnectivity } = require('../helpers/connectivity');
 const parseUrl = require('../helpers/parseUrl');
 const showHelp = require('../helpers/showHelp');
+const sleep = require('../helpers/sleep');
 const launchBrowser = require('../helpers/launchBrowser');
+const handleCaptcha = require('../helpers/handleCaptcha');
 
 /**
  * Define helpers
@@ -113,6 +115,8 @@ async function scrape(url = null, options = {}) {
 
   const page = await browser.newPage();
   await page.goto(parseUrl(url).href);
+
+  await handleCaptcha(page)
 
   let results;
   try {

@@ -69,14 +69,16 @@ function printResults(results) {
  * Define script
  */
 
-async function google(query=null, limit=null) {
+async function google(query = null, options={}) {
   showHelp(cli, [(!query && cli.input.length < 2)]);
 
   query = query ? query : cli.input.slice(1).join(' ');
-  limit = limit || cli.flags.count || 10;
+  const limit = options.limit || cli.flags.count || 10;
 
   const browser = await launchBrowser({
-    headless: true,
+    headless: false,
+    delay: 400,
+    timeout: 0,
     defaultViewport: {
       width: 1024,
       height: 800
@@ -84,9 +86,10 @@ async function google(query=null, limit=null) {
   });
 
   const scrapeResults = async (query='', start=0) => await scrape(
-    `https://www.google.com/search?q=${query}&start=${start}`,
-    'div.g',
-    browser
+    `https://www.google.com/search?q=${query}&start=${start}`, {
+      selector: 'div.g',
+      browser
+    }
   )
 
   let results = [];
@@ -114,8 +117,7 @@ async function google(query=null, limit=null) {
       }
     }
   } catch (err) {
-    console.error(err);
-    return err;
+    console.error(err); return err;
   } finally {
     browser.close();
     return results;
