@@ -69,11 +69,11 @@ function printResults(results) {
  * Define script
  */
 
-async function google(query=null, limit=null) {
+async function google(query = null, options) {
   showHelp(cli, [(!query && cli.input.length < 2)]);
 
   query = query ? query : cli.input.slice(1).join(' ');
-  limit = limit || cli.flags.count || 10;
+  const limit = options.limit || cli.flags.count || 10;
 
   const browser = await launchBrowser({
     headless: true,
