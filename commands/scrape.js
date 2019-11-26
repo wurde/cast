@@ -30,21 +30,32 @@ async function parsePage(page, selector) {
 };
 
 async function scrollToPageBottom(page) {
-  // Get current scrollHeight.
-  const currentScrollHeight = await page.evaluate(() => document.body.scrollHeight);
-  // Scroll to the bottom of the page.
-  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-  // Wait for scroll height to increase.
-  await page.waitForFunction(
-    `document.body.scrollHeight > ${currentScrollHeight}`
-  );
-  // Wait for 2 seconds.
-  page.waitFor(2000);
-  // Get current scrollHeight.
-  const totalScrollHeight = await page.evaluate(() => document.body.scrollHeight);
-  // Return true if page is still scrollable.
-  return totalScrollHeight > currentScrollHeight;
+  try {
+    // Get current scrollHeight.
+    const currentScrollHeight = await page.evaluate(() => document.body.scrollHeight);
+    // Scroll to the bottom of the page.
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    // Wait for scroll height to increase.
+    await page.waitForFunction(
+      `document.body.scrollHeight > ${currentScrollHeight}`,
+      { timeout: 2000 }
+    );
+    // Wait for 2 seconds.
+    page.waitFor(2000);
+    // Get current scrollHeight.
+    const totalScrollHeight = await page.evaluate(() => document.body.scrollHeight);
+    // Return true if page is still scrollable.
+    return totalScrollHeight > currentScrollHeight;
+  } catch (err) {
+    return false
+  }
 };
+
+async function checkResultCount(page, selector, count) {
+  const result = await parsePage(page, selector)
+  const resultCount = result.length;
+  return resultCount < count
+}
 
 /**
  * Parse args
@@ -93,7 +104,7 @@ async function scrape(url = null, options = {}) {
   const browser =
     options.browser ||
     (await launchBrowser({
-      headless: true,
+      headless: false,
       defaultViewport: {
         width: 1024,
         height: 800
@@ -103,13 +114,18 @@ async function scrape(url = null, options = {}) {
   const page = await browser.newPage();
   await page.goto(parseUrl(url).href);
 
-  const results = [];
+  let results;
   try {
     if (infiniteScroll) {
       let isScrolling = true;
-      while (isScrolling) { isScrolling = await scrollToPageBottom(page); };
+
+      while (isScrolling) {
+        isScrolling = await scrollToPageBottom(page);
+        if (count) isScrolling = await checkResultCount(page, selector, count);
+      }
     }
-    results.push(await parsePage(page, selector));
+
+    results = await parsePage(page, selector);
     if (arguments.length === 0) console.log(JSON.stringify(results));
   } catch (err) {
     console.error(err); return err;

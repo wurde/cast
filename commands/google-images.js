@@ -68,6 +68,7 @@ async function google_images(query = null, options = {}) {
   const browser = await launchBrowser({
     headless: false,
     delay: 400,
+    timeout: 0,
     defaultViewport: {
       width: 1024,
       height: 800
