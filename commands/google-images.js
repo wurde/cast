@@ -84,6 +84,7 @@ async function google_images(query = null, options = {}) {
       minCount,
       browser
     });
+    browser.close();
 
     // Parse all image URLs on page.
     imageUrls = imageUrls.concat(
@@ -102,7 +103,8 @@ async function google_images(query = null, options = {}) {
   } catch (err) {
     console.error(err);
   } finally {
-    browser.close();
+    // Ensure browser is closed.
+    if (browser) browser.close();
   }
 }
 
