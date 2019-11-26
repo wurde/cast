@@ -52,7 +52,7 @@ const cli = meow(`
  * Define script
  */
 
-async function google_images(query=null, options={}) {
+async function google_images(query = null, options = {}) {
   showHelp(cli, [(!query && cli.input.length < 2)])
 
   query = query || cli.input.slice(1);
