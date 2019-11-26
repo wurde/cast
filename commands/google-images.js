@@ -54,7 +54,7 @@ async function google_images(query = null, options = {}) {
   showHelp(cli, [(!query && cli.input.length < 2)])
 
   query = query || cli.input.slice(1);
-  const minCount = options.minCount || cli.flags.minCount || 80;
+  const minCount = options.minCount || cli.flags.minCount;
   const label = options.label || camelcase(query, { pascalCase: true });
   const size = options.size || cli.flags.size;
   const color = options.color || cli.flags.color;
@@ -154,10 +154,6 @@ async function google_images(query = null, options = {}) {
         targetUrl += 'ift:ico,';
       }
     }
-
-    browser.close()
-    console.log('targetUrl', targetUrl);
-    process.exit(1);
 
     const result = await scrape(targetUrl, {
       selector: 'div#search img',

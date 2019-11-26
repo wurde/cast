@@ -38,7 +38,7 @@ async function scrollToPageBottom(page) {
     // Wait for scroll height to increase.
     await page.waitForFunction(
       `document.body.scrollHeight > ${currentScrollHeight}`,
-      { timeout: 2000 }
+      { timeout: 10000 }
     );
     // Wait for 2 seconds.
     page.waitFor(2000);
