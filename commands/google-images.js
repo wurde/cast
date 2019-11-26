@@ -77,7 +77,23 @@ async function google_images(query = null, options = {}) {
 
   try {
     let imageUrls = [];
-    const targetUrl = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(query)}`;
+    let targetUrl = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(query)}`;
+
+    if (size) {
+      if (size.match(/large/i) || size.match('l')) {
+        targetUrl += '&tbs=isz:l';
+      } else if (size.match(/medium/i) || size.match('m')) {
+        targetUrl += '&tbs=isz:m';
+      } else if (size.match(/icon/i) || size.match('i')) {
+        targetUrl += '&tbs=isz:i';
+      } else {
+        targetUrl += '&tbs=isz:l';
+      }
+    }
+    browser.close()
+    console.log('targetUrl', targetUrl);
+    process.exit(1);
+
     const result = await scrape(targetUrl, {
       selector: 'div#search img',
       infiniteScroll: true,
