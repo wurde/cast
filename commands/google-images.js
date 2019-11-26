@@ -31,10 +31,8 @@ const cli = meow(`
                            day, week, month, year.
     --type TYPE          Filter results by type.
                            face, photo, clipart, lineart, animated.
-    --region REGION      Filter results by region.
-                         United Kingdom, United States, Uruguay, ...
     --format FORMAT      Filter results by file format.
-                         JPG, PNG, GIF, BMP, SVG, ICO.
+                           jpg, png, gif, bmp, svg, ico.
 `, {
   description: 'Search and download Google Images.',
   flags: {
@@ -138,6 +136,22 @@ async function google_images(query = null, options = {}) {
         targetUrl += 'itp:lineart,';
       } else if (type.match(/animated/i)) {
         targetUrl += 'itp:animated,';
+      }
+    }
+
+    if (format) {
+      if (format.match(/jpg/i)) {
+        targetUrl += 'ift:jpg,';
+      } else if (format.match(/png/i)) {
+        targetUrl += 'ift:png,';
+      } else if (format.match(/gif/i)) {
+        targetUrl += 'ift:gif,';
+      } else if (format.match(/bmp/i)) {
+        targetUrl += 'ift:bmp,';
+      } else if (format.match(/svg/i)) {
+        targetUrl += 'ift:svg,';
+      } else if (format.match(/ico/i)) {
+        targetUrl += 'ift:ico,';
       }
     }
 
