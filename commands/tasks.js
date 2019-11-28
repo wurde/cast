@@ -4,20 +4,20 @@
  * Dependencies
  */
 
-const path = require('path')
-const meow = require('meow')
-const chalk = require('chalk')
-const prompts = require('prompts')
-const Sequelize = require('sequelize')
-const showHelp = require('../helpers/showHelp')
+const path = require('path');
+const meow = require('meow');
+const chalk = require('chalk');
+const prompts = require('prompts');
+const Sequelize = require('sequelize');
+const showHelp = require('../helpers/showHelp');
 
 /**
  * Constants
  */
 
-const tasks_db = path.join(process.env.HOME, '.tasks.sqlite3')
-const db = new Sequelize({ dialect: 'sqlite', storage: tasks_db, logging: false })
-const cwd = process.cwd()
+const db_path = path.join(process.env.HOME, '.tasks.sqlite3');
+const db = new Sequelize({ dialect: 'sqlite', storage: db_path, logging: false });
+const cwd = process.cwd();
 
 /**
  * Parse args
@@ -28,25 +28,25 @@ const cli = meow(`
     $ cast tasks <command>
 
   Options
-    --create, -c  Create a task.
-    --done, -d    Mark task as done.
-    --clear       Clear all tasks marked as done.
+    --add, -a MESSAGE          Add a task.
+    --complete, -c PATTERN     Mark all matching tasks as completed.
+    --clear                    Clear all tasks marked as completed.
 `, {
   description: 'Project task manager.',
   flags: {
-    create: {
-      type: 'boolean',
-      alias: 'c'
+    add: {
+      type: 'string',
+      alias: 'a'
     },
-    done: {
-      type: 'boolean',
-      alias: 'd'
+    complete: {
+      type: 'string',
+      alias: 'c'
     },
     clear: {
       type: 'boolean'
     }
   }
-})
+});
 
 /**
  * Setup database
