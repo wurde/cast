@@ -68,6 +68,20 @@ async function createTableIfMissing(db) {
   if (results.length === 0) await db.exec('createTable');
 }
 
+async function listAllTasks(db) {
+  const [tasks, _] = await db.exec('listTasks', [cwd]);
+
+  for (let i = 0; i < tasks.length; i++) {
+    console.log(
+      `    ${
+        tasks[i].completed_at
+          ? chalk.green('\u2713')
+          : chalk.white('\u25A2')
+      }  ${tasks[i].description}`
+    );
+  }
+}
+
 /**
  * Parse args
  */
@@ -117,6 +131,7 @@ async function tasks(command=null) {
 
       console.log('  Adding a task...');
       await db.exec('addTask', [cwd, cli.flags.add]);
+      await listAllTasks(db);
     } else if (cli.flags.complete || cli.flags.c) {
       /**
        * Mark all matching tasks as completed.
@@ -124,24 +139,22 @@ async function tasks(command=null) {
 
       console.log('  Marking task(s) as completed...');
       await db.exec('completeTask', [cli.flags.complete]);
+      await listAllTasks(db);
     } else if (cli.flags.clear) {
       /**
        * Clear all tasks marked as completed.
        */
 
       console.log('  Clearing all tasks marked as completed...');
-      await db.exec('clearTasks', [cli.flags.clear]);
+      await db.exec('clearTasks', [cwd]);
+      await listAllTasks(db);
     } else {
       /**
        * List all tasks.
        */
 
       console.log('  Tasks:');
-      const [tasks, _] = await db.exec('listTasks', [cwd]);
-      for (let i = 0; i < tasks.length; i++) {
-        if (arguments.length === 0) console.log(`    ${tasks[i].completed_at ? 
-          chalk.green('\u2713') : chalk.white('\u25A2')}  ${tasks[i].description}`);
-      }
+      await listAllTasks(db);
     }
   } catch(err) {
     console.error(err);
