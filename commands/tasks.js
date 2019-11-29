@@ -126,14 +126,17 @@ async function tasks(command = null, options = {}) {
     if (cli.flags.add) {
       command = 'add';
       message = cli.flags.add;
-      if (!message) throw new Error('Message is required.');
     }
     if (cli.flags.complete) {
       command = 'complete';
       message = cli.flags.complete;
-      if (!message) throw new Error('Message is required.');
     }
     if (cli.flags.clear) command = 'clear';
+  }
+
+  if (command === 'add' || command === 'complete') {
+    console.log('message', message);
+    if (!message) throw new Error('Message is required.');
   }
 
   try {
@@ -145,7 +148,7 @@ async function tasks(command = null, options = {}) {
        */
 
       console.log('  Adding a task...');
-      await db.exec('addTask', [cwd, cli.flags.add]);
+      await db.exec('addTask', [cwd, message]);
       await listAllTasks(db, cwd);
     } else if (command == 'complete') {
       /**
@@ -153,7 +156,7 @@ async function tasks(command = null, options = {}) {
        */
 
       console.log('  Marking task(s) as completed...');
-      await db.exec('completeTask', [cli.flags.complete]);
+      await db.exec('completeTask', [message]);
       await listAllTasks(db, cwd);
     } else if (command == 'clear') {
       /**
