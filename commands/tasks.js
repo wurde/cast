@@ -111,15 +111,31 @@ async function tasks(command=null) {
     console.log('\nProject:', cwd, '\n');
 
     if (cli.flags.add || cli.flags.a) {
-      console.log('  Creating a task...');
+      /**
+       * Add a task.
+       */
+
+      console.log('  Adding a task...');
       await db.exec('addTask', [cwd, cli.flags.add]);
     } else if (cli.flags.complete || cli.flags.c) {
-      console.log('  Marking task as done...');
+      /**
+       * Mark all matching tasks as completed.
+       */
+
+      console.log('  Marking task(s) as completed...');
       await db.exec('completeTask', [cli.flags.complete]);
     } else if (cli.flags.clear) {
-      console.log('  Clearing all tasks marked as done...');
+      /**
+       * Clear all tasks marked as completed.
+       */
+
+      console.log('  Clearing all tasks marked as completed...');
       await db.exec('clearTasks', [cli.flags.clear]);
     } else {
+      /**
+       * List all tasks.
+       */
+
       console.log('  Tasks:');
       const [tasks, _] = await db.exec('listTasks', [cwd]);
       for (let i = 0; i < tasks.length; i++) {
