@@ -91,7 +91,7 @@ const cli = meow(`
 
   Options
     --add, -a MESSAGE          Add a task.
-    --complete, -c PATTERN     Mark all matching tasks as completed.
+    --complete, -c MESSAGE     Mark all matching tasks as completed.
     --clear                    Clear all tasks marked as completed.
 `, {
   description: 'Project task manager.',
@@ -120,10 +120,19 @@ async function tasks(command = null, options = {}) {
   const cwd = options.cwd || process.cwd();
   const db = new Database(dbPath, queries);
   await createTableIfMissing(db);
+  let message = options.message;
 
   if (!command) {
-    if (cli.flags.add) command = 'add';
-    if (cli.flags.complete) command = 'complete';
+    if (cli.flags.add) {
+      command = 'add';
+      message = cli.flags.add;
+      if (!message) throw new Error('Message is required.');
+    }
+    if (cli.flags.complete) {
+      command = 'complete';
+      message = cli.flags.complete;
+      if (!message) throw new Error('Message is required.');
+    }
     if (cli.flags.clear) command = 'clear';
   }
 
