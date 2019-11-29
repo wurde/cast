@@ -10,14 +10,55 @@ const chalk = require('chalk');
 const prompts = require('prompts');
 const Sequelize = require('sequelize');
 const showHelp = require('../helpers/showHelp');
+const Database = require('../helpers/Database');
 
 /**
  * Constants
  */
 
-const db_path = path.join(process.env.HOME, '.tasks.sqlite3');
-const db = new Sequelize({ dialect: 'sqlite', storage: db_path, logging: false });
 const cwd = process.cwd();
+const dbPath = path.join(process.env.HOME, '.tasks.sqlite3');
+const queries = {
+  addTask: (cwd, description) => `
+    INSERT INTO tasks (
+      working_directory,
+      description
+    ) VALUES (
+      '${cwd}',
+      '${description}'
+    );
+  `,
+  completeTask: description => `
+    UPDATE tasks
+    SET completed_at = ${Date.now()}
+    WHERE description LIKE '%${description}%';
+  `,
+  clearTasks: () => `
+    DELETE FROM tasks
+    WHERE working_directory = '${cwd}'
+    AND completed_at IS NOT NULL;
+  `,
+  listTasks: () => `
+    SELECT *
+    FROM tasks
+    WHERE working_directory = '${cwd}'
+    ORDER BY completed_at;
+  `,
+  setup: () => `
+    CREATE TABLE IF NOT EXISTS tasks (
+      id integer primary key,
+      working_directory text,
+      description text,
+      completed_at integer
+    );
+  `,
+  hasTable: () => `
+    SELECT name
+    FROM sqlite_master
+    WHERE type='table'
+    AND name='tasks';
+  `
+};
 
 /**
  * Parse args
@@ -25,7 +66,7 @@ const cwd = process.cwd();
 
 const cli = meow(`
   Usage
-    $ cast tasks <command>
+    $ cast tasks [OPTIONS]
 
   Options
     --add, -a MESSAGE          Add a task.
@@ -49,99 +90,42 @@ const cli = meow(`
 });
 
 /**
- * Setup database
- */
-
-async function setup_database() {
-  try {
-    const [results, _] = await db.query("SELECT name FROM sqlite_master WHERE type='table' AND name='tasks';")
-
-    if (results.length === 0) {
-      await db.query('CREATE TABLE IF NOT EXISTS tasks (id integer primary key, working_directory text, description text, done_at integer);')
-    }
-  } catch(err) {
-    console.error(err)
-  }
-}
-
-/**
- * Close database
- */
-
-async function close_database() {
-  await db.close()
-}
-
-/**
  * Define script
  */
 
-async function tasks() {
-  showHelp(cli)
+async function tasks(command=null) {
+  showHelp(cli);
 
-  const command = cli.input[1]
+  console.log('command', command);
+  console.log('cli.flags', cli.flags);
+  process.exit(1);
 
   try {
-    await setup_database()
+    const db = new Database(dbPath, queries);
 
-    console.log('')
-    if (cli.flags.create || cli.flags.c || command === 'create') {
-      console.log('Project:', cwd, '\n')
-      console.log('  Creating a task...')
-      const res = await prompts({
-        type: 'text',
-        name: 'task',
-        message: 'Description:'
-      })
-
-      if (res.task) {
-        await db.query(`INSERT INTO tasks (working_directory, description) VALUES ('${cwd}', '${res.task}');`)
-      }
-    } else if (cli.flags.done || cli.flags.d || command === 'done') {
-      console.log('Project:', cwd, '\n')
-      console.log('  Marking task as done...')
-      const res = await prompts({
-        type: 'text',
-        name: 'task',
-        message: 'Description:'
-      })
-
-      if (res.task) {
-        await db.query(`UPDATE tasks SET done_at = ${Date.now()} WHERE description LIKE '%${res.task}%';`)
-      }
-    } else if (cli.flags.clear || command === 'clear') {
-      console.log('Project:', cwd, '\n')
-      console.log('  Clearing all tasks marked as done...')
-      await db.query(`DELETE FROM tasks WHERE working_directory = '${cwd}' AND done_at IS NOT NULL;`)
-    } else if (cli.flags.all || command === 'all') {
-      console.log('Printing all tasks across all projects...', '\n')
-      const [alltasks_result, _] = await db.query(`SELECT * FROM tasks ORDER BY done_at, working_directory;`)
-
-      for (let i = 0; i < alltasks_result.length; i++) {
-        if (alltasks_result[i].done_at) {
-          console.log(`  ${chalk.green('\u2713')}  ${alltasks_result[i].working_directory}  -  ${alltasks_result[i].description}`)
-        } else {
-          console.log(`  ${chalk.white('\u25A2')}  ${alltasks_result[i].working_directory}  -  ${alltasks_result[i].description}`)
-        }
-      }
+    if (arguments.length === 0) console.log('\nProject:', cwd, '\n');
+    if (cli.flags.add || cli.flags.a || command == 'add') {
+      if (arguments.length === 0) console.log('  Creating a task...');
+      await db.addTask();
+    } else if (cli.flags.complete || cli.flags.c || command == 'complete') {
+      if (arguments.length === 0) console.log('  Marking task as done...');
+      await db.completeTask();
+    } else if (cli.flags.clear || command == 'clear') {
+      if (arguments.length === 0) console.log('  Clearing all tasks marked as done...')
+      await db.clearTasks();
     } else {
-      console.log('Project:', cwd, '\n')
-      console.log('  Tasks:')
-      const [alltasks_result, _] = await db.query(`SELECT * FROM tasks WHERE working_directory = '${cwd}' ORDER BY done_at;`)
+      if (arguments.length === 0) console.log('  Tasks:');
+      const [tasks, _] = await db.listTasks();
 
-      for (let i = 0; i < alltasks_result.length; i++) {
-        if (alltasks_result[i].done_at) {
-          console.log(`    ${chalk.green('\u2713')}  ${alltasks_result[i].description}`)
-        } else {
-          console.log(`    ${chalk.white('\u25A2')}  ${alltasks_result[i].description}`)
-        }
+      for (let i = 0; i < tasks.length; i++) {
+        if (arguments.length === 0) console.log(`    ${tasks[i].completed_at ? 
+          chalk.green('\u2713') : chalk.white('\u25A2')}  ${tasks[i].description}`);
       }
-      console.log('')
     }
-
-    await close_database()
   } catch(err) {
-    console.error(err)
+    console.error(err);
+  } finally {
+    await db.close();
   }
 }
 
@@ -149,4 +133,4 @@ async function tasks() {
  * Export script
  */
 
-module.exports = tasks
+module.exports = tasks;
