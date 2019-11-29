@@ -7,7 +7,6 @@
 const path = require('path');
 const meow = require('meow');
 const chalk = require('chalk');
-const prompts = require('prompts');
 const Sequelize = require('sequelize');
 const showHelp = require('../helpers/showHelp');
 const Database = require('../helpers/Database');
@@ -28,17 +27,17 @@ const queries = {
       '${description}'
     );
   `,
-  completeTask: description => `
+  completeTask: (description) => `
     UPDATE tasks
     SET completed_at = ${Date.now()}
     WHERE description LIKE '%${description}%';
   `,
-  clearTasks: () => `
+  clearTasks: (cwd) => `
     DELETE FROM tasks
     WHERE working_directory = '${cwd}'
     AND completed_at IS NOT NULL;
   `,
-  listTasks: () => `
+  listTasks: (cwd) => `
     SELECT *
     FROM tasks
     WHERE working_directory = '${cwd}'
@@ -96,27 +95,23 @@ const cli = meow(`
 async function tasks(command=null) {
   showHelp(cli);
 
-  console.log('command', command);
-  console.log('cli.flags', cli.flags);
-  process.exit(1);
+  const db = new Database(dbPath, queries);
 
   try {
-    const db = new Database(dbPath, queries);
-
     if (arguments.length === 0) console.log('\nProject:', cwd, '\n');
-    if (cli.flags.add || cli.flags.a || command == 'add') {
-      if (arguments.length === 0) console.log('  Creating a task...');
-      await db.addTask();
-    } else if (cli.flags.complete || cli.flags.c || command == 'complete') {
-      if (arguments.length === 0) console.log('  Marking task as done...');
-      await db.completeTask();
-    } else if (cli.flags.clear || command == 'clear') {
-      if (arguments.length === 0) console.log('  Clearing all tasks marked as done...')
+
+    if (cli.flags.add || cli.flags.a) {
+      console.log('  Creating a task...');
+      await db.addTask(cwd, cli.flags.add);
+    } else if (cli.flags.complete || cli.flags.c) {
+      console.log('  Marking task as done...');
+      await db.completeTask(cli.flags.complete);
+    } else if (cli.flags.clear) {
+      console.log('  Clearing all tasks marked as done...');
       await db.clearTasks();
     } else {
-      if (arguments.length === 0) console.log('  Tasks:');
+      console.log('  Tasks:');
       const [tasks, _] = await db.listTasks();
-
       for (let i = 0; i < tasks.length; i++) {
         if (arguments.length === 0) console.log(`    ${tasks[i].completed_at ? 
           chalk.green('\u2713') : chalk.white('\u25A2')}  ${tasks[i].description}`);
