@@ -43,7 +43,7 @@ const queries = {
     WHERE working_directory = '${cwd}'
     ORDER BY completed_at;
   `,
-  setup: () => `
+  createTable: () => `
     CREATE TABLE IF NOT EXISTS tasks (
       id integer primary key,
       working_directory text,
@@ -58,6 +58,15 @@ const queries = {
     AND name='tasks';
   `
 };
+
+/**
+ * Define helpers
+ */
+
+async function createTableIfMissing(db) {
+  const [results, _] = await db.exec('hasTable');
+  if (results.length === 0) await db.exec('createTable');
+}
 
 /**
  * Parse args
@@ -96,6 +105,7 @@ async function tasks(command=null) {
   showHelp(cli);
 
   const db = new Database(dbPath, queries);
+  await createTableIfMissing(db);
 
   try {
     console.log('\nProject:', cwd, '\n');
