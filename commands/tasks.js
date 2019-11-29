@@ -15,7 +15,6 @@ const Database = require('../helpers/Database');
  * Constants
  */
 
-const cwd = process.cwd();
 const dbPath = path.join(process.env.HOME, '.tasks.sqlite3');
 const queries = {
   addTask: (cwd, description) => `
@@ -68,7 +67,7 @@ async function createTableIfMissing(db) {
   if (results.length === 0) await db.exec('createTable');
 }
 
-async function listAllTasks(db) {
+async function listAllTasks(db, cwd) {
   const [tasks, _] = await db.exec('listTasks', [cwd]);
 
   for (let i = 0; i < tasks.length; i++) {
@@ -115,31 +114,32 @@ const cli = meow(`
  * Define script
  */
 
-async function tasks(command=null) {
+async function tasks(command = null, options = {}) {
   showHelp(cli);
 
+  const cwd = options.cwd || process.cwd();
   const db = new Database(dbPath, queries);
   await createTableIfMissing(db);
 
   try {
     console.log('\nProject:', cwd, '\n');
 
-    if (cli.flags.add || cli.flags.a) {
+    if (cli.flags.add) {
       /**
        * Add a task.
        */
 
       console.log('  Adding a task...');
       await db.exec('addTask', [cwd, cli.flags.add]);
-      await listAllTasks(db);
-    } else if (cli.flags.complete || cli.flags.c) {
+      await listAllTasks(db, cwd);
+    } else if (cli.flags.complete) {
       /**
        * Mark all matching tasks as completed.
        */
 
       console.log('  Marking task(s) as completed...');
       await db.exec('completeTask', [cli.flags.complete]);
-      await listAllTasks(db);
+      await listAllTasks(db, cwd);
     } else if (cli.flags.clear) {
       /**
        * Clear all tasks marked as completed.
@@ -147,14 +147,14 @@ async function tasks(command=null) {
 
       console.log('  Clearing all tasks marked as completed...');
       await db.exec('clearTasks', [cwd]);
-      await listAllTasks(db);
+      await listAllTasks(db, cwd);
     } else {
       /**
        * List all tasks.
        */
 
       console.log('  Tasks:');
-      await listAllTasks(db);
+      await listAllTasks(db, cwd);
     }
   } catch(err) {
     console.error(err);
