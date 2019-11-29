@@ -121,10 +121,16 @@ async function tasks(command = null, options = {}) {
   const db = new Database(dbPath, queries);
   await createTableIfMissing(db);
 
+  if (!command) {
+    if (cli.flags.add) command = 'add';
+    if (cli.flags.complete) command = 'complete';
+    if (cli.flags.clear) command = 'clear';
+  }
+
   try {
     console.log('\nProject:', cwd, '\n');
 
-    if (cli.flags.add) {
+    if (command == 'add') {
       /**
        * Add a task.
        */
@@ -132,7 +138,7 @@ async function tasks(command = null, options = {}) {
       console.log('  Adding a task...');
       await db.exec('addTask', [cwd, cli.flags.add]);
       await listAllTasks(db, cwd);
-    } else if (cli.flags.complete) {
+    } else if (command == 'complete') {
       /**
        * Mark all matching tasks as completed.
        */
@@ -140,7 +146,7 @@ async function tasks(command = null, options = {}) {
       console.log('  Marking task(s) as completed...');
       await db.exec('completeTask', [cli.flags.complete]);
       await listAllTasks(db, cwd);
-    } else if (cli.flags.clear) {
+    } else if (command == 'clear') {
       /**
        * Clear all tasks marked as completed.
        */
