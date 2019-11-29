@@ -36,17 +36,6 @@ class Database {
   }
 }
 
-// async setupIfMissing(sql) {
-//   try {
-//     const [results, _] = await db.query(
-//       "SELECT name FROM sqlite_master WHERE type='table' AND name='tasks';"
-//     );
-//     if (results.length === 0) await db.query(sql);
-//   } catch (err) {
-//     console.error(err);
-//   }
-// }
-
 /**
  * Export class
  */

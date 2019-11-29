@@ -79,6 +79,8 @@ async function listAllTasks(db, cwd) {
       }  ${tasks[i].description}`
     );
   }
+
+  return JSON.stringify(tasks);
 }
 
 /**
@@ -104,9 +106,7 @@ const cli = meow(`
       type: 'string',
       alias: 'c'
     },
-    clear: {
-      type: 'boolean'
-    }
+    clear: { type: 'boolean' },
   }
 });
 
@@ -135,7 +135,6 @@ async function tasks(command = null, options = {}) {
   }
 
   if (command === 'add' || command === 'complete') {
-    console.log('message', message);
     if (!message) throw new Error('Message is required.');
   }
 
@@ -149,7 +148,7 @@ async function tasks(command = null, options = {}) {
 
       console.log('  Adding a task...');
       await db.exec('addTask', [cwd, message]);
-      await listAllTasks(db, cwd);
+      return await listAllTasks(db, cwd);
     } else if (command == 'complete') {
       /**
        * Mark all matching tasks as completed.
@@ -157,7 +156,7 @@ async function tasks(command = null, options = {}) {
 
       console.log('  Marking task(s) as completed...');
       await db.exec('completeTask', [message]);
-      await listAllTasks(db, cwd);
+      return await listAllTasks(db, cwd);
     } else if (command == 'clear') {
       /**
        * Clear all tasks marked as completed.
@@ -165,14 +164,14 @@ async function tasks(command = null, options = {}) {
 
       console.log('  Clearing all tasks marked as completed...');
       await db.exec('clearTasks', [cwd]);
-      await listAllTasks(db, cwd);
+      return await listAllTasks(db, cwd);
     } else {
       /**
        * List all tasks.
        */
 
       console.log('  Tasks:');
-      await listAllTasks(db, cwd);
+      return await listAllTasks(db, cwd);
     }
   } catch(err) {
     console.error(err);
