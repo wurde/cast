@@ -98,20 +98,20 @@ async function tasks(command=null) {
   const db = new Database(dbPath, queries);
 
   try {
-    if (arguments.length === 0) console.log('\nProject:', cwd, '\n');
+    console.log('\nProject:', cwd, '\n');
 
     if (cli.flags.add || cli.flags.a) {
       console.log('  Creating a task...');
-      await db.addTask(cwd, cli.flags.add);
+      await db.exec('addTask', [cwd, cli.flags.add]);
     } else if (cli.flags.complete || cli.flags.c) {
       console.log('  Marking task as done...');
-      await db.completeTask(cli.flags.complete);
+      await db.exec('completeTask', [cli.flags.complete]);
     } else if (cli.flags.clear) {
       console.log('  Clearing all tasks marked as done...');
-      await db.clearTasks();
+      await db.exec('clearTasks', [cli.flags.clear]);
     } else {
       console.log('  Tasks:');
-      const [tasks, _] = await db.listTasks();
+      const [tasks, _] = await db.exec('listTasks', [cwd]);
       for (let i = 0; i < tasks.length; i++) {
         if (arguments.length === 0) console.log(`    ${tasks[i].completed_at ? 
           chalk.green('\u2713') : chalk.white('\u25A2')}  ${tasks[i].description}`);

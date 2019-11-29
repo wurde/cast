@@ -16,10 +16,19 @@ class Database {
       storage: dbPath,
       logging: false
     });
+    this.queries = queries;
+  }
+
+  async exec(method, args=[]) {
+    if (!this.queries.hasOwnProperty(method)) 
+      throw new Error(`No query found for '${method}'`)
+
+    const sql = this.queries[method](...args);
+    return await this.query(sql);
   }
 
   async query(sql) {
-    return await db.query(sql);
+    return await this.db.query(sql);
   }
 
   async close() {
