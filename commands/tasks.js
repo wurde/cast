@@ -67,17 +67,19 @@ async function createTableIfMissing(db) {
   if (results.length === 0) await db.exec('createTable');
 }
 
-async function listAllTasks(db, cwd) {
+async function listAllTasks(db, cwd, quiet) {
   const [tasks, _] = await db.exec('listTasks', [cwd]);
 
-  for (let i = 0; i < tasks.length; i++) {
-    console.log(
-      `    ${
-        tasks[i].completed_at
-          ? chalk.green('\u2713')
-          : chalk.white('\u25A2')
-      }  ${tasks[i].description}`
-    );
+  if (!quiet) {
+    for (let i = 0; i < tasks.length; i++) {
+      console.log(
+        `    ${
+          tasks[i].completed_at
+            ? chalk.green('\u2713')
+            : chalk.white('\u25A2')
+        }  ${tasks[i].description}`
+      );
+    }
   }
 
   return JSON.stringify(tasks);
@@ -119,6 +121,7 @@ async function tasks(command = null, options = {}) {
 
   const cwd = options.cwd || process.cwd();
   const db = new Database(dbPath, queries);
+  const quiet = (command) ? true : false;
   await createTableIfMissing(db);
   let message = options.message;
 
@@ -139,39 +142,39 @@ async function tasks(command = null, options = {}) {
   }
 
   try {
-    console.log('\nProject:', cwd, '\n');
+    if (!quiet) console.log('\nProject:', cwd, '\n');
 
     if (command == 'add') {
       /**
        * Add a task.
        */
 
-      console.log('  Adding a task...');
+      if (!quiet) console.log('  Adding a task...');
       await db.exec('addTask', [cwd, message]);
-      return await listAllTasks(db, cwd);
+      return await listAllTasks(db, cwd, quiet);
     } else if (command == 'complete') {
       /**
        * Mark all matching tasks as completed.
        */
 
-      console.log('  Marking task(s) as completed...');
+      if (!quiet) console.log('  Marking task(s) as completed...');
       await db.exec('completeTask', [message]);
-      return await listAllTasks(db, cwd);
+      return await listAllTasks(db, cwd, quiet);
     } else if (command == 'clear') {
       /**
        * Clear all tasks marked as completed.
        */
 
-      console.log('  Clearing all tasks marked as completed...');
+      if (!quiet) console.log('  Clearing all tasks marked as completed...');
       await db.exec('clearTasks', [cwd]);
-      return await listAllTasks(db, cwd);
+      return await listAllTasks(db, cwd, quiet);
     } else {
       /**
        * List all tasks.
        */
 
-      console.log('  Tasks:');
-      return await listAllTasks(db, cwd);
+      if (!quiet) console.log('  Tasks:');
+      return await listAllTasks(db, cwd, quiet);
     }
   } catch(err) {
     console.error(err);
