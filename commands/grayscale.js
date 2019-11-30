@@ -5,6 +5,7 @@
  */
 
 const meow = require('meow');
+const jimp = require('jimp');
 const showHelp = require('../helpers/showHelp');
 
 /**
