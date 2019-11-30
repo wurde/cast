@@ -24,19 +24,21 @@ const cli = meow(`
  * Define script
  */
 
-function grayscale(image) {
+async function grayscale(image) {
   showHelp(cli, [(!image && cli.input.length < 2)]);
 
   image = image || cli.input[1];
 
-  if (fs.existsSync(image)) {
-    jimp.read(image)
-      .then(file => {
-        return file.greyscale().write('image-greyscale.jpg') 
-      })
-      .catch(err => console.error(err));
-  } else {
-    throw new Error(`MissingFile: no such image ${image}`);
+  try {
+    if (fs.existsSync(image)) {
+      const img = await jimp.read(image);
+
+      return img.greyscale().write('image-greyscale.jpg') ;
+    } else {
+      throw new Error(`MissingFile: no such image ${image}`);
+    }
+  } catch (err) {
+    console.error(err);
   }
 }
 
