@@ -14,6 +14,18 @@ const showHelp = require('../helpers/showHelp');
  * Define helpers
  */
 
+async function processImage(image) {
+  console.log('image', image)
+  // const img = await jimp.read(image);
+  // const out = createFilename(image);
+  // return img.greyscale().write(out);
+}
+// async function processImage(image) {
+//   const img = await jimp.read(image);
+//   const out = createFilename(image);
+//   return img.greyscale().write(out);
+// }
+
 function createFilename(image) {
   const ext = path.extname(image);
   const basename = path.basename(image, ext);
@@ -44,9 +56,16 @@ async function grayscale(image) {
 
   try {
     if (fs.existsSync(image)) {
-      const img = await jimp.read(image);
-      const out = createFilename(image);
-      return img.greyscale().write(out);
+      const stats = fs.statSync(image);
+
+      if (stats.isDirectory()) {
+        const files = fs.readdirSync(image, { withFileTypes: true })
+        .filter(file => file.isFile());
+
+        files.forEach(file => processImage(file));
+      } else {
+        processImage(image);
+      }
     } else {
       throw new Error(`cannot find file ${image}`);
     }
