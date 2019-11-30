@@ -36,7 +36,7 @@ function createFilename(image) {
   const basename = path.basename(image, ext);
   const dirname = path.dirname(image);
 
-  return path.join(dirname, `${basename}-bw${ext}`);
+  return path.join(dirname, `${basename}-x${ext}`);
 }
 
 /**
@@ -91,8 +91,6 @@ async function convolute(image, options={}) {
   filter = cli.flags.emboss ? EMBOSS : filter;
   filter = cli.flags.blur ? BLUR : filter;
 
-  console.log('filter', filter);
-  process.exit(0);
   const overwrite = options.overwrite || cli.flags.overwrite;
 
   try {
