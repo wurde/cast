@@ -84,7 +84,10 @@ async function convolute(image, options={}) {
   ]);
 
   image = image || cli.input[1];
-  let filter = cli.flags.kernel || options.kernel; 
+
+  let filter = cli.flags.kernel || options.kernel;
+  filter = filter ? JSON.parse(filter) : filter;
+
   filter = cli.flags.edgeEnhance ? EDGE_ENHANCE : filter;
   filter = cli.flags.edgeDetect ? EDGE_DETECTION : filter;
   filter = cli.flags.sharpen ? SHARPEN : filter;
