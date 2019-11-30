@@ -35,7 +35,7 @@ function createFilename(image) {
 
 const cli = meow(`
   Usage
-    $ cast grayscale IMAGE
+    $ cast grayscale IMAGE_OR_DIR
   
   Options
     --overwrite   Overwrite the original file.

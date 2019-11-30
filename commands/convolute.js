@@ -35,7 +35,7 @@ function createFilename(image) {
 
 const cli = meow(`
   Usage
-    $ cast convolute IMAGE
+    $ cast convolute IMAGE_OR_DIR
   
   Options
     --overwrite   Overwrite the original file.
@@ -55,8 +55,7 @@ const cli = meow(`
 async function convolute(image, options={}) {
   showHelp(cli, [(!image && cli.input.length < 2)]);
 
-  console.log('convolute', convolute);
-  // image = image || cli.input[1];
+  image = image || cli.input[1];
   // const overwrite = options.overwrite || cli.flags.overwrite;
 
   // try {
