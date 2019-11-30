@@ -15,16 +15,10 @@ const showHelp = require('../helpers/showHelp');
  */
 
 async function processImage(image) {
-  console.log('image', image)
-  // const img = await jimp.read(image);
-  // const out = createFilename(image);
-  // return img.greyscale().write(out);
+  const img = await jimp.read(image);
+  const out = createFilename(image);
+  return img.greyscale().write(out);
 }
-// async function processImage(image) {
-//   const img = await jimp.read(image);
-//   const out = createFilename(image);
-//   return img.greyscale().write(out);
-// }
 
 function createFilename(image) {
   const ext = path.extname(image);
@@ -59,8 +53,10 @@ async function grayscale(image) {
       const stats = fs.statSync(image);
 
       if (stats.isDirectory()) {
+        const dir = image;
         const files = fs.readdirSync(image, { withFileTypes: true })
-        .filter(file => file.isFile());
+        .filter(file => file.isFile())
+        .map(file => path.join(dir, file.name));
 
         files.forEach(file => processImage(file));
       } else {
