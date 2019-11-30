@@ -41,14 +41,12 @@ async function grayscale(image) {
   showHelp(cli, [(!image && cli.input.length < 2)]);
 
   image = image || cli.input[1];
-  createFilename(image);
-  process.exit(0);
 
   try {
     if (fs.existsSync(image)) {
       const img = await jimp.read(image);
       const out = createFilename(image);
-      return img.greyscale().write('image-greyscale.jpg') ;
+      return img.greyscale().write(out);
     } else {
       throw new Error(`MissingFile: no such image ${image}`);
     }
