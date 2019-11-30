@@ -48,7 +48,7 @@ async function grayscale(image) {
       const out = createFilename(image);
       return img.greyscale().write(out);
     } else {
-      throw new Error(`MissingFile: no such image ${image}`);
+      throw new Error(`cannot find file ${image}`);
     }
   } catch (err) {
     console.error(err);
