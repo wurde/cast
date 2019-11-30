@@ -12,13 +12,23 @@ const showHelp = require('../helpers/showHelp');
 const applyToFileOrDirectory = require('../helpers/applyToFileOrDirectory');
 
 /**
+ * Constants
+ */
+
+const EDGE_ENHANCE = [[0,0,0], [-1,1,0], [0,0,0]];
+const EDGE_DETECTION = [[-1,-1,-1], [-1,8,-1], [-1,-1,-1]];
+const SHARPEN = [[0,-1,0], [-1,-5,-1], [0,-1,0]];
+const EMBOSS = [[-2,-1,0], [-1,1,1], [0,1,2]];
+const BLUR = [[1,1,1], [1,1,1], [1,1,1]];
+
+/**
  * Define helpers
  */
 
 async function processImage(image, options={}) {
   const img = await jimp.read(image);
   const out = options.overwrite ? image : createFilename(image);
-  return img.greyscale().write(out);
+  return img.convolute(options.filter).write(out);
 }
 
 function createFilename(image) {
@@ -48,9 +58,13 @@ const cli = meow(`
 `, {
   description: 'Apply an image filter using convolution matrix.',
   flags: {
-    overwrite: {
-      type: 'boolean'
-    }
+    kernel: { type: 'string' },
+    edgeEnhance: { type: 'boolean' },
+    edgeDetect: { type: 'boolean' },
+    sharpen: { type: 'boolean' },
+    emboss: { type: 'boolean' },
+    blur: { type: 'boolean' },
+    overwrite: { type: 'boolean' }
   }
 });
 
@@ -60,17 +74,35 @@ const cli = meow(`
 
 async function convolute(image, options={}) {
   showHelp(cli, [
-    (!image && cli.input.length < 2)
+    (!image && cli.input.length < 2),
+    ((!cli.flags.kernel && !options.kernel) && 
+     (!cli.flags.edgeEnhance && !options.edgeEnhance) && 
+     (!cli.flags.edgeDetect && !options.edgeDetect) && 
+     (!cli.flags.sharpen && !options.sharpen) && 
+     (!cli.flags.emboss && !options.emboss) && 
+     (!cli.flags.blur && !options.blur))
   ]);
 
   image = image || cli.input[1];
-  // const overwrite = options.overwrite || cli.flags.overwrite;
+  let filter = cli.flags.kernel || options.kernel; 
+  filter = cli.flags.edgeEnhance ? EDGE_ENHANCE : filter;
+  filter = cli.flags.edgeDetect ? EDGE_DETECTION : filter;
+  filter = cli.flags.sharpen ? SHARPEN : filter;
+  filter = cli.flags.emboss ? EMBOSS : filter;
+  filter = cli.flags.blur ? BLUR : filter;
 
-  // try {
-  //   applyToFileOrDirectory(image, processImage, { overwrite: overwrite });
-  // } catch (err) {
-  //   console.error(err);
-  // }
+  console.log('filter', filter);
+  process.exit(0);
+  const overwrite = options.overwrite || cli.flags.overwrite;
+
+  try {
+    applyToFileOrDirectory(image, processImage, {
+      filter: filter,
+      overwrite: overwrite
+    });
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 /**
