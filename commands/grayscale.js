@@ -14,9 +14,9 @@ const showHelp = require('../helpers/showHelp');
  * Define helpers
  */
 
-async function processImage(image) {
+async function processImage(image, options={}) {
   const img = await jimp.read(image);
-  const out = createFilename(image);
+  const out = options.overwrite ? image : createFilename(image);
   return img.greyscale().write(out);
 }
 
@@ -25,7 +25,7 @@ function createFilename(image) {
   const basename = path.basename(image, ext);
   const dirname = path.dirname(image);
 
-  return path.join(dirname, `${basename}-bw${ext}`)
+  return path.join(dirname, `${basename}-bw${ext}`);
 }
 
 /**
@@ -35,18 +35,27 @@ function createFilename(image) {
 const cli = meow(`
   Usage
     $ cast grayscale IMAGE
+  
+  Options
+    --overwrite   Overwrite the original file.
 `, {
-  description: 'Change grayscale values of an image.'
+  description: 'Change grayscale values of an image.',
+  flags: {
+    overwrite: {
+      type: 'boolean'
+    }
+  }
 });
 
 /**
  * Define script
  */
 
-async function grayscale(image) {
+async function grayscale(image, options={}) {
   showHelp(cli, [(!image && cli.input.length < 2)]);
 
   image = image || cli.input[1];
+  const overwrite = options.overwrite || cli.flags.overwrite;
 
   try {
     if (fs.existsSync(image)) {
@@ -58,9 +67,9 @@ async function grayscale(image) {
         .filter(file => file.isFile())
         .map(file => path.join(dir, file.name));
 
-        files.forEach(file => processImage(file));
+        files.forEach(file => processImage(file, { overwrite: overwrite }));
       } else {
-        processImage(image);
+        processImage(image, { overwrite: overwrite });
       }
     } else {
       throw new Error(`cannot find file ${image}`);
