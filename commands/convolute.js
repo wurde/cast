@@ -36,9 +36,15 @@ function createFilename(image) {
 const cli = meow(`
   Usage
     $ cast convolute IMAGE_OR_DIR
-  
+
   Options
-    --overwrite   Overwrite the original file.
+    --kernel MATRIX    Custom matrix filter.
+    --edge-enhance     Edge enhance the image.
+    --edge-detect      Edge detect the image.
+    --sharpen          Sharpen the image.
+    --emboss           Emboss the image.
+    --blur             Blur the image.
+    --overwrite        Overwrite the original file.
 `, {
   description: 'Apply an image filter using convolution matrix.',
   flags: {
@@ -53,7 +59,9 @@ const cli = meow(`
  */
 
 async function convolute(image, options={}) {
-  showHelp(cli, [(!image && cli.input.length < 2)]);
+  showHelp(cli, [
+    (!image && cli.input.length < 2)
+  ]);
 
   image = image || cli.input[1];
   // const overwrite = options.overwrite || cli.flags.overwrite;
