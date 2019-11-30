@@ -17,7 +17,7 @@ const applyToFileOrDirectory = require('../helpers/applyToFileOrDirectory');
 
 const EDGE_ENHANCE = [[0,0,0], [-1,1,0], [0,0,0]];
 const EDGE_DETECTION = [[-1,-1,-1], [-1,8,-1], [-1,-1,-1]];
-const SHARPEN = [[0,-1,0], [-1,-5,-1], [0,-1,0]];
+const SHARPEN = [[0,-1,0], [-1,5,-1], [0,-1,0]];
 const EMBOSS = [[-2,-1,0], [-1,1,1], [0,1,2]];
 const BLUR = [[1,1,1], [1,1,1], [1,1,1]];
 
