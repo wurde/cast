@@ -4,10 +4,10 @@
  * Dependencies
  */
 
-const child_process = require('child_process')
-const meow = require('meow')
-const chalk = require('chalk')
-const showHelp = require('../helpers/showHelp')
+const meow = require('meow');
+const jimp = require('jimp');
+const chalk = require('chalk');
+const showHelp = require('../helpers/showHelp');
 
 /**
  * Parse args
@@ -15,41 +15,23 @@ const showHelp = require('../helpers/showHelp')
 
 const cli = meow(`
   Usage
-    $ cast image
+    $ cast image IMAGE_OR_DIR
 `, {
   description: 'Format images.'
-})
-
-/**
- * helpers
- */
-
-function hasImageMagick() {
-  try {
-    child_process.execSync('which convert', { encoding: 'utf8' })
-    return true
-  } catch(err) {
-    return false
-  }
-}
+});
 
 /**
  * Define script
  */
 
 async function image() {
-  showHelp(cli)
+  showHelp(cli);
 
-  if (!hasImageMagick()) {
-    console.error(chalk.red('Missing ImageMagick. Visit http://www.imagemagick.org/ for more information.'))
-    process.exit(1)
-  }
-
-  require('korkut')
+  console.log('image');
 }
 
 /**
  * Export script
  */
 
-module.exports = image
+module.exports = image;
