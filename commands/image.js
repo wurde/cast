@@ -15,9 +15,13 @@ const showHelp = require('../helpers/showHelp');
 
 const cli = meow(`
   Usage
-    $ cast image IMAGE_OR_DIR
+    $ cast image [OPTIONS] IMAGE_OR_DIR
+
+  Options:
+    --flip-horz    Flip the image(s) horizontally.
+    --flip-vert    Flip the image(s) vertically.
 `, {
-  description: 'Format images.'
+  description: 'Image manipulation.'
 });
 
 /**
@@ -25,9 +29,11 @@ const cli = meow(`
  */
 
 async function image() {
-  showHelp(cli);
+  showHelp(cli, [(!image && cli.input.length < 2)]);
 
-  console.log('image');
+  image = image || cli.input[1];
+
+  console.log('image', image);
 }
 
 /**
