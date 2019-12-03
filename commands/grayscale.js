@@ -15,7 +15,7 @@ const applyToFileOrDirectory = require('../helpers/applyToFileOrDirectory');
  * Define helpers
  */
 
-async function processImage(image, options={}) {
+async function processImage(image, options = {}) {
   const img = await jimp.read(image);
   const out = options.overwrite ? image : createFilename(image);
   return img.greyscale().write(out);
@@ -52,7 +52,7 @@ const cli = meow(`
  * Define script
  */
 
-async function grayscale(image, options={}) {
+async function grayscale(image=null, options={}) {
   showHelp(cli, [(!image && cli.input.length < 2)]);
 
   image = image || cli.input[1];
