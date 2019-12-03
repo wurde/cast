@@ -13,16 +13,18 @@ const ETC_DIR = '/etc/bash_completion.d';
 const COMPSPEC = path.join(ETC_DIR, 'cast');
 const CMD = `
 _cast() {
-  local word
-  word="$\{COMP_WORDS[COMP_CWORD]}"
+  local cur
+  cur="\${COMP_WORDS[COMP_CWORD]}"
 
-  if [[ "$\{word}" ]]; then
-    COMPREPLY=($(cast commands --oneline | tail -n 1 | tr " " "\\n" | grep "^$\{word}" | tr "\\n" " "))
+  if [[ $COMP_CWORD -gt 1 ]]; then
+    COMPREPLY=($(compgen -A file $\{cur}))
+  else
+    COMPREPLY=($(compgen -W "$(cast commands --oneline | tail -n 1)" $\{cur}))
   fi
   return 0
 }
 complete -F _cast cast
-`
+`;
 
 /**
  * Require root privileges.
