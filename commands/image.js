@@ -21,6 +21,9 @@ async function processImage(image, options = {}) {
 
   if (options.rotate) {
     return img.rotate(Number(options.rotate)).write(out);
+  } else if (options.resize) {
+    const dim = options.resize.split(',')
+    return img.resize(Number(dim[0]), Number(dim[1])).write(out);
   } else if (options.flipHorz && options.flipVert) {
     return img.flip(true, true).write(out);
   } else if (options.flipHorz) {
@@ -58,6 +61,7 @@ const cli = meow(`
 
   Options:
     --rotate DEG    Rotate the image clockwise by a number of degrees.
+    --resize W,H    Rotate the image clockwise by a number of degrees.
     --flip-horz     Flip the image(s) horizontally.
     --flip-vert     Flip the image(s) vertically.
     --invert        Invert the image colours.
@@ -69,6 +73,7 @@ const cli = meow(`
   description: 'Image manipulation.',
   flags: {
     rotate: { type: 'string' },
+    resize: { type: 'string' },
     flipHorz: { type: 'boolean' },
     flipVert: { type: 'boolean' },
     invert: { type: 'boolean' },
