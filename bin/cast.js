@@ -36,6 +36,16 @@ if (!command) {
 }
 
 /**
+ * Check if --version requested
+ */
+
+if (command === '--version') {
+  const pkg = require('../package.json');
+  console.log(`cast version ${pkg.version}\n`);
+  process.exit(0);
+}
+
+/**
  * Check script exists
  */
 
