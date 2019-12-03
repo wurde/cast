@@ -15,7 +15,7 @@ const applyToFileOrDirectory = require('../helpers/applyToFileOrDirectory');
  * Define helpers
  */
 
-async function processImage(image, options={}) {
+async function processImage(image, options = {}) {
   const img = await jimp.read(image);
   const out = options.overwrite ? image : createFilename(image);
   return img.greyscale().write(out);
