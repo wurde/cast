@@ -19,7 +19,9 @@ async function processImage(image, options = {}) {
   const img = await jimp.read(image);
   const out = createFilename(image);
 
-  if (options.flipHorz && options.flipVert) {
+  if (options.rotate) {
+    return img.rotate(Number(options.rotate)).write(out);
+  } else if (options.flipHorz && options.flipVert) {
     return img.flip(true, true).write(out);
   } else if (options.flipHorz) {
     return img.flip(true, false).write(out);
@@ -55,16 +57,18 @@ const cli = meow(`
     $ cast image [OPTIONS] IMAGE_OR_DIR
 
   Options:
-    --flip-horz    Flip the image(s) horizontally.
-    --flip-vert    Flip the image(s) vertically.
-    --invert       Invert the image colours.
-    --sepia        Apply a sepia wash to the image.
-    --greyscale    Remove colour from the image.
-    --normalize    Normalize the channels in an image.
-    --opaque       Set the alpha channel on every pixel to fully opaque.
+    --rotate DEG    Rotate the image clockwise by a number of degrees.
+    --flip-horz     Flip the image(s) horizontally.
+    --flip-vert     Flip the image(s) vertically.
+    --invert        Invert the image colours.
+    --sepia         Apply a sepia wash to the image.
+    --greyscale     Remove colour from the image.
+    --normalize     Normalize the channels in an image.
+    --opaque        Set the alpha channel on every pixel to fully opaque.
 `, {
   description: 'Image manipulation.',
   flags: {
+    rotate: { type: 'string' },
     flipHorz: { type: 'boolean' },
     flipVert: { type: 'boolean' },
     invert: { type: 'boolean' },
