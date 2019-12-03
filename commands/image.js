@@ -22,8 +22,23 @@ async function processImage(image, options = {}) {
   if (options.rotate) {
     return img.rotate(Number(options.rotate)).write(out);
   } else if (options.resize) {
-    const dim = options.resize.split(',')
-    return img.resize(Number(dim[0]), Number(dim[1])).write(out);
+    const dim = options.resize.split(',').map(x => Number(x));
+    return img.resize(dim[0], dim[1]).write(out);
+  } else if (options.crop) {
+    const args = options.crop.split(',').map(x => Number(x));
+    return img.crop(args[0], args[1], args[2], args[3]).write(out);
+  } else if (options.gaussian) {
+    return img.gaussian(Number(options.gaussian)).write(out);
+  } else if (options.posterize) {
+    return img.posterize(Number(options.posterize)).write(out);
+  } else if (options.opacity) {
+    return img.opacity(Number(options.opacity)).write(out);
+  } else if (options.brightness) {
+    return img.brightness(Number(options.brightness)).write(out);
+  } else if (options.contrast) {
+    return img.contrast(Number(options.contrast)).write(out);
+  } else if (options.background) {
+    return img.background(options.contrast).write(out);
   } else if (options.flipHorz && options.flipVert) {
     return img.flip(true, true).write(out);
   } else if (options.flipHorz) {
@@ -60,20 +75,34 @@ const cli = meow(`
     $ cast image [OPTIONS] IMAGE_OR_DIR
 
   Options:
-    --rotate DEG    Rotate the image clockwise by a number of degrees.
-    --resize W,H    Rotate the image clockwise by a number of degrees.
-    --flip-horz     Flip the image(s) horizontally.
-    --flip-vert     Flip the image(s) vertically.
-    --invert        Invert the image colours.
-    --sepia         Apply a sepia wash to the image.
-    --greyscale     Remove colour from the image.
-    --normalize     Normalize the channels in an image.
-    --opaque        Set the alpha channel on every pixel to fully opaque.
+    --rotate DEG       Rotate the image clockwise by a number of degrees.
+    --resize W,H       Resize the image.
+    --crop X,Y,W,H     Crop to the given region.
+    --gaussian N       Gaussian blur the image by N pixels.
+    --posterize N      Apply a posterization effect with N level.
+    --opacity N        Multiply the alpha channel by N factor (0 to 1).
+    --brightness N     Adjust the brighness by N (-1 to +1).
+    --contrast N       Adjust the contrast by N (-1 to +1).
+    --background HEX   Set the default pixel colour.
+    --flip-horz        Flip the image(s) horizontally.
+    --flip-vert        Flip the image(s) vertically.
+    --invert           Invert the image colours.
+    --sepia            Apply a sepia wash to the image.
+    --greyscale        Remove colour from the image.
+    --normalize        Normalize the channels in an image.
+    --opaque           Set the alpha channel on every pixel to fully opaque.
 `, {
   description: 'Image manipulation.',
   flags: {
     rotate: { type: 'string' },
     resize: { type: 'string' },
+    crop: { type: 'string' },
+    gaussian: { type: 'string' },
+    posterize: { type: 'string' },
+    opacity: { type: 'string' },
+    brightness: { type: 'string' },
+    contrast: { type: 'string' },
+    background: { type: 'string' },
     flipHorz: { type: 'boolean' },
     flipVert: { type: 'boolean' },
     invert: { type: 'boolean' },
