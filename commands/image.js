@@ -25,6 +25,16 @@ async function processImage(image, options = {}) {
     return img.flip(true, false).write(out);
   } else if (options.flipVert) {
     return img.flip(false, true).write(out);
+  } else if (options.invert) {
+    return img.invert().write(out);
+  } else if (options.sepia) {
+    return img.sepia().write(out);
+  } else if (options.greyscale) {
+    return img.greyscale().write(out);
+  } else if (options.normalize) {
+    return img.normalize().write(out);
+  } else if (options.opaque) {
+    return img.opaque().write(out);
   }
 }
 
@@ -47,15 +57,21 @@ const cli = meow(`
   Options:
     --flip-horz    Flip the image(s) horizontally.
     --flip-vert    Flip the image(s) vertically.
+    --invert       Invert the image colours.
+    --sepia        Apply a sepia wash to the image.
+    --greyscale    Remove colour from the image.
+    --normalize    Normalize the channels in an image.
+    --opaque       Set the alpha channel on every pixel to fully opaque.
 `, {
   description: 'Image manipulation.',
   flags: {
-    flipHorz: {
-      type: 'boolean'
-    },
-    flipVert: {
-      type: 'boolean'
-    }
+    flipHorz: { type: 'boolean' },
+    flipVert: { type: 'boolean' },
+    invert: { type: 'boolean' },
+    sepia: { type: 'boolean' },
+    greyscale: { type: 'boolean' },
+    normalize: { type: 'boolean' },
+    opaque: { type: 'boolean' },
   }
 });
 
@@ -63,7 +79,7 @@ const cli = meow(`
  * Define script
  */
 
-async function image(image=null, options = {}) {
+async function image(image=null, options=null) {
   showHelp(cli, [(!image && cli.input.length < 2)]);
 
   image = image || cli.input[1];
