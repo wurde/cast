@@ -21,19 +21,27 @@ const cli = meow(`
     --flip-horz    Flip the image(s) horizontally.
     --flip-vert    Flip the image(s) vertically.
 `, {
-  description: 'Image manipulation.'
+  description: 'Image manipulation.',
+  flags: {
+    flipHorz: {
+      type: 'boolean'
+    },
+    flipVert: {
+      type: 'boolean'
+    }
+  }
 });
 
 /**
  * Define script
  */
 
-async function image() {
+async function image(image=null) {
   showHelp(cli, [(!image && cli.input.length < 2)]);
 
   image = image || cli.input[1];
 
-  console.log('image', image);
+  console.log('image', image, cli.input, cli.input.length);
 }
 
 /**
