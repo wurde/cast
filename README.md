@@ -1,5 +1,7 @@
 # Scripts
 
+<a href="https://github.com/wurde/scripts/actions"><img alt="GitHub Action CI status" src="https://github.com/wurde/scripts/workflows/Continuous%20Integration/badge.svg"></a>
+
 Command-line interface applications written using **Node.js**. This project is setup in a way for easy extension. After setup add a new custom script by adding a new file to the `commands/` directory. Then reference that command from the terminal by the unique filename you gave it. (`cast customscript`)
 
 ## Getting started
