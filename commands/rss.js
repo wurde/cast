@@ -16,12 +16,23 @@ const Database = require('../helpers/Database');
  * Constants
  */
 
-const parser = new Parser();
+const parser = new Parser({
+  timeout: 5000, // 5 seconds
+  headers: {
+    'User-Agent': `Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36`
+  }
+});
 // Some RSS feeds can't be loaded in the browser due to CORS security.
 // To get around this, you can use a proxy.
 const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
 const DB_PATH = path.join(process.env.HOME, '.rss.sqlite3');
 const QUERIES = {
+  insertFeed: (title, link) => `
+    INSERT INTO feeds (title, link) VALUES ('${title}', '${link}');
+  `,
+  selectFeeds: () => `
+    SELECT * FROM feeds;
+  `,
   createTableFeeds: () => `
     CREATE TABLE IF NOT EXISTS feeds (
       id integer PRIMARY KEY,
@@ -63,6 +74,24 @@ async function createTablesIfMissing(db) {
     await db.exec('createTableArticles');
 }
 
+async function seedEmptyFeedsTable(db) {
+  // Check if feeds table is empty;
+  const [feedsSelect] = await db.exec('selectFeeds');
+
+  if (feedsSelect.length === 0) {
+    for (let i = 0; i < rssFeeds.length; i++) {
+      try {
+        // Check if feed is still available
+        const feed = await parser.parseURL(rssFeeds[i].link);
+        if (feed && feed.title && feed.link)
+          await db.exec('insertFeed', [feed.title.trim(), feed.link.trim()]);
+      } catch (e) {
+        console.error(e)
+      }
+    }
+  }
+}
+
 /**
  * Parse args
  */
@@ -85,9 +114,8 @@ async function rss() {
   await createTablesIfMissing(db);
 
   try {
-    console.log('DB_PATH', DB_PATH)
-    console.log('QUERIES', QUERIES)
-    console.log('db', db)
+    // Seed feeds table.
+    await seedEmptyFeedsTable(db);
 
     // TODO default - fetch and print most recent articles.
     // TODO fetch articles from a specific feed.
@@ -97,13 +125,11 @@ async function rss() {
     // TODO remove a feed.
     // TODO subscribe to feed.
     // TODO unsubscribe from feed.
-
-    console.log('rss', rssFeeds);
   } catch (err) {
     console.error(err);
   } finally {
     await db.close();
-  };
+  }
 };
 
 /**
