@@ -7,6 +7,7 @@
 const meow = require('meow');
 const showHelp = require('../helpers/showHelp');
 const Parser = require('rss-parser');
+const rssFeeds = require('../data/rss_feeds.json');
 
 /**
  * Constants
@@ -44,7 +45,7 @@ function rss() {
   // TODO subscribe to feed.
   // TODO unsubscribe from feed.
 
-  console.log('rss')
+  console.log('rss', rssFeeds);
 };
 
 /**
