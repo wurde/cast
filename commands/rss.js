@@ -19,6 +19,16 @@ const parser = new Parser();
 // To get around this, you can use a proxy.
 const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
 const DB_PATH = path.join(process.env.HOME, '.rss.sqlite3');
+const queries = {
+  createTable: () => `
+    CREATE TABLE IF NOT EXISTS feeds (
+      id integer PRIMARY KEY,
+      title text,
+      link text,
+      created_at timestamp DEFAULT CURRENT_TIMESTAMP
+    );
+  `,
+};
 
 /**
  * Parse args
