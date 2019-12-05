@@ -92,6 +92,16 @@ async function seedEmptyFeedsTable(db) {
   }
 }
 
+function parseCommand(flags, cmdDefault) {
+  const cmds = Object.keys(flags);
+
+  if (cmds.length === 0) {
+    return cmdDefault;
+  } else {
+    return cmds.shift();
+  }
+}
+
 /**
  * Parse args
  */
@@ -99,19 +109,30 @@ async function seedEmptyFeedsTable(db) {
 const cli = meow(`
   Usage
     $ cast rss
+
+  Options:
+    --add LINK       Add a new RSS feed.
+    --remove LINK    Add a new RSS feed.
 `, {
   description: 'RSS feeds management utility.',
+  flags: {
+    add: { type: 'string' },
+    remove: { type: 'string' },
+  }
 })
 
 /**
  * Define script
  */
 
-async function rss() {
+async function rss(command = null) {
   showHelp(cli);
 
   const db = new Database(DB_PATH, QUERIES);
   await createTablesIfMissing(db);
+
+  command = command || parseCommand(cli.flags, 'list');
+  console.log('command', command);
 
   try {
     // Seed feeds table.
