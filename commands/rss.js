@@ -30,6 +30,9 @@ const QUERIES = {
   insertFeed: (title, link) => `
     INSERT INTO feeds (title, link) VALUES ('${title}', '${link}');
   `,
+  deleteFeed: (link) => `
+    DELETE FROM feeds WHERE link ILIKE '%${link}%';
+  `,
   selectFeeds: () => `
     SELECT * FROM feeds;
   `,
@@ -92,7 +95,7 @@ async function seedEmptyFeedsTable(db) {
   }
 }
 
-async function addFeed(link) {
+async function addFeed(db, link) {
   try {
     // Check if feed is available.
     const feed = await parser.parseURL(link);
@@ -100,6 +103,14 @@ async function addFeed(link) {
       await db.exec('insertFeed', [feed.title.trim(), feed.link.trim()]);
   } catch (e) {
     console.error(e)
+  }
+}
+
+async function removeFeed(db, link) {
+  try {
+    await db.exec('deleteFeed', [link]);
+  } catch (e) {
+    console.error(e);
   }
 }
 
@@ -149,13 +160,13 @@ async function rss(command = null) {
     await seedEmptyFeedsTable(db);
 
     if (command === 'add') {
-      await addFeed(cli.flags.add);
+      await addFeed(db, cli.flags.add);
     } else if (command === 'remove') {
-      // await removeFeed(cli.flags.remove);
+      await removeFeed(db, cli.flags.remove);
     } else if (command === 'subscribe') {
-      // await subscribeToFeed(cli.flags.subscribe);
+      // await subscribeToFeed(db, cli.flags.subscribe);
     } else if (command === 'unsubscribe') {
-      // await unsubscribeToFeed(cli.flags.unsubscribe);
+      // await unsubscribeToFeed(db, cli.flags.unsubscribe);
     }
 
     // TODO print all feeds (show subscriptions top).
