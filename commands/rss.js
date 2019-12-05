@@ -6,6 +6,7 @@
 
 const path = require('path');
 const meow = require('meow');
+const chalk = require('chalk');
 const Parser = require('rss-parser');
 const Sequelize = require('sequelize');
 const rssFeeds = require('../data/rss_feeds.json');
@@ -31,7 +32,7 @@ const QUERIES = {
     INSERT INTO feeds (title, link) VALUES ('${title}', '${link}');
   `,
   deleteFeed: (link) => `
-    DELETE FROM feeds WHERE link ILIKE '%${link}%';
+    DELETE FROM feeds WHERE link LIKE '%${link}%';
   `,
   selectFeeds: () => `
     SELECT * FROM feeds;
@@ -92,6 +93,22 @@ async function seedEmptyFeedsTable(db) {
         console.error(e)
       }
     }
+  }
+}
+
+async function listFeeds(db) {
+  try {
+    const [feedsSelect] = await db.exec('selectFeeds');
+
+    console.log('');
+    for (let i = 0; i < feedsSelect.length; i++) {
+      const feed = feedsSelect[i];
+      console.log('  ' + chalk.green.bold(feed.title));
+      console.log('  ' + chalk.yellow.bold(feed.link));
+      console.log('');
+    }
+  } catch (e) {
+    console.error(e);
   }
 }
 
@@ -159,7 +176,10 @@ async function rss(command = null) {
     // Seed feeds table.
     await seedEmptyFeedsTable(db);
 
-    if (command === 'add') {
+    // TODO print all feeds (show subscriptions top).
+    if (command === 'list') {
+      await listFeeds(db);
+    } else if (command === 'add') {
       await addFeed(db, cli.flags.add);
     } else if (command === 'remove') {
       await removeFeed(db, cli.flags.remove);
@@ -169,7 +189,6 @@ async function rss(command = null) {
       // await unsubscribeToFeed(db, cli.flags.unsubscribe);
     }
 
-    // TODO print all feeds (show subscriptions top).
     // TODO fetch articles from a specific feed.
     // TODO allow filtering articles by keyword.
 
