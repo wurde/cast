@@ -117,14 +117,16 @@ async function rss() {
     // Seed feeds table.
     await seedEmptyFeedsTable(db);
 
-    // TODO default - fetch and print most recent articles.
-    // TODO fetch articles from a specific feed.
-    // TODO allow filtering articles by keyword.
-    // TODO print all feeds (show subscriptions top).
     // TODO add a feed.
     // TODO remove a feed.
     // TODO subscribe to feed.
     // TODO unsubscribe from feed.
+
+    // TODO print all feeds (show subscriptions top).
+    // TODO fetch articles from a specific feed.
+    // TODO allow filtering articles by keyword.
+
+    // TODO default - fetch and print most recent articles.
   } catch (err) {
     console.error(err);
   } finally {
