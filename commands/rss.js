@@ -28,23 +28,23 @@ const parser = new Parser({
 const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
 const DB_PATH = path.join(process.env.HOME, '.rss.sqlite3');
 const QUERIES = {
-  subscribeFeed: link => `
-    UPDATE TABLE feeds
+  subscribeFeed: () => `
+    UPDATE feeds
     SET subscribed_at = CURRENT_TIMESTAMP
-    WHERE link LIKE '%${link}%'
-    OR title LIKE '%${link}%';
+    WHERE link LIKE $1
+    OR title LIKE $1;
   `,
-  unsubscribeFeed: link => `
-    UPDATE TABLE feeds
+  unsubscribeFeed: () => `
+    UPDATE feeds
     SET subscribed_at = null
-    WHERE link LIKE '%${link}%'
-    OR title LIKE '%${link}%';
+    WHERE link LIKE $1
+    OR title LIKE $1;
   `,
-  insertFeed: (title, link) => `
-    INSERT INTO feeds (title, link) VALUES ('${title}', '${link}');
+  insertFeed: () => `
+    INSERT INTO feeds (title, link) VALUES ($1, $2);
   `,
-  deleteFeed: link => `
-    DELETE FROM feeds WHERE link LIKE '%${link}%';
+  deleteFeed: () => `
+    DELETE FROM feeds WHERE link LIKE $1;
   `,
   selectFeeds: () => `
     SELECT * FROM feeds;
@@ -70,11 +70,11 @@ const QUERIES = {
         ON DELETE CASCADE
     );
   `,
-  hasTable: tblName => `
+  hasTable: () => `
     SELECT name
     FROM sqlite_master
-    WHERE type='table'
-    AND name='${tblName}';
+    WHERE type = 'table'
+    AND name = $1;
   `
 };
 
@@ -83,10 +83,14 @@ const QUERIES = {
  */
 
 async function createTablesIfMissing(db) {
-  const [tblFeedsSelect] = await db.exec('hasTable', ['feeds']);
+  const [tblFeedsSelect] = await db.exec('hasTable', null, {
+    bind: ['feeds']
+  });
   if (tblFeedsSelect.length === 0) await db.exec('createTableFeeds');
 
-  const [tblArticlesSelect] = await db.exec('hasTable', ['articles']);
+  const [tblArticlesSelect] = await db.exec('hasTable', null, {
+    bind: ['articles']
+  });
   if (tblArticlesSelect.length === 0)
     await db.exec('createTableArticles');
 }
@@ -101,7 +105,9 @@ async function seedEmptyFeedsTable(db) {
         // Check if feed is still available.
         const feed = await parser.parseURL(rssFeeds[i].link);
         if (feed && feed.title && feed.link)
-          await db.exec('insertFeed', [feed.title.trim(), feed.link.trim()]);
+          await db.exec('insertFeed', null, {
+            bind: [feed.title.trim(), feed.link.trim()]
+          });
       } catch (e) {
         console.error(e)
       }
@@ -138,7 +144,9 @@ async function addFeed(db, link) {
 
 async function removeFeed(db, link) {
   try {
-    await db.exec('deleteFeed', [link]);
+    await db.exec('deleteFeed', null, {
+      bind: [`%${link}%`]
+    });
   } catch (e) {
     console.error(e);
   }
@@ -146,7 +154,7 @@ async function removeFeed(db, link) {
 
 async function subscribeToFeed(db, link) {
   try {
-    await db.exec('subscribeFeed', [link]);
+    await db.exec('subscribeFeed', null, { bind: [`%${link}%`] });
   } catch (e) {
     console.error(e);
   }
@@ -179,13 +187,17 @@ const cli = meow(`
     $ cast rss
 
   Options:
-    --add LINK       Add a new RSS feed.
-    --remove LINK    Add a new RSS feed.
+    --add LINK           Add a new RSS feed.
+    --remove LINK        Remove an RSS feed.
+    --subscribe LINK     Subscribe to an RSS feed.
+    --unsubscribe LINK   Unsubscribe to an RSS feed.
 `, {
   description: 'RSS feeds management utility.',
   flags: {
     add: { type: 'string' },
     remove: { type: 'string' },
+    subscribe: { type: 'string' },
+    unsubscribe: { type: 'string' },
   }
 })
 
