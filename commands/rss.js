@@ -13,6 +13,9 @@ const Parser = require('rss-parser');
  */
 
 const parser = new Parser();
+// Some RSS feeds can't be loaded in the browser due to CORS security.
+// To get around this, you can use a proxy.
+const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
 
 /**
  * Parse args
