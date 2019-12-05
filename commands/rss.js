@@ -81,7 +81,7 @@ async function seedEmptyFeedsTable(db) {
   if (feedsSelect.length === 0) {
     for (let i = 0; i < rssFeeds.length; i++) {
       try {
-        // Check if feed is still available
+        // Check if feed is still available.
         const feed = await parser.parseURL(rssFeeds[i].link);
         if (feed && feed.title && feed.link)
           await db.exec('insertFeed', [feed.title.trim(), feed.link.trim()]);
@@ -89,6 +89,17 @@ async function seedEmptyFeedsTable(db) {
         console.error(e)
       }
     }
+  }
+}
+
+async function addFeed(link) {
+  try {
+    // Check if feed is available.
+    const feed = await parser.parseURL(link);
+    if (feed && feed.title && feed.link)
+      await db.exec('insertFeed', [feed.title.trim(), feed.link.trim()]);
+  } catch (e) {
+    console.error(e)
   }
 }
 
@@ -132,16 +143,20 @@ async function rss(command = null) {
   await createTablesIfMissing(db);
 
   command = command || parseCommand(cli.flags, 'list');
-  console.log('command', command);
 
   try {
     // Seed feeds table.
     await seedEmptyFeedsTable(db);
 
-    // TODO add a feed.
-    // TODO remove a feed.
-    // TODO subscribe to feed.
-    // TODO unsubscribe from feed.
+    if (command === 'add') {
+      await addFeed(cli.flags.add);
+    } else if (command === 'remove') {
+      // await removeFeed(cli.flags.remove);
+    } else if (command === 'subscribe') {
+      // await subscribeToFeed(cli.flags.subscribe);
+    } else if (command === 'unsubscribe') {
+      // await unsubscribeToFeed(cli.flags.unsubscribe);
+    }
 
     // TODO print all feeds (show subscriptions top).
     // TODO fetch articles from a specific feed.
