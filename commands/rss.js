@@ -28,10 +28,22 @@ const parser = new Parser({
 const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
 const DB_PATH = path.join(process.env.HOME, '.rss.sqlite3');
 const QUERIES = {
+  subscribeFeed: link => `
+    UPDATE TABLE feeds
+    SET subscribed_at = CURRENT_TIMESTAMP
+    WHERE link LIKE '%${link}%'
+    OR title LIKE '%${link}%';
+  `,
+  unsubscribeFeed: link => `
+    UPDATE TABLE feeds
+    SET subscribed_at = null
+    WHERE link LIKE '%${link}%'
+    OR title LIKE '%${link}%';
+  `,
   insertFeed: (title, link) => `
     INSERT INTO feeds (title, link) VALUES ('${title}', '${link}');
   `,
-  deleteFeed: (link) => `
+  deleteFeed: link => `
     DELETE FROM feeds WHERE link LIKE '%${link}%';
   `,
   selectFeeds: () => `
@@ -42,6 +54,7 @@ const QUERIES = {
       id integer PRIMARY KEY,
       title text,
       link text,
+      subscribed_at timestamp,
       created_at timestamp DEFAULT CURRENT_TIMESTAMP
     );
   `,
@@ -131,6 +144,22 @@ async function removeFeed(db, link) {
   }
 }
 
+async function subscribeToFeed(db, link) {
+  try {
+    await db.exec('subscribeFeed', [link]);
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+async function unsubscribeToFeed(db, link) {
+  try {
+    await db.exec('subscribeFeed', [link]);
+  } catch (e) {
+    console.error(e);
+  }
+}
+
 function parseCommand(flags, cmdDefault) {
   const cmds = Object.keys(flags);
 
@@ -176,7 +205,6 @@ async function rss(command = null) {
     // Seed feeds table.
     await seedEmptyFeedsTable(db);
 
-    // TODO print all feeds (show subscriptions top).
     if (command === 'list') {
       await listFeeds(db);
     } else if (command === 'add') {
@@ -184,9 +212,9 @@ async function rss(command = null) {
     } else if (command === 'remove') {
       await removeFeed(db, cli.flags.remove);
     } else if (command === 'subscribe') {
-      // await subscribeToFeed(db, cli.flags.subscribe);
+      await subscribeToFeed(db, cli.flags.subscribe);
     } else if (command === 'unsubscribe') {
-      // await unsubscribeToFeed(db, cli.flags.unsubscribe);
+      await unsubscribeToFeed(db, cli.flags.unsubscribe);
     }
 
     // TODO fetch articles from a specific feed.
