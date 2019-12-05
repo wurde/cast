@@ -20,12 +20,22 @@ const parser = new Parser();
 const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
 const DB_PATH = path.join(process.env.HOME, '.rss.sqlite3');
 const queries = {
-  createTable: () => `
+  createTables: () => `
     CREATE TABLE IF NOT EXISTS feeds (
       id integer PRIMARY KEY,
       title text,
       link text,
       created_at timestamp DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS articles (
+      id integer PRIMARY KEY,
+      article_id integer ,
+      title text,
+      link text,
+      created_at timestamp DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (article_id) REFERENCES articles (id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
     );
   `,
 };
