@@ -6,6 +6,13 @@
 
 const meow = require('meow');
 const showHelp = require('../helpers/showHelp');
+const Parser = require('rss-parser');
+
+/**
+ * Constants
+ */
+
+const parser = new Parser();
 
 /**
  * Parse args
