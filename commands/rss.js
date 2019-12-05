@@ -5,8 +5,9 @@
  */
 
 const meow = require('meow');
-const showHelp = require('../helpers/showHelp');
 const Parser = require('rss-parser');
+const Sequelize = require('sequelize');
+const showHelp = require('../helpers/showHelp');
 const rssFeeds = require('../data/rss_feeds.json');
 
 /**
@@ -17,6 +18,7 @@ const parser = new Parser();
 // Some RSS feeds can't be loaded in the browser due to CORS security.
 // To get around this, you can use a proxy.
 const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
+const DB_PATH = path.join(process.env.HOME, '.rss.sqlite3');
 
 /**
  * Parse args
