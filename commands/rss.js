@@ -137,6 +137,9 @@ async function listArticles(db, filter = null) {
     let [feedsSelect] = await db.exec('selectFeeds');
     feedsSelect = feedsSelect.filter(x => x.subscribed_at);
 
+    if (feedsSelect.length === 0)
+      console.log(chalk.bold.white("\n  You aren't subscribed to any feeds yet. \n"))
+
     const now = Date.now();
 
     for (let i = 0; i < feedsSelect.length; i++) {
