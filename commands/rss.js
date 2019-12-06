@@ -117,13 +117,16 @@ async function seedEmptyFeedsTable(db) {
 
 async function listFeeds(db) {
   try {
-    const [feedsSelect] = await db.exec('selectFeeds');
+    let [feedsSelect] = await db.exec('selectFeeds');
+    feedsSelect.sort((a, b) => a.subscribed_at ? -1 : 0);
 
     console.log('');
     for (let i = 0; i < feedsSelect.length; i++) {
       const feed = feedsSelect[i];
-      console.log('  ' + chalk.green.bold(feed.title));
-      console.log('  ' + chalk.yellow.bold(feed.link));
+      const sub = feed.subscribed_at ? '[*]' : '[ ]';
+
+      console.log(`  ${sub} ` + chalk.green.bold(feed.title));
+      console.log('      ' + chalk.yellow.bold(feed.link));
       console.log('');
     }
   } catch (e) {
@@ -230,9 +233,8 @@ async function rss(command = null) {
     }
 
     // TODO fetch articles from a specific feed.
-    // TODO allow filtering articles by keyword.
-
     // TODO default - fetch and print most recent articles.
+    // TODO allow filtering articles by keyword.
   } catch (err) {
     console.error(err);
   } finally {

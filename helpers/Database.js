@@ -25,8 +25,6 @@ class Database {
 
     args = args || [];
     const sql = this.queries[method](...args);
-    console.log('sql', sql)
-    console.log('options', options)
     return await this.query(sql, options);
   }
 
