@@ -15,8 +15,8 @@ const Database = require('../helpers/Database');
  * Constants
  */
 
-const dbPath = path.join(process.env.HOME, '.tasks.sqlite3');
-const queries = {
+const DB_PATH = path.join(process.env.HOME, '.tasks.sqlite3');
+const QUERIES = {
   addTask: (cwd, description) => `
     INSERT INTO tasks (
       working_directory,
@@ -120,7 +120,7 @@ async function tasks(command = null, options = {}) {
   showHelp(cli);
 
   const cwd = options.cwd || process.cwd();
-  const db = new Database(dbPath, queries);
+  const db = new Database(DB_PATH, QUERIES);
   const quiet = (command) ? true : false;
   await createTableIfMissing(db);
   let message = options.message;

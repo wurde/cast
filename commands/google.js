@@ -57,10 +57,10 @@ function formatValidResults(scrapedResults) {
 }
 
 function printResults(results) {
+  console.log('')
   results.forEach(result => {
-    console.log(chalk.green.bold(result.title))
-    console.log(chalk.yellow.bold(result.href))
-    console.log(result.description)
+    console.log('  ' + chalk.green.bold(result.title))
+    console.log('  ' + chalk.yellow.bold(result.href))
     console.log('')
   })
 }

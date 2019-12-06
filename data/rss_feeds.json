@@ -1,0 +1,94 @@
+[
+  { "link": "http://feeds.bbci.co.uk/news/rss.xml" },
+  { "link": "http://feeds.bbci.co.uk/news/world/rss.xml" },
+  { "link": "http://feeds.bbci.co.uk/news/business/rss.xml" },
+  { "link": "http://feeds.bbci.co.uk/news/technology/rss.xml" },
+  { "link": "http://feeds.bbci.co.uk/news/politics/rss.xml" },
+  { "link": "http://feeds.bbci.co.uk/news/health/rss.xml" },
+  { "link": "http://feeds.bbci.co.uk/news/education/rss.xml" },
+  { "link": "http://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml" },
+  { "link": "https://hnrss.org/frontpage" },
+  { "link": "http://podcasts.joerogan.net/feed" },
+  { "link": "http://www.reddit.com/.rss" },
+  { "link": "http://www.reddit.com/r/news/.rss" },
+  { "link": "http://www.reddit.com/r/worldnews/.rss" },
+  { "link": "http://www.reddit.com/r/TechNewsToday/.rss" },
+  { "link": "http://www.reddit.com/r/nottheonion/.rss" },
+  { "link": "https://www.reddit.com/r/MachineLearning/.rss" },
+  { "link": "https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml" },
+  { "link": "https://www.uscourts.gov/news/rss" },
+  { "link": "https://www.xkcd.com/rss.xml" },
+  { "link": "https://www.wired.com/feed/rss" },
+  { "link": "https://www.wired.com/feed/category/business/latest/rss" },
+  { "link": "https://www.wired.com/feed/category/culture/latest/rss" },
+  { "link": "https://www.wired.com/feed/category/ideas/latest/rss" },
+  { "link": "https://www.wired.com/feed/category/science/latest/rss" },
+  { "link": "https://www.wired.com/feed/category/security/latest/rss" },
+  { "link": "https://www.wired.com/feed/category/backchannel/latest/rss" },
+  { "link": "https://lifehacker.com/rss" },
+  { "link": "https://tim.blog/feed/" },
+  { "link": "https://www.npr.org/rss/podcast.php?id=510289" },
+  { "link": "https://gizmodo.com/rss" },
+  { "link": "https://blog.codinghorror.com/rss/" },
+  { "link": "https://martinfowler.com/feed.atom" },
+  { "link": "https://m.signalvnoise.com/feed/" },
+  { "link": "https://www.theverge.com/rss/index.xml" },
+  { "link": "https://news.google.com/rss" },
+  {
+    "link": "https://news.google.com/rss/topics/CAAqIggKIhxDQkFTRHdvSkwyMHZNRGxqTjNjd0VnSmxiaWdBUAE"
+  },
+  {
+    "link": "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx1YlY4U0FtVnVHZ0pWVXlnQVAB"
+  },
+  {
+    "link": "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVdZU0FtVnVHZ0pWVXlnQVAB"
+  },
+  {
+    "link": "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGRqTVhZU0FtVnVHZ0pWVXlnQVAB"
+  },
+  {
+    "link": "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNREpxYW5RU0FtVnVHZ0pWVXlnQVAB"
+  },
+  {
+    "link": "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRFp1ZEdvU0FtVnVHZ0pWVXlnQVAB"
+  },
+  {
+    "link": "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRFp0Y1RjU0FtVnVHZ0pWVXlnQVAB"
+  },
+  {
+    "link": "https://news.google.com/rss/topics/CAAqIQgKIhtDQkFTRGdvSUwyMHZNR3QwTlRFU0FtVnVLQUFQAQ"
+  },
+  {
+    "link": "https://archive.org/services/collection-rss.php?collection=arxiv"
+  },
+  { "link": "http://news.mit.edu/rss/topic/machine-learning" },
+  { "link": "https://blogs.unity3d.com/category/machine-learning/feed" },
+  { "link": "https://aws.amazon.com/blogs/ai/feed" },
+  {
+    "link": "https://developer.ibm.com/patterns/category/artificial-intelligence/feed"
+  },
+  { "link": "https://lexfridman.com/category/ai/feed" },
+  { "link": "https://bair.berkeley.edu/blog/feed.xml" },
+  { "link": "https://www.technologyreview.com/topnews.rss" },
+  { "link": "https://www.technologyreview.com/stories.rss" },
+  { "link": "https://www.technologyreview.com/c/biomedicine/rss/" },
+  { "link": "https://www.technologyreview.com/c/business/rss/" },
+  { "link": "https://www.technologyreview.com/c/computing/rss/" },
+  { "link": "https://www.technologyreview.com/c/energy/rss/" },
+  { "link": "https://www.technologyreview.com/c/mobile/rss/" },
+  { "link": "https://www.technologyreview.com/c/robotics/rss/" },
+  { "link": "http://export.arxiv.org/rss/physics" },
+  { "link": "http://export.arxiv.org/rss/math" },
+  { "link": "http://export.arxiv.org/rss/stat" },
+  { "link": "http://export.arxiv.org/rss/eess" },
+  { "link": "http://export.arxiv.org/rss/econ" },
+  { "link": "http://rss1.smashingmagazine.com/feed/" },
+  { "link": "https://hacks.mozilla.org/feed/" },
+  { "link": "http://blog.chromium.org/feeds/posts/default" },
+  { "link": "https://kotaku.com/rss" },
+  { "link": "https://www.metacritic.com/rss/features" },
+  { "link": "https://www.metacritic.com/rss/movies" },
+  { "link": "https://www.metacritic.com/rss/tv" },
+  { "link": "https://www.metacritic.com/rss/music" },
+  { "link": "https://www.metacritic.com/rss/games/pc" }
+]
