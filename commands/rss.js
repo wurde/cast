@@ -23,11 +23,17 @@ const parser = new Parser({
     'User-Agent': `Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36`
   }
 });
+const HOUR = 1000 * 60 * 60;
 // Some RSS feeds can't be loaded in the browser due to CORS security.
 // To get around this, you can use a proxy.
 const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
 const DB_PATH = path.join(process.env.HOME, '.rss.sqlite3');
 const QUERIES = {
+  updateFeedFetchTimestamp: () => `
+    UPDATE feeds
+    SET last_fetch_at = CURRENT_TIMESTAMP
+    WHERE link LIKE $1;
+  `,
   subscribeFeed: () => `
     UPDATE feeds
     SET subscribed_at = CURRENT_TIMESTAMP
@@ -55,6 +61,7 @@ const QUERIES = {
       title text,
       link text,
       subscribed_at timestamp,
+      last_fetch_at timestamp,
       created_at timestamp DEFAULT CURRENT_TIMESTAMP
     );
   `,
@@ -100,18 +107,62 @@ async function seedEmptyFeedsTable(db) {
   const [feedsSelect] = await db.exec('selectFeeds');
 
   if (feedsSelect.length === 0) {
+    console.log(chalk.bold.white('\n  Seeding empty feed list.\n'))
+
     for (let i = 0; i < rssFeeds.length; i++) {
       try {
         // Check if feed is still available.
-        const feed = await parser.parseURL(rssFeeds[i].link);
-        if (feed && feed.title && feed.link)
+        const link = rssFeeds[i].link;
+        const feed = await parser.parseURL(link);
+
+        if (feed && feed.title && feed.link) {
+          const title = feed.title.trim();
+          console.log('    ' + chalk.green.bold(title));
           await db.exec('insertFeed', null, {
-            bind: [feed.title.trim(), feed.link.trim()]
+            bind: [title, link]
           });
+        }
       } catch (e) {
         console.error(e)
       }
     }
+  }
+}
+
+async function listArticles(db, filter = null) {
+  try {
+    let [feedsSelect] = await db.exec('selectFeeds');
+    feedsSelect = feedsSelect.filter(x => x.subscribed_at);
+
+    const now = Date.now();
+
+    for (let i = 0; i < feedsSelect.length; i++) {
+      const feed = feedsSelect[i];
+
+      // Fetch articles if last update was over an hour ago.
+      if (now - (feed.last_fetch_at || 0) > HOUR) {
+        // Fetch articles.
+        console.log('feed.link', feed.link);
+        const feedData = await parser.parseURL(feed.link);
+        console.log('feedData', feedData);
+
+        // Save articles to database.
+        if (feedData && feedData.items.length > 0)
+          console.log('Articles', feedData.items);
+          // TODO
+
+        // Update database timestamp.
+        await db.exec('updateFeedFetchTimestamp', null, {
+          bind: [feed.link]
+        });
+      }
+
+      // console.log('  ' + chalk.green.bold(article.title));
+      // console.log('  ' + chalk.yellow.bold(article.link));
+      // console.log('');
+    }
+  } catch (e) {
+    console.error(e);
   }
 }
 
@@ -138,8 +189,11 @@ async function addFeed(db, link) {
   try {
     // Check if feed is available.
     const feed = await parser.parseURL(link);
-    if (feed && feed.title && feed.link)
-      await db.exec('insertFeed', [feed.title.trim(), feed.link.trim()]);
+
+    if (feed && feed.title && feed.link) {
+      console.log('  Added: ' + chalk.green.bold(feed.title));
+      await db.exec('insertFeed', [feed.title.trim(), link]);
+    }
   } catch (e) {
     console.error(e)
   }
@@ -190,6 +244,7 @@ const cli = meow(`
     $ cast rss
 
   Options:
+    --feeds              List all RSS feeds.
     --add LINK           Add a new RSS feed.
     --remove LINK        Remove an RSS feed.
     --subscribe LINK     Subscribe to an RSS feed.
@@ -221,6 +276,9 @@ async function rss(command = null) {
     await seedEmptyFeedsTable(db);
 
     if (command === 'list') {
+      const filter = cli.input.splice(1).join(' ');
+      await listArticles(db, filter);
+    } else if (command === 'feeds') {
       await listFeeds(db);
     } else if (command === 'add') {
       await addFeed(db, cli.flags.add);
@@ -231,10 +289,6 @@ async function rss(command = null) {
     } else if (command === 'unsubscribe') {
       await unsubscribeToFeed(db, cli.flags.unsubscribe);
     }
-
-    // TODO fetch articles from a specific feed.
-    // TODO default - fetch and print most recent articles.
-    // TODO allow filtering articles by keyword.
   } catch (err) {
     console.error(err);
   } finally {
