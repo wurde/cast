@@ -49,6 +49,9 @@ const QUERIES = {
   insertArticle: () => `
     INSERT INTO articles (feed_id, title, link) VALUES ($1, $2, $3);
   `,
+  selectArticles: () => `
+    SELECT * FROM articles ORDER BY created_at DESC;
+  `,
   insertFeed: () => `
     INSERT INTO feeds (title, link) VALUES ($1, $2);
   `,
@@ -172,9 +175,13 @@ async function listArticles(db, filter = null) {
         });
       }
 
-      // console.log('  ' + chalk.green.bold(article.title));
-      // console.log('  ' + chalk.yellow.bold(article.link));
-      // console.log('');
+      console.log('')
+      let [articlesSelect] = await db.exec('selectArticles');
+      for (let i = 0; i < articlesSelect.length; i++) {
+        console.log('  ' + chalk.green.bold(articlesSelect[i].title));
+        console.log('  ' + chalk.yellow.bold(articlesSelect[i].link));
+        console.log('');
+      }
     }
   } catch (e) {
     console.error(e);
