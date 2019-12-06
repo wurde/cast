@@ -50,7 +50,9 @@ const QUERIES = {
     INSERT INTO articles (feed_id, title, link) VALUES ($1, $2, $3);
   `,
   selectArticles: () => `
-    SELECT * FROM articles ORDER BY created_at DESC;
+    SELECT * FROM articles
+    WHERE created_at > date('now','-2 hours')
+    ORDER BY created_at DESC;
   `,
   insertFeed: () => `
     INSERT INTO feeds (title, link) VALUES ($1, $2);
