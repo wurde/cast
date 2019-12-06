@@ -164,9 +164,11 @@ async function listArticles(db, filter = null) {
           );
 
           for (let j = 0; j < articles.length; j++) {
-            await db.exec('insertArticle', null, {
-              bind: [feed.id, articles[j].title, articles[j].link]
-            });
+            if (articles[j].title && articles[j].link) {
+              await db.exec('insertArticle', null, {
+                bind: [feed.id, articles[j].title, articles[j].link]
+              });
+            }
           }
         }
         console.log('');
