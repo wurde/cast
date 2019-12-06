@@ -138,7 +138,7 @@ async function listArticles(db, filter = null) {
     feedsSelect = feedsSelect.filter(x => x.subscribed_at);
 
     if (feedsSelect.length === 0)
-      console.log(chalk.bold.white("\n  You aren't subscribed to any feeds yet. \n"))
+      console.log(chalk.bold.white("\n  You aren't subscribed to any feeds yet. \n"));
 
     const now = Date.now();
 
@@ -154,12 +154,17 @@ async function listArticles(db, filter = null) {
         if (feedData && feedData.items.length > 0) {
           const articles = feedData.items;
 
+          console.log(
+            chalk.bold.white(`\n  Fetched ${articles.length} articles from ${feed.link}`)
+          );
+
           for (let j = 0; j < articles.length; j++) {
             await db.exec('insertArticle', null, {
               bind: [feed.id, articles[j].title, articles[j].link]
             });
           }
         }
+        console.log('');
 
         // Update database timestamp.
         await db.exec('updateFeedFetchTimestamp', null, {
