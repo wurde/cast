@@ -46,6 +46,9 @@ const QUERIES = {
     WHERE link LIKE $1
     OR title LIKE $1;
   `,
+  insertArticle: () => `
+    INSERT INTO articles (feed_id, title, link) VALUES ($1, $2, $3);
+  `,
   insertFeed: () => `
     INSERT INTO feeds (title, link) VALUES ($1, $2);
   `,
@@ -68,11 +71,11 @@ const QUERIES = {
   createTableArticles: () => `
     CREATE TABLE IF NOT EXISTS articles (
       id integer PRIMARY KEY,
-      article_id integer ,
+      feed_id integer,
       title text,
       link text,
       created_at timestamp DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (article_id) REFERENCES articles (id)
+      FOREIGN KEY (feed_id) REFERENCES feeds (id)
         ON UPDATE CASCADE
         ON DELETE CASCADE
     );
@@ -142,14 +145,18 @@ async function listArticles(db, filter = null) {
       // Fetch articles if last update was over an hour ago.
       if (now - (feed.last_fetch_at || 0) > HOUR) {
         // Fetch articles.
-        console.log('feed.link', feed.link);
         const feedData = await parser.parseURL(feed.link);
-        console.log('feedData', feedData);
 
         // Save articles to database.
-        if (feedData && feedData.items.length > 0)
-          console.log('Articles', feedData.items);
-          // TODO
+        if (feedData && feedData.items.length > 0) {
+          const articles = feedData.items;
+
+          for (let j = 0; j < articles.length; j++) {
+            await db.exec('insertArticle', null, {
+              bind: [feed.id, articles[j].title, articles[j].link]
+            });
+          }
+        }
 
         // Update database timestamp.
         await db.exec('updateFeedFetchTimestamp', null, {
