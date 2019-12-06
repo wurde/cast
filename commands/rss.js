@@ -179,6 +179,12 @@ async function listArticles(db, filter = null) {
 
       console.log('')
       let [articlesSelect] = await db.exec('selectArticles');
+
+      if (filter.length > 0)
+        articlesSelect = articlesSelect.filter(x => {
+          return x.title.toLowerCase().match(filter.toLowerCase());
+        });
+
       for (let i = 0; i < articlesSelect.length; i++) {
         console.log('  ' + chalk.green.bold(articlesSelect[i].title));
         console.log('  ' + chalk.yellow.bold(articlesSelect[i].link));
