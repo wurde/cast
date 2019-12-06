@@ -47,7 +47,7 @@ const QUERIES = {
     OR title LIKE $1;
   `,
   insertArticle: () => `
-    INSERT INTO articles (feed_id, title, link) VALUES ($1, $2, $3);
+    INSERT OR IGNORE INTO articles (feed_id, title, link) VALUES ($1, $2, $3);
   `,
   selectArticles: () => `
     SELECT * FROM articles
@@ -76,9 +76,9 @@ const QUERIES = {
   createTableArticles: () => `
     CREATE TABLE IF NOT EXISTS articles (
       id integer PRIMARY KEY,
+      link text UNIQUE,
       feed_id integer,
       title text,
-      link text,
       created_at timestamp DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (feed_id) REFERENCES feeds (id)
         ON UPDATE CASCADE
