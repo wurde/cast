@@ -149,9 +149,10 @@ async function listArticles(db, filter = null) {
 
     for (let i = 0; i < feedsSelect.length; i++) {
       const feed = feedsSelect[i];
+      const last_fetch_at = new Date(feed.last_fetch_at).getTime();
 
       // Fetch articles if last update was over an hour ago.
-      if (now - (feed.last_fetch_at || 0) > HOUR) {
+      if (now - (last_fetch_at || 0) > HOUR) {
         // Fetch articles.
         const feedData = await parser.parseURL(feed.link);
 
