@@ -165,7 +165,7 @@ async function subscribeToFeed(db, link) {
 
 async function unsubscribeToFeed(db, link) {
   try {
-    await db.exec('subscribeFeed', [link]);
+    await db.exec('unsubscribeFeed', null, { bind: [`%${link}%`] });
   } catch (e) {
     console.error(e);
   }
