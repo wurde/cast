@@ -5,7 +5,15 @@
  */
 
 const meow = require('meow');
+const child_process = require('child_process');
 const showHelp = require('../helpers/showHelp');
+const sleep = require('../helpers/sleep');
+
+/**
+ * Constants
+ */
+
+const SEC = 1000; // 1 second in milliseconds
 
 /**
  * Parse args
@@ -13,7 +21,7 @@ const showHelp = require('../helpers/showHelp');
 
 const cli = meow(`
   Usage
-    $ cast beep
+    $ cast beep [MILLISECONDS]
 `, {
   description: 'Play a beep sound.'
 });
@@ -22,10 +30,18 @@ const cli = meow(`
  * Define script
  */
 
-function beep() {
+async function beep(ms = null) {
   showHelp(cli);
 
-  console.log('beep');
+  ms = ms || cli.input[1] || SEC;
+
+  const noise = await child_process.spawn('speaker-test', 
+    ['-t', 'sine', '-f', '1000', '-p', ms]
+  );
+
+  await sleep(ms);
+
+  noise.kill('SIGTERM');
 };
 
 /**
