@@ -73,7 +73,10 @@ async function morse(msg) {
   // Filter out unsupported characters.
   msg = msg.replace(/[^a-z0-9 ]/ig, '');
 
-  console.log('morse', msg);
+  // Split message by character.
+  const chars = msg.split('');
+
+  console.log('chars', chars);
 
   // TODO convert text into morse code.
   // TODO print to console dit-dot sequence.
