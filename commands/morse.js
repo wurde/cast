@@ -5,6 +5,7 @@
  */
 
 const meow = require('meow');
+const chalk = require('chalk');
 const showHelp = require('../helpers/showHelp');
 
 /**
@@ -84,26 +85,25 @@ async function morse(msg) {
     const length = morse_code[char][0];
     const binary = morse_code[char][1].toString(2);
 
-    console.table({
-      char: char,
-      length: length,
-      binary: binary,
-      'binary.length': binary.length,
-      'length - binary.length': length - binary.length
-    });
-
     const code = binary
-    .replace(/0/g, '.')
-    .replace(/1/g, '-')
-    .padStart(length - binary.length, '.');
+      .replace(/0/g, '.')
+      .replace(/1/g, '-')
+      .padStart(length, '.');
 
     return code;
   });
-  console.log('chars', chars);
-  console.log('codes', codes);
 
-  // TODO print to console dit-dot sequence.
+  if (arguments.length === 0) {
+    // Print to console dit-dot sequence.
+    const morse = codes.join(' ');
+    console.log('');
+    console.log('  ', chalk.white.bold(msg));
+    console.log('  ', chalk.green.bold(morse), '\n');
+  }
+
   // TODO play morse code.
+
+  return codes;
 }
 
 /**
