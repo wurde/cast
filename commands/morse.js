@@ -70,11 +70,14 @@ async function morse(msg) {
 
   msg = msg || cli.input.slice(1).join(' ');
 
+  // Filter out unsupported characters.
+  msg = msg.replace(/[^a-z0-9 ]/ig, '');
+
+  console.log('morse', msg);
+
   // TODO convert text into morse code.
   // TODO print to console dit-dot sequence.
   // TODO play morse code.
-
-  console.log('morse', msg);
 }
 
 /**
