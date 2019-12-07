@@ -48,6 +48,7 @@ const morse_code = {
   "7": [5, 0x18],  // 7: --...
   "8": [5, 0x1c],  // 8: ---..
   "9": [5, 0x1e],  // 9: ----.
+  " ": [0, 0],  // Space
 };
 
 /**
@@ -74,11 +75,33 @@ async function morse(msg) {
   msg = msg.replace(/[^a-z0-9 ]/ig, '');
 
   // Split message by character.
-  const chars = msg.split('');
+  const chars = msg.split('').map(c => c.toLowerCase());
 
+  // Convert text into morse code.
+  const codes = chars.map(char => {
+    if (char === ' ') return ' ';
+
+    const length = morse_code[char][0];
+    const binary = morse_code[char][1].toString(2);
+
+    console.table({
+      char: char,
+      length: length,
+      binary: binary,
+      'binary.length': binary.length,
+      'length - binary.length': length - binary.length
+    });
+
+    const code = binary
+    .replace(/0/g, '.')
+    .replace(/1/g, '-')
+    .padStart(length - binary.length, '.');
+
+    return code;
+  });
   console.log('chars', chars);
+  console.log('codes', codes);
 
-  // TODO convert text into morse code.
   // TODO print to console dit-dot sequence.
   // TODO play morse code.
 }
