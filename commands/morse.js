@@ -13,7 +13,7 @@ const showHelp = require('../helpers/showHelp');
 
 const cli = meow(`
   Usage
-    $ cast morse
+    $ cast morse MESSAGE
 `, {
   description: 'Morse code generator.'
 });
@@ -22,9 +22,12 @@ const cli = meow(`
  * Define script
  */
 
-function morse() {
-  showHelp(cli);
-  console.log('morse');
+async function morse(msg) {
+  showHelp(cli, [(!msg && cli.input.length < 2)]);
+
+  msg = msg || cli.input.slice(1).join(' ');
+
+  console.log('morse', msg);
 }
 
 /**
