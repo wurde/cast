@@ -4,12 +4,56 @@
  * Dependencies
  */
 
+const path = require('path');
 const meow = require('meow');
-const scrape = require('./scrape');
-const cheerio = require('cheerio');
 const chalk = require('chalk');
+const cheerio = require('cheerio');
+const Sequelize = require('sequelize');
+const scrape = require('./scrape');
 const showHelp = require('../helpers/showHelp');
 const launchBrowser = require('../helpers/launchBrowser');
+const Database = require('../helpers/Database');
+
+/**
+ * Constants
+ */
+
+const DB_PATH = path.join(process.env.HOME, '.google.sqlite3');
+const QUERIES = {
+  insertResult: () => `
+    INSERT OR IGNORE INTO results (query, href, title, description) VALUES ($1, $2, $3, $4);
+  `,
+  createTablesQueries: () => `
+    CREATE TABLE IF NOT EXISTS results (
+      id integer PRIMARY KEY,
+      query text,
+      href text UNIQUE,
+      title text,
+      description text,
+      created_at timestamp DEFAULT CURRENT_TIMESTAMP
+    );
+  `
+};
+
+/**
+ * Define helpers
+ */
+
+async function saveResults(db, query, results) {
+  try {
+    for (let i = 0; i < results.length; i++) {
+      await db.exec('insertResult', null, {
+        bind: [
+          query,
+          results[i].href,
+          results[i].title,
+          (results[i].description || ''),
+      ]});
+    }
+  } catch (e) {
+    console.error(e);
+  }
+}
 
 /**
  * Parse args
@@ -75,6 +119,9 @@ async function google(query = null, options={}) {
   query = query ? query : cli.input.slice(1).join(' ');
   const limit = options.limit || cli.flags.count || 10;
 
+  const db = new Database(DB_PATH, QUERIES);
+  await db.exec('createTablesQueries');
+
   const browser = await launchBrowser({
     headless: false,
     delay: 400,
@@ -116,6 +163,8 @@ async function google(query = null, options={}) {
         console.log(JSON.stringify(results))
       }
     }
+
+    await saveResults(db, query, results);
   } catch (err) {
     console.error(err); return err;
   } finally {
