@@ -35,13 +35,13 @@ async function beep(ms = null) {
 
   ms = ms || cli.input[1] || SEC;
 
-  const noise = await child_process.spawn('speaker-test', 
+  const noise = child_process.spawn('speaker-test', 
     ['-t', 'sine', '-f', '1000', '-p', ms]
   );
 
   await sleep(ms);
 
-  noise.kill('SIGTERM');
+  await child_process.spawnSync('kill', ['-9', noise.pid]);
 };
 
 /**
