@@ -61,14 +61,14 @@ async function yt_search(query = null, options = {}) {
   try {
     let targetUrl = `${YT_URL}?search_query=${encodeURIComponent(query)}`;
 
-    // const result = await scrape(targetUrl, {
-    //   selector: 'div#search img',
-    //   infiniteScroll: true,
-    //   count,
-    //   browser
-    // });
+    const result = await scrape(targetUrl, {
+      selector: '#contents ytd-video-renderer',
+      infiniteScroll: true,
+      count,
+      browser
+    });
 
-    // console.log('result', result);
+    console.log('result', result);
   } catch (err) {
     console.error(err);
     return err;
