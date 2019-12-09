@@ -72,10 +72,9 @@ async function yt_search(query = null, options = {}) {
     results = result.map(html => {
       const $ = cheerio.load(html);
       return {
-        youtube_id: $('a#video-title')[0].attribs.href,
+        youtube_id: $('a#video-title')[0].attribs.href.match(/\?v=(.*)?/)[0].replace('?v=', ''),
         title: $('a#video-title')[0].attribs.title,
         description: $('#description-text').text(),
-        channel_name: $('#channel-name').text().trim(),
         query
       };
     });
