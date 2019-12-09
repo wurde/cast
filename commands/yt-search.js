@@ -5,6 +5,7 @@
  */
 
 const meow = require('meow');
+const cheerio = require('cheerio');
 const scrape = require('./scrape');
 const showHelp = require('../helpers/showHelp');
 const launchBrowser = require('../helpers/launchBrowser');
@@ -68,7 +69,18 @@ async function yt_search(query = null, options = {}) {
       browser
     });
 
-    console.log('result', result);
+    results = result.map(html => {
+      const $ = cheerio.load(html);
+      return {
+        youtube_id: $('a#video-title')[0].attribs.href,
+        title: $('a#video-title')[0].attribs.title,
+        description: $('#description-text').text(),
+        channel_name: $('#channel-name').text().trim(),
+        query
+      };
+    });
+
+    console.log('results', results);
   } catch (err) {
     console.error(err);
     return err;
