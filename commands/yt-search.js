@@ -22,18 +22,29 @@ const YT_URL = 'https://www.youtube.com/results';
 const cli = meow(`
   Usage
     $ cast yt-search QUERY
+  
+  Options:
+    -c, --count    Minimum number of results (default 10).
 `, {
-  description: 'Search videos on YouTube.'
+  description: 'Search videos on YouTube.',
+  flags: {
+    count:  {
+      type: 'integer',
+      alias: 'c',
+      default: 10
+    },
+  }
 });
 
 /**
  * Define script
  */
 
-async function yt_search(query = null) {
+async function yt_search(query = null, options = {}) {
   showHelp(cli, [(!query && cli.input.length < 2)]);
 
   query = query || cli.input.slice(1).join(' ');
+  const count = options.count || cli.flags.count;
 
   const browser = await launchBrowser({
     headless: false,
@@ -53,11 +64,10 @@ async function yt_search(query = null) {
     // const result = await scrape(targetUrl, {
     //   selector: 'div#search img',
     //   infiniteScroll: true,
-    //   minCount,
+    //   count,
     //   browser
     // });
 
-    console.log('targetUrl', targetUrl);
     // console.log('result', result);
   } catch (err) {
     console.error(err);
