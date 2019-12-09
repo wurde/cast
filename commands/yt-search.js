@@ -5,8 +5,15 @@
  */
 
 const meow = require('meow');
+const scrape = require('./scrape');
 const showHelp = require('../helpers/showHelp');
 const launchBrowser = require('../helpers/launchBrowser');
+
+/**
+ * Constants
+ */
+
+const YT_URL = 'https://www.youtube.com/results';
 
 /**
  * Parse args
@@ -41,7 +48,17 @@ async function yt_search(query = null) {
   let results = [];
 
   try {
-    console.log('query', query);
+    let targetUrl = `${YT_URL}?search_query=${encodeURIComponent(query)}`;
+
+    // const result = await scrape(targetUrl, {
+    //   selector: 'div#search img',
+    //   infiniteScroll: true,
+    //   minCount,
+    //   browser
+    // });
+
+    console.log('targetUrl', targetUrl);
+    // console.log('result', result);
   } catch (err) {
     console.error(err);
     return err;
