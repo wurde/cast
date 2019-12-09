@@ -13,7 +13,7 @@ const showHelp = require('../helpers/showHelp');
 
 const cli = meow(`
   Usage
-    $ cast yt-search
+    $ cast yt-search QUERY
 `, {
   description: 'Search videos on YouTube.'
 });
@@ -22,9 +22,12 @@ const cli = meow(`
  * Define script
  */
 
-function yt_search() {
-  showHelp(cli);
-  console.log('yt-search');
+function yt_search(query = null) {
+  showHelp(cli, [(!query && cli.input.length < 2)]);
+
+  query = query || cli.input.slice(1).join(' ');
+
+  console.log('query', query);
 }
 
 /**
