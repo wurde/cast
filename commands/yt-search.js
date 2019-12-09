@@ -5,6 +5,7 @@
  */
 
 const meow = require('meow');
+const chalk = require('chalk');
 const cheerio = require('cheerio');
 const scrape = require('./scrape');
 const showHelp = require('../helpers/showHelp');
@@ -14,7 +15,21 @@ const launchBrowser = require('../helpers/launchBrowser');
  * Constants
  */
 
-const YT_URL = 'https://www.youtube.com/results';
+const YT_URL = 'https://www.youtube.com';
+
+/**
+ * Define helpers
+ */
+
+function printResults(results) {
+  console.log('');
+  results.forEach(result => {
+    console.log('  ' + chalk.white.bold(result.title));
+    console.log('  ' + chalk.green.bold(`${YT_URL}/watch?v=${result.youtube_id}`));
+    console.log('  ' + chalk.yellow.bold(result.description));
+    console.log('');
+  });
+}
 
 /**
  * Parse args
@@ -60,7 +75,9 @@ async function yt_search(query = null, options = {}) {
   let results = [];
 
   try {
-    let targetUrl = `${YT_URL}?search_query=${encodeURIComponent(query)}`;
+    let targetUrl = `${YT_URL}/results?search_query=${encodeURIComponent(
+      query
+    )}`;
 
     const result = await scrape(targetUrl, {
       selector: '#contents ytd-video-renderer',
@@ -68,6 +85,7 @@ async function yt_search(query = null, options = {}) {
       count,
       browser
     });
+    browser.close();
 
     results = result.map(html => {
       const $ = cheerio.load(html);
@@ -79,7 +97,9 @@ async function yt_search(query = null, options = {}) {
       };
     });
 
-    console.log('results', results);
+    if (arguments.length === 0) {
+      printResults(results);
+    }
   } catch (err) {
     console.error(err);
     return err;
