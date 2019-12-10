@@ -8,6 +8,7 @@ const meow = require('meow');
 const chalk = require('chalk');
 const cheerio = require('cheerio');
 const scrape = require('./scrape');
+const Database = require('../helpers/Database');
 const showHelp = require('../helpers/showHelp');
 const launchBrowser = require('../helpers/launchBrowser');
 
@@ -16,6 +17,7 @@ const launchBrowser = require('../helpers/launchBrowser');
  */
 
 const YT_URL = 'https://www.youtube.com';
+const DB_PATH = path.join(process.env.HOME, '.youtube.sqlite3');
 
 /**
  * Define helpers
