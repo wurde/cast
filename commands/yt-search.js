@@ -51,6 +51,23 @@ function printResults(results) {
   });
 }
 
+async function saveResults(db, query, results) {
+  try {
+    for (let i = 0; i < results.length; i++) {
+      await db.exec('insertSearchResult', null, {
+        bind: [
+          query,
+          results[i].youtube_id,
+          results[i].title,
+          results[i].description || ''
+        ]
+      });
+    }
+  } catch (e) {
+    console.error(e);
+  }
+}
+
 /**
  * Parse args
  */
@@ -130,6 +147,8 @@ async function yt_search(query = null, options = {}) {
         console.log(JSON.stringify(results));
       }
     }
+
+    await saveResults(db, query, results);
   } catch (err) {
     console.error(err);
     return err;
