@@ -82,7 +82,7 @@ async function yt_search(query = null, options = {}) {
     const result = await scrape(targetUrl, {
       selector: '#contents ytd-video-renderer',
       infiniteScroll: true,
-      count,
+      minCount: count,
       browser
     });
     browser.close();
