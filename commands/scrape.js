@@ -34,22 +34,33 @@ async function parsePage(page, selector) {
 async function scrollToPageBottom(page) {
   try {
     // Get current scrollHeight.
-    const currentScrollHeight = await page.evaluate(() => document.body.scrollHeight);
+    const currentScrollHeight = await page.evaluate(() => {
+      return document.querySelector('html').scrollHeight
+    });
+
     // Scroll to the bottom of the page.
-    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    await page.evaluate(() => {
+      window.scrollTo(0, document.querySelector('html').scrollHeight)
+    });
+
     // Wait for scroll height to increase.
     await page.waitForFunction(
-      `document.body.scrollHeight > ${currentScrollHeight}`,
+      `document.querySelector('html').scrollHeight > ${currentScrollHeight}`,
       { timeout: 10000 }
     );
+
     // Wait for 2 seconds.
-    page.waitFor(2000);
+    await page.waitFor(2000);
+
     // Get current scrollHeight.
-    const totalScrollHeight = await page.evaluate(() => document.body.scrollHeight);
+    const totalScrollHeight = await page.evaluate(() => {
+      return document.querySelector('html').scrollHeight;
+    });
+
     // Return true if page is still scrollable.
     return totalScrollHeight > currentScrollHeight;
   } catch (err) {
-    return false
+    return false;
   }
 };
 
@@ -134,7 +145,8 @@ async function scrape(url = null, options = {}) {
     results = await parsePage(page, selector);
     if (arguments.length === 0) console.log(JSON.stringify(results));
   } catch (err) {
-    console.error(err); return err;
+    console.error(err);
+    return err;
   } finally {
     options.browser ? page.close() : browser.close();
     return results;

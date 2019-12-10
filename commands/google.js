@@ -116,7 +116,7 @@ function printResults(results) {
 async function google(query = null, options={}) {
   showHelp(cli, [(!query && cli.input.length < 2)]);
 
-  query = query ? query : cli.input.slice(1).join(' ');
+  query = query || cli.input.slice(1).join(' ');
   const limit = options.limit || cli.flags.count || 10;
 
   const db = new Database(DB_PATH, QUERIES);
