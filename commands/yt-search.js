@@ -19,6 +19,11 @@ const launchBrowser = require('../helpers/launchBrowser');
 const YT_URL = 'https://www.youtube.com';
 const DB_PATH = path.join(process.env.HOME, '.youtube.sqlite3');
 const QUERIES = {
+  insertSearchResult: () => `
+    INSERT OR IGNORE INTO search_results (
+      query, youtube_id, title, description
+    ) VALUES ($1, $2, $3, $4);
+  `,
   createTables: () => `
     CREATE TABLE IF NOT EXISTS search_results (
       id integer PRIMARY KEY,
