@@ -4,6 +4,7 @@
  * Dependencies
  */
 
+const path = require('path');
 const meow = require('meow');
 const chalk = require('chalk');
 const cheerio = require('cheerio');
@@ -81,6 +82,12 @@ async function yt_search(query = null, options = {}) {
   query = query || cli.input.slice(1).join(' ');
   const count = options.count || cli.flags.count;
 
+  console.log('count', count);
+  process.exit(1);
+
+  const db = new Database(DB_PATH, QUERIES);
+  await db.exec('createTables');
+
   const browser = await launchBrowser({
     headless: false,
     delay: 400,
@@ -117,7 +124,11 @@ async function yt_search(query = null, options = {}) {
     });
 
     if (arguments.length === 0) {
-      printResults(results);
+      if (count < 20) {
+        printResults(results);
+      } else {
+        console.log(JSON.stringify(results));
+      }
     }
   } catch (err) {
     console.error(err);
