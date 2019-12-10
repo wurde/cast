@@ -18,6 +18,18 @@ const launchBrowser = require('../helpers/launchBrowser');
 
 const YT_URL = 'https://www.youtube.com';
 const DB_PATH = path.join(process.env.HOME, '.youtube.sqlite3');
+const QUERIES = {
+  createTables: () => `
+    CREATE TABLE IF NOT EXISTS search_results (
+      id integer PRIMARY KEY,
+      query text,
+      youtube_id text UNIQUE,
+      title text,
+      description text,
+      created_at timestamp DEFAULT CURRENT_TIMESTAMP
+    );
+  `
+};
 
 /**
  * Define helpers
