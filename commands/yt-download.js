@@ -11,6 +11,12 @@ const ytdl_core = require('ytdl-core');
 const showHelp = require('../helpers/showHelp');
 
 /**
+ * Constants
+ */
+
+const YT_URL = 'https://www.youtube.com';
+
+/**
  * Parse args
  */
 
@@ -25,10 +31,13 @@ const cli = meow(`
  * Define script
  */
 
-async function youtube(link_or_id = null) {
-  showHelp(cli, [cli.input.length < 2]);
+async function yt_download(link_or_id = null) {
+  showHelp(cli, [(!link_or_id && cli.input.length < 2)]);
 
   link_or_id = link_or_id || cli.input[1];
+
+  console.log('link_or_id', link_or_id);
+  process.exit(0);
   const youtube_url = url.parse(link);
 
   ytdl_core(link).pipe(fs.createWriteStream(`${(youtube_url.query || 'youtube')}.flv`));
@@ -38,4 +47,4 @@ async function youtube(link_or_id = null) {
  * Export script
  */
 
-module.exports = youtube;
+module.exports = yt_download;
