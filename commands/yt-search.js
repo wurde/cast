@@ -97,7 +97,7 @@ async function yt_search(query = null, options = {}) {
   showHelp(cli, [(!query && cli.input.length < 2)]);
 
   query = query || cli.input.slice(1).join(' ');
-  const count = options.count || cli.flags.count;
+  const count = options.count || cli.flags.count | 10;
 
   const db = new Database(DB_PATH, QUERIES);
   await db.exec('createTables');
