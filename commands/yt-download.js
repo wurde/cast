@@ -5,6 +5,7 @@
  */
 
 const fs = require('fs');
+const path = require('path');
 const meow = require('meow');
 const ytdl_core = require('ytdl-core');
 const showHelp = require('../helpers/showHelp');
@@ -40,13 +41,19 @@ const cli = meow(`
     $ cast yt-download LINK_OR_ID
   
   Options:
-    -o, --output    Output file (Default 'youtube.flv').
+    -o, --output FILE   Output file (Default '$ID.flv').
+    -d, --dir DIR       Set the output directory (Default '.').
 `, {
   description: 'Download videos on YouTube.',
   flags: {
     output: {
       type: 'string',
       alias: 'o'
+    },
+    dir: {
+      type: 'string',
+      alias: 'd',
+      default: '.'
     }
   }
 });
@@ -62,8 +69,10 @@ async function yt_download(link_or_id = null, options = {}) {
 
   const link = buildLink(link_or_id);
   const output = options.output || cli.flags.output || buildOutput(link);
+  const dir = options.dir || cli.flags.dir;
+  const outputPath = path.join(dir, output);
 
-  ytdl_core(link).pipe(fs.createWriteStream(output));
+  ytdl_core(link).pipe(fs.createWriteStream(outputPath));
 }
 
 /**
