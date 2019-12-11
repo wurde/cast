@@ -17,6 +17,18 @@ const showHelp = require('../helpers/showHelp');
 const YT_URL = 'https://www.youtube.com';
 
 /**
+ * Define helper
+ */
+
+function buildLink(link_or_id) {
+  if (link_or_id.match(/youtube\.com/)) {
+    return link_or_id;
+  }
+
+  return `${YT_URL}/watch?v=${link_or_id}`;
+};
+
+/**
  * Parse args
  */
 
@@ -36,8 +48,8 @@ async function yt_download(link_or_id = null) {
 
   link_or_id = link_or_id || cli.input[1];
 
-  console.log('link_or_id', link_or_id);
-  process.exit(0);
+  const link = buildLink(link_or_id);
+
   const youtube_url = url.parse(link);
 
   ytdl_core(link).pipe(fs.createWriteStream(`${(youtube_url.query || 'youtube')}.flv`));
