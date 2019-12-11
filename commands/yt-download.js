@@ -27,6 +27,10 @@ function buildLink(link_or_id) {
   return `${YT_URL}/watch?v=${link_or_id}`;
 };
 
+function buildOutput(link) {
+  return `${link.match(/v=(.*)$/)[1]}.flv`;
+};
+
 /**
  * Parse args
  */
@@ -42,8 +46,7 @@ const cli = meow(`
   flags: {
     output: {
       type: 'string',
-      alias: 'o',
-      default: 'youtube.flv'
+      alias: 'o'
     }
   }
 });
@@ -56,12 +59,10 @@ async function yt_download(link_or_id = null, options = {}) {
   showHelp(cli, [(!link_or_id && cli.input.length < 2)]);
 
   link_or_id = link_or_id || cli.input[1];
-  const output = options.output || cli.flags.output;
 
   const link = buildLink(link_or_id);
+  const output = options.output || cli.flags.output || buildOutput(link);
 
-  console.log('output', output);
-  process.exit(1);
   ytdl_core(link).pipe(fs.createWriteStream(output));
 }
 
