@@ -7,6 +7,7 @@
 const fs = require('fs');
 const path = require('path');
 const meow = require('meow');
+const chalk = require('chalk');
 const ytdl_core = require('ytdl-core');
 const showHelp = require('../helpers/showHelp');
 
@@ -71,6 +72,8 @@ async function yt_download(link_or_id = null, options = {}) {
   const output = options.output || cli.flags.output || buildOutput(link);
   const dir = options.dir || cli.flags.dir;
   const outputPath = path.join(dir, output);
+
+  console.log(chalk.white.bold('\n  Downloading: ') + chalk.green.bold(link));
 
   ytdl_core(link).pipe(fs.createWriteStream(outputPath));
 }
