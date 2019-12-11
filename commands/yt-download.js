@@ -42,7 +42,8 @@ const cli = meow(`
   flags: {
     output: {
       type: 'string',
-      alias: 'o'
+      alias: 'o',
+      default: 'youtube.flv'
     }
   }
 });
@@ -55,13 +56,13 @@ async function yt_download(link_or_id = null, options = {}) {
   showHelp(cli, [(!link_or_id && cli.input.length < 2)]);
 
   link_or_id = link_or_id || cli.input[1];
-  const output = cli.flags.output || options.output || 'eeyoutube';
-  console.log('output', output);
-  process.exit(1);
+  const output = options.output || cli.flags.output;
 
   const link = buildLink(link_or_id);
 
-  ytdl_core(link).pipe(fs.createWriteStream(`${output}.flv`));
+  console.log('output', output);
+  process.exit(1);
+  ytdl_core(link).pipe(fs.createWriteStream(output));
 }
 
 /**
