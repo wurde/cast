@@ -8,6 +8,7 @@ const meow = require('meow');
 const prompts = require('prompts');
 const chalk = require('chalk');
 const axios = require('axios');
+const gitConfig = require('./git-config');
 const showHelp = require('../helpers/showHelp');
 
 /**
@@ -15,6 +16,20 @@ const showHelp = require('../helpers/showHelp');
  */
 
 const BASE_URL = 'https://api.github.com';
+
+/**
+ * Define helpers
+ */
+
+function gitUserEmail() {
+  const config = gitConfig(['--global']);
+
+  if (config && config['user.email']) {
+    return config['user.email'];
+  } else {
+    return null;
+  }
+}
 
 /**
  * Parse args
@@ -41,19 +56,21 @@ const cli = meow(`
  * Define script
  */
 
-async function gh_auto_collab() {
-  showHelp(cli);
-  // TODO get default user from git.config;
+async function gh_auto_collab(user = null) {
+  const userEmail = gitUserEmail();
+  showHelp(cli, [(!user && !cli.flags.user && !userEmail)]);
+
+  user = user || cli.flags.user || userEmail;
 
   // Prompt user for password.
   const password = await prompts({
     type: 'password',
     name: 'value',
-    message: 'Enter your GitHub password:'
+    message: `Enter GitHub password (${user}):`
   });
 
   const auth = {
-    username: cli.flags.user,
+    username: user,
     password: password.value  
   }
 
@@ -64,7 +81,7 @@ async function gh_auto_collab() {
   );
 
   if (allInvites.length === 0) {
-    console.log('No pending invites')
+    console.log(chalk.white.bold('\n  No pending invites\n'))
     return 'No pending invites.'
   }
 
