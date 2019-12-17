@@ -5,7 +5,20 @@
  */
 
 const meow = require('meow');
+const chalk = require('chalk');
+const { table } = require('table');
+const child_process = require('child_process');
 const showHelp = require('../helpers/showHelp');
+
+/**
+ * Define helpers
+ */
+
+function printConfig(data) {
+  const keys = Object.keys(data);
+  const output = table(Object.entries(data));
+  console.log(output);
+};
 
 /**
  * Parse args
@@ -24,7 +37,22 @@ const cli = meow(`
 
 function git_config() {
   showHelp(cli);
-  console.log('git-config');
+
+  const res = child_process.spawnSync('git', ['config', '--list'], { encoding: 'utf8' });
+
+  if (res.status === 0) {
+    const data = res.stdout.trim().split('\n').reduce((obj, x) => {
+      const item = x.split('=');
+      obj[item[0]] = item[1];
+      return obj;
+    }, {});
+
+    if (arguments.length === 0) {
+      printConfig(data);
+    }
+
+    return data;
+  }
 }
 
 /**
