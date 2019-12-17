@@ -18,6 +18,20 @@ const showHelp = require('../helpers/showHelp');
 const BASE_URL = 'https://api.github.com';
 
 /**
+ * Define helpers
+ */
+
+function gitUserEmail() {
+  const config = gitConfig(['--global']);
+
+  if (config && config['user.email']) {
+    return config['user.email'];
+  } else {
+    return null;
+  }
+}
+
+/**
  * Parse args
  */
 
@@ -42,21 +56,21 @@ const cli = meow(`
  * Define script
  */
 
-async function gh_auto_collab() {
-  showHelp(cli);
-  // TODO get default user from git.config;
-  console.log('gitConfig', gitConfig(['--list', '--global']));
-  process.exit(0);
+async function gh_auto_collab(user = null) {
+  const userEmail = gitUserEmail();
+  showHelp(cli, [(!user && !cli.flags.user && !userEmail)]);
+
+  user = user || cli.flags.user || userEmail;
 
   // Prompt user for password.
   const password = await prompts({
     type: 'password',
     name: 'value',
-    message: 'Enter your GitHub password:'
+    message: `Enter GitHub password (${user}):`
   });
 
   const auth = {
-    username: cli.flags.user,
+    username: user,
     password: password.value  
   }
 
@@ -67,7 +81,7 @@ async function gh_auto_collab() {
   );
 
   if (allInvites.length === 0) {
-    console.log(chalk.white.bold('No pending invites'))
+    console.log(chalk.white.bold('\n  No pending invites\n'))
     return 'No pending invites.'
   }
 
