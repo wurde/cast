@@ -59,6 +59,7 @@
     "puppeteer": "^2.0.0",
     "release": "^6.1.0",
     "rss-parser": "^3.7.3",
+    "scen": "^1.2.2",
     "sequelize": "^5.19.2",
     "speed-test": "^2.1.0",
     "sqlite3": "^4.1.0",

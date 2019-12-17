@@ -25,6 +25,10 @@ const cli = meow(`
 function dashboard() {
   showHelp(cli);
 
+  // TODO render box with label.
+  // TODO render multiple boxes.
+  // TODO render weather app inside.
+
   console.log('dashboard');
 }
 
