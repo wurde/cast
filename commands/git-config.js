@@ -26,19 +26,28 @@ function printConfig(data) {
 
 const cli = meow(`
   Usage
-    $ cast git-config
-`, {
-  description: 'Git configuration.'
-});
+    $ cast git-config [options]
+
+  Options:
+    --global   use global config file
+    --local    use repository config file
+    --system   use system config file
+`,
+  {
+    description: 'Git configuration.'
+  }
+);
 
 /**
  * Define script
  */
 
-function git_config() {
+function git_config(options) {
   showHelp(cli);
 
-  const res = child_process.spawnSync('git', ['config', '--list'], { encoding: 'utf8' });
+  options = options || Object.keys(cli.flags).map(x => `--${x}`);
+
+  const res = child_process.spawnSync('git', ['config', '--list', ...options], { encoding: 'utf8' });
 
   if (res.status === 0) {
     const data = res.stdout.trim().split('\n').reduce((obj, x) => {

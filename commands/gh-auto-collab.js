@@ -8,6 +8,7 @@ const meow = require('meow');
 const prompts = require('prompts');
 const chalk = require('chalk');
 const axios = require('axios');
+const gitConfig = require('./git-config');
 const showHelp = require('../helpers/showHelp');
 
 /**
@@ -44,6 +45,8 @@ const cli = meow(`
 async function gh_auto_collab() {
   showHelp(cli);
   // TODO get default user from git.config;
+  console.log('gitConfig', gitConfig(['--list', '--global']));
+  process.exit(0);
 
   // Prompt user for password.
   const password = await prompts({
