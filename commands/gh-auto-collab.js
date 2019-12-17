@@ -64,7 +64,7 @@ async function gh_auto_collab() {
   );
 
   if (allInvites.length === 0) {
-    console.log('No pending invites')
+    console.log(chalk.white.bold('No pending invites'))
     return 'No pending invites.'
   }
 
