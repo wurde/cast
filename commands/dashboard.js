@@ -5,6 +5,7 @@
  */
 
 const meow = require('meow');
+const chalk = require('chalk');
 const scen = require('scen');
 const showHelp = require('../helpers/showHelp');
 
@@ -28,17 +29,22 @@ function dashboard() {
 
   const text = 'The quick brown fox \njumps over the lazy dog.';
 
-  console.log(
-    scen(text, {
-      title: 'Custom Title',
-      padding: '2 6',
-      textAlign: 'center',
-      style: 'classic'
-    })
-  );
+  const output = scen(text, {
+    title: 'Custom Title',
+    padding: '2 10',
+    textAlign: 'center',
+    style: 'classic'
+  }).split('\n')
+  .map(line => line + '  ' + line)
+  .join('\n');
 
-  // TODO render boxes side by side.
+  console.log('');
+  console.log(chalk.white.bold(output), '\n');
+
+  // TODO render the date.
   // TODO render weather app.
+  // TODO solve for dynamic terminal width.
+  // TODO render boxes side by side.
 }
 
 /**
