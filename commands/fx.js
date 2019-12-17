@@ -4,17 +4,9 @@
  * Dependencies
  */
 
-const fs = require('fs');
-const path = require('path');
 const meow = require('meow');
-const child_process = require('child_process');
+const execBin = require('../helpers/execBin');
 const showHelp = require('../helpers/showHelp');
-
-/**
- * Constants
- */
-
-const bin = path.resolve(__dirname, '..', 'node_modules', '.bin', 'fx')
 
 /**
  * Parse args
@@ -33,15 +25,7 @@ const cli = meow(`
 
 function fxScript() {
   showHelp(cli);
-
-  if (!fs.existsSync(bin)) {
-    console.error(
-      chalk.red.bold('Missing binary. Run `npm install` and try again.')
-    );
-    process.exit(1);
-  }
-
-  child_process.fork(bin);
+  execBin('fx');
 }
 
 /**
