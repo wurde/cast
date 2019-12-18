@@ -34,7 +34,16 @@ const cli = meow(`
   Options
     --celsius     Degrees in Celsius.
     --fahrenheit  Degrees in Fahrenheit (Default).
-`)
+`, {
+  flags: {
+    celsius: {
+      type: 'string'
+    },
+    fahrenheit: {
+      type: 'string'
+    }
+  }
+})
 
 /**
  * Define helpers
@@ -101,26 +110,33 @@ function renderScale(scale) {
  * Define script
  */
 
-async function weather() {
-  showHelp(cli)
+async function weather(location = null, options = {}) {
+  showHelp(cli);
 
-  let options = readConfig()
+  let config = readConfig();
 
-  if (cli.input.length > 1) {
-    options.location = cli.input.slice(1, cli.input.length).join(' ')
-    writeConfig('location', options.location)
+  location = location || cli.input.slice(1, cli.input.length).join(' ');
+
+  if (location) {
+    config.location = location
+    writeConfig('location', config.location)
   }
-  
+
+  // const degrees = 
+
   if (cli.flags.celsius || cli.flags.fahrenheit) {
-    options.scale = (cli.flags.fahrenheit) ? 'fahrenheit' : 'celsius'
-    writeConfig('scale', options.scale)
+    config.scale = (cli.flags.fahrenheit) ? 'fahrenheit' : 'celsius'
+    writeConfig('scale', config.scale)
   }
+
+  // console.log('cli.flags', cli.flags);
+  // process.exit(0);
 
   try {
-    const result = await weather_js2_async(options.location, options.scale)
+    const result = await weather_js2_async(config.location, config.scale)
 
     const res = result.reduce((acc, curr) => {
-      if (curr.location.name == options.location) {
+      if (curr.location.name == config.location) {
         return location
       } else {
         return acc
@@ -129,7 +145,7 @@ async function weather() {
 
     console.log(`\nLocation: ${res.location.name}\n`)
     console.log(`${generate_icon(res.current.skycode)}  ${res.current.skytext}`)
-    console.log(`   Today ${res.current.temperature} ${renderScale(options.scale)}`)
+    console.log(`   Today ${res.current.temperature} ${renderScale(config.scale)}`)
     console.log(`   ${res.current.winddisplay}`)
     console.log('')
 
@@ -138,14 +154,14 @@ async function weather() {
 
     const res_array = res.forecast.map(daily_forecast => {
       let icon = generate_icon(daily_forecast.skycodeday)
-      return `${icon}  ${daily_forecast.skytextday}\n   ${daily_forecast.shortday} ${chalk.green.bold(daily_forecast.high)} - ${chalk.green.bold(daily_forecast.low)} ${renderScale(options.scale)}\n   Precipitation ${daily_forecast.precip}%`
+      return `${icon}  ${daily_forecast.skytextday}\n   ${daily_forecast.shortday} ${chalk.green.bold(daily_forecast.high)} - ${chalk.green.bold(daily_forecast.low)} ${renderScale(config.scale)}\n   Precipitation ${daily_forecast.precip}%`
     })
 
     console.log(table([res_array]))
     console.log('')
   } catch(err) {
     console.error(err)
-    console.error(chalk.red.bold(`Coudn't find location: ${options.location}`))
+    console.error(chalk.red.bold(`Coudn't find location: ${config.location}`))
     process.exit(1)
   }
 }
