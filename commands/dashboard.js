@@ -13,6 +13,7 @@ const figlet = require('figlet');
 const termSize = require('term-size');
 const moment = require('moment');
 const datetime = require('./datetime');
+const weather = require('./weather');
 const showHelp = require('../helpers/showHelp');
 
 /**
@@ -81,31 +82,49 @@ async function dashboard() {
   showHelp(cli);
 
   // Render dateTime app.
-  const date = datetime();
-  const dateMaxTextLength = widestLine(date);
-  const datePaddingX = calcPaddingX(cols, dateMaxTextLength);
-  const datePanel = createPanel(date, {
-    padding: { left: datePaddingX, right: datePaddingX }
+  const d = datetime();
+  const dMaxTextLength = widestLine(d);
+  const dPaddingX = calcPaddingX(cols, dMaxTextLength);
+  const dPanel = createPanel(d, {
+    padding: { left: dPaddingX, right: dPaddingX }
   });
-  console.log(datePanel);
+  console.log(dPanel);
 
   // TODO render weather app.
-  // weather();
-  // const weatherMaxTextLength = widestLine(weather);
-  // const weatherPaddingX = calcPaddingX(Math.floor(cols / 3), weatherMaxTextLength);
-  // const weatherPanel = createPanel(date, {
-  //   padding: { left: weatherPaddingX, right: weatherPaddingX }
+  const w = await weather();
+  // const wMaxTextLength = widestLine(w);
+  // const wPaddingX = calcPaddingX(Math.floor(cols / 3), wMaxTextLength);
+  // const wPanel = createPanel(date, {
+  //   padding: { left: wPaddingX, right: wPaddingX }
   // });
-  // console.log(weatherPanel);
+  // console.log(wPanel);
 
   // TODO render tasks app.
   // tasks();
+  // const wMaxTextLength = widestLine(w);
+  // const wPaddingX = calcPaddingX(Math.floor(cols / 3), wMaxTextLength);
+  // const wPanel = createPanel(date, {
+  //   padding: { left: wPaddingX, right: wPaddingX }
+  // });
+  // console.log(wPanel);
 
   // TODO render qotd app.
   // qotd();
+  // const wMaxTextLength = widestLine(w);
+  // const wPaddingX = calcPaddingX(Math.floor(cols / 3), wMaxTextLength);
+  // const wPanel = createPanel(date, {
+  //   padding: { left: wPaddingX, right: wPaddingX }
+  // });
+  // console.log(wPanel);
 
   // TODO render os app.
   // os();
+  // const wMaxTextLength = widestLine(w);
+  // const wPaddingX = calcPaddingX(Math.floor(cols / 3), wMaxTextLength);
+  // const wPanel = createPanel(date, {
+  //   padding: { left: wPaddingX, right: wPaddingX }
+  // });
+  // console.log(wPanel);
 
   // const output = joinPanels([panel, panel])
 }
