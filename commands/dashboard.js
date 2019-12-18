@@ -100,32 +100,8 @@ async function dashboard() {
   console.log(wPanel);
 
   // TODO render tasks app.
-  // const t = tasks();
-  // const wMaxTextLength = widestLine(w);
-  // const wPaddingX = calcPaddingX(Math.floor(cols / 3), wMaxTextLength);
-  // const wPanel = createPanel(t, {
-  //   padding: { left: wPaddingX, right: wPaddingX }
-  // });
-  // console.log(wPanel);
-
   // TODO render qotd app.
-  // const q = qotd();
-  // const wMaxTextLength = widestLine(w);
-  // const wPaddingX = calcPaddingX(Math.floor(cols / 3), wMaxTextLength);
-  // const wPanel = createPanel(q, {
-  //   padding: { left: wPaddingX, right: wPaddingX }
-  // });
-  // console.log(wPanel);
-
   // TODO render os app.
-  // const o = os();
-  // const wMaxTextLength = widestLine(w);
-  // const wPaddingX = calcPaddingX(Math.floor(cols / 3), wMaxTextLength);
-  // const wPanel = createPanel(o, {
-  //   padding: { left: wPaddingX, right: wPaddingX }
-  // });
-  // console.log(wPanel);
-
   // const output = joinPanels([panel, panel])
 }
 
