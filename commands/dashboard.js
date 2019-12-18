@@ -44,6 +44,18 @@ function createScene(content, options = {}) {
   }
 }
 
+function calcPaddingX(cols, maxTextLength) {
+  return Math.floor(cols / 2 - 1 - maxTextLength / 2)
+}
+
+function createPanel(content, options = {}) {
+  // Check if paddingX is negative;
+
+  const output = boxen(content, options);
+
+  return output;
+}
+
 function joinScenes(scenes) {
   const output = scen(text, {
     title: ' UTC TIME ',
@@ -75,22 +87,25 @@ const cli = meow(`
 async function dashboard() {
   showHelp(cli);
 
-  const text = 'The quick brown fox \njumps over the lazy dog and something else.';
-  // const date = moment().format('MMMM Do YYYY, h:mm:ss a');
-  // const date = figlet.textSync(date, { font: 'Small' });
+  // const text = 'The quick brown fox \njumps over the lazy dog and something else.';
+  const date = moment().format('MMMM Do YYYY, h:mm:ss a');
+  const fancyDate = figlet.textSync(date, { font: 'Small' });
 
   // Calculate padding X by splitting total columns in half.
   // Then remove 1 column to account for left and right borders.
   // Then calculate the maximum width of the content divided by 2.
-  const maxTextLength = widestLine(text);
-  const paddingX = Math.floor(cols / 2 - 1 - maxTextLength / 2);
-
-  const output = boxen(text, {
+  const maxTextLength = widestLine(fancyDate);
+  const paddingX = calcPaddingX(cols, maxTextLength);
+  const output = createPanel(fancyDate, {
     padding: { left: paddingX, right: paddingX }
   });
-  // const output = createScene(text, { widthPct: 0.5 });
 
+  // TODO render dateTime app.
   // joinScenes([...])
+  // TODO render weather app.
+  // TODO render tasks app.
+  // TODO render qotd app.
+  // TODO render os app.
 
   console.log('');
   console.log(output);
