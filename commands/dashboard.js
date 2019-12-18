@@ -24,28 +24,8 @@ const { columns: cols, rows } = termSize();
  * Define helpers
  */
 
-function createScene(content, options = {}) {
-  const title = options.title;
-  const contentLength = content.split('\n')[0].length;
-  let output;
-  let outputWidth = cols;
-  let widthConfig = cols;
-
-  while (widthConfig > 0 && contentLength < cols && outputWidth >= cols) {
-    output = scen(content, {
-      textAlign: 'center',
-      style: 'single',
-      width: widthConfig,
-      title,
-    });
-    const lines = output.split('\n');
-    outputWidth = lines[0].length;
-    widthConfig--;
-  }
-}
-
 function calcPaddingX(cols, maxTextLength) {
-  return Math.floor(cols / 2 - 1 - maxTextLength / 2)
+  return Math.floor(cols / 2 - 1 - maxTextLength / 2);
 }
 
 function createPanel(content, options = {}) {
@@ -56,17 +36,26 @@ function createPanel(content, options = {}) {
   return output;
 }
 
-function joinScenes(scenes) {
-  const output = scen(text, {
-    title: ' UTC TIME ',
-    padding: '2 10',
-    textAlign: 'center',
-    style: 'single',
-  }).split('\n')
-  .map(line => line + '  ' + line)
-  .join('\n');
+function joinPanels(panels) {
+  let output = [];
 
-  return output;
+  // Split panels by newline.
+  panels = panels.map(panel => panel.split('\n'));
+
+  // Ensure panels have same number of lines.
+  const maxLength = panels.reduce((max, x) => max > x.length ? max : x.length, 0);
+  panels = panels.filter(panel => panel.length === maxLength);
+
+  // Join parallel lines together.
+  for (let i = 0; i < maxLength; i++) {
+    for (let j = 0; j < panels.length; j++) {
+      output[i] = output[i] || '';
+      output[i] += panels[j][i];
+    }
+    output[i] += '\n';
+  }
+
+  return output.join('');
 }
 
 /**
@@ -94,14 +83,16 @@ async function dashboard() {
   // Calculate padding X by splitting total columns in half.
   // Then remove 1 column to account for left and right borders.
   // Then calculate the maximum width of the content divided by 2.
-  const maxTextLength = widestLine(fancyDate);
-  const paddingX = calcPaddingX(cols, maxTextLength);
-  const output = createPanel(fancyDate, {
+  const maxTextLength = widestLine(date);
+  const paddingX = calcPaddingX(Math.floor(cols / 3), maxTextLength);
+  const panel = createPanel(date, {
     padding: { left: paddingX, right: paddingX }
   });
 
   // TODO render dateTime app.
-  // joinScenes([...])
+  // const output = joinPanels([panel, panel])
+  const output = joinPanels([panel, panel, panel])
+
   // TODO render weather app.
   // TODO render tasks app.
   // TODO render qotd app.
