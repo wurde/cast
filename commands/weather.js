@@ -37,8 +37,14 @@ const cli = meow(`
     --fahrenheit  Degrees in Fahrenheit (Default).
 `, {
   flags: {
-    celsius: { type: 'boolean' },
-    fahrenheit: { type: 'boolean' }
+    celsius: {
+      type: 'boolean',
+      alias: 'c',
+    },
+    fahrenheit: {
+      type: 'boolean',
+      alias: 'f',
+    }
   }
 });
 
@@ -46,7 +52,7 @@ const cli = meow(`
  * Define helpers
  */
 
-function weather_js2_async(location, scale) {
+function fetchWeather(location, scale) {
   const degreeType = (scale == 'fahrenheit') ? 'F' : 'C';
 
   return new Promise((resolve, reject) => {
@@ -94,10 +100,10 @@ function renderScale(scale) {
   return scale == 'fahrenheit' ? '°F' : '°C';
 }
 
-function printCurrentWeather(res, config) {
+function printCurrentWeather(res, scale) {
   console.log(`\nLocation: ${res.location.name}\n`);
   console.log(`${generate_icon(res.current.skycode)}  ${res.current.skytext}`);
-  console.log(`   Today ${res.current.temperature} ${renderScale(config.scale)}`);
+  console.log(`   Today ${res.current.temperature} ${renderScale(scale)}`);
   console.log(`   ${res.current.winddisplay}`);
   console.log('');
 }
@@ -129,10 +135,10 @@ async function weather(location = null, options = {}) {
   writeConfig('scale', scale);
 
   try {
-    const result = await weather_js2_async(config.location, config.scale);
+    const result = await fetchWeather(location, scale);
 
     const res = result.reduce((acc, curr) => {
-      if (curr.location.name == config.location) {
+      if (curr.location.name == location) {
         return location
       } else {
         return acc
@@ -142,13 +148,14 @@ async function weather(location = null, options = {}) {
     // Filter out historic forecasts
     res.forecast = res.forecast.filter(daily_forecast => daily_forecast.date >= res.current.date);
 
+    // Format daily forecasts.
     const res_array = res.forecast.map(daily_forecast => {
       let icon = generate_icon(daily_forecast.skycodeday)
-      return `${icon}  ${daily_forecast.skytextday}\n   ${daily_forecast.shortday} ${chalk.green.bold(daily_forecast.high)} - ${chalk.green.bold(daily_forecast.low)} ${renderScale(config.scale)}\n   Precipitation ${daily_forecast.precip}%`
+      return `${icon}  ${daily_forecast.skytextday}\n   ${daily_forecast.shortday} ${chalk.green.bold(daily_forecast.high)} - ${chalk.green.bold(daily_forecast.low)} ${renderScale(scale)}\n   Precipitation ${daily_forecast.precip}%`
     })
 
-    if (isMainCommand()) {
-      printCurrentWeather(res, config);
+    if (isMainCommand(module)) {
+      printCurrentWeather(res, scale);
       console.log(table([res_array]));
       console.log('');
     } else {
@@ -156,7 +163,7 @@ async function weather(location = null, options = {}) {
     }
   } catch(err) {
     console.error(err);
-    console.error(chalk.red.bold(`Coudn't find location: ${config.location}`));
+    console.error(chalk.red.bold(`Coudn't find location: ${location}`));
     process.exit(1);
   }
 }
