@@ -90,38 +90,38 @@ async function dashboard() {
   });
   console.log(dPanel);
 
-  // TODO render weather app.
+  // Render weather app.
   const w = await weather();
-  // const wMaxTextLength = widestLine(w);
-  // const wPaddingX = calcPaddingX(Math.floor(cols / 3), wMaxTextLength);
-  // const wPanel = createPanel(date, {
-  //   padding: { left: wPaddingX, right: wPaddingX }
-  // });
-  // console.log(wPanel);
+  const wMaxTextLength = widestLine(w);
+  const wPaddingX = calcPaddingX(cols, wMaxTextLength);
+  const wPanel = createPanel(w, {
+    padding: { left: wPaddingX, right: wPaddingX }
+  });
+  console.log(wPanel);
 
   // TODO render tasks app.
-  // tasks();
+  // const t = tasks();
   // const wMaxTextLength = widestLine(w);
   // const wPaddingX = calcPaddingX(Math.floor(cols / 3), wMaxTextLength);
-  // const wPanel = createPanel(date, {
+  // const wPanel = createPanel(t, {
   //   padding: { left: wPaddingX, right: wPaddingX }
   // });
   // console.log(wPanel);
 
   // TODO render qotd app.
-  // qotd();
+  // const q = qotd();
   // const wMaxTextLength = widestLine(w);
   // const wPaddingX = calcPaddingX(Math.floor(cols / 3), wMaxTextLength);
-  // const wPanel = createPanel(date, {
+  // const wPanel = createPanel(q, {
   //   padding: { left: wPaddingX, right: wPaddingX }
   // });
   // console.log(wPanel);
 
   // TODO render os app.
-  // os();
+  // const o = os();
   // const wMaxTextLength = widestLine(w);
   // const wPaddingX = calcPaddingX(Math.floor(cols / 3), wMaxTextLength);
-  // const wPanel = createPanel(date, {
+  // const wPanel = createPanel(o, {
   //   padding: { left: wPaddingX, right: wPaddingX }
   // });
   // console.log(wPanel);
