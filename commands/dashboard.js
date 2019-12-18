@@ -26,6 +26,9 @@ const { columns: cols, rows } = termSize();
  */
 
 function calcPaddingX(cols, maxTextLength) {
+  // Calculate padding X by splitting total columns in half.
+  // Then remove 1 column to account for left and right borders.
+  // Then calculate the maximum width of the content divided by 2.
   return Math.floor(cols / 2 - 1 - maxTextLength / 2);
 }
 
@@ -77,27 +80,23 @@ const cli = meow(`
 async function dashboard() {
   showHelp(cli);
 
-  // const text = 'The quick brown fox \njumps over the lazy dog and something else.';
-  const date = moment().format('MMMM Do YYYY, h:mm:ss a');
-  const fancyDate = figlet.textSync(date, { font: 'Small' });
-
-  // Calculate padding X by splitting total columns in half.
-  // Then remove 1 column to account for left and right borders.
-  // Then calculate the maximum width of the content divided by 2.
-  const maxTextLength = widestLine(date);
-  const paddingX = calcPaddingX(Math.floor(cols / 3), maxTextLength);
-  // const panel = createPanel(date, {
-  //   padding: { left: paddingX, right: paddingX }
-  // });
-
-  // const output = joinPanels([panel, panel])
-  // const output = joinPanels([panel, panel, panel])
-
   // Render dateTime app.
-  datetime();
+  const date = datetime();
+  const dateMaxTextLength = widestLine(date);
+  const datePaddingX = calcPaddingX(cols, dateMaxTextLength);
+  const datePanel = createPanel(date, {
+    padding: { left: datePaddingX, right: datePaddingX }
+  });
+  console.log(datePanel);
 
   // TODO render weather app.
   // weather();
+  // const weatherMaxTextLength = widestLine(weather);
+  // const weatherPaddingX = calcPaddingX(Math.floor(cols / 3), weatherMaxTextLength);
+  // const weatherPanel = createPanel(date, {
+  //   padding: { left: weatherPaddingX, right: weatherPaddingX }
+  // });
+  // console.log(weatherPanel);
 
   // TODO render tasks app.
   // tasks();
@@ -107,6 +106,8 @@ async function dashboard() {
 
   // TODO render os app.
   // os();
+
+  // const output = joinPanels([panel, panel])
 }
 
 /**

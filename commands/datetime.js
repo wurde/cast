@@ -45,7 +45,7 @@ const cli = meow(`
  */
 
 function datetime() {
-  showHelp(cli)
+  showHelp(cli);
 
   const date = moment().format('MMMM Do YYYY, h:mm:ss a');
   const fancyDate = figlet.textSync(date, { font: 'Small' });
@@ -62,7 +62,7 @@ function datetime() {
     console.log(output);
     console.log('');
   } else {
-    return output;
+    return content;
   }
 }
 
@@ -70,4 +70,4 @@ function datetime() {
  * Export script
  */
 
-module.exports = datetime
+module.exports = datetime;
