@@ -15,6 +15,20 @@ const moment = require('moment');
 const showHelp = require('../helpers/showHelp');
 
 /**
+ * Constants
+ */
+
+const { columns: cols, rows } = termSize();
+
+/**
+ * Define helpers
+ */
+
+function calcPaddingX(cols, maxTextLength) {
+  return Math.floor(cols / 2 - 1 - maxTextLength / 2);
+}
+
+/**
  * Parse args
  */
 
@@ -31,7 +45,20 @@ const cli = meow(`
 
 function datetime() {
   showHelp(cli)
-  console.log('datetime');
+
+  const date = moment().format('MMMM Do YYYY, h:mm:ss a');
+  const fancyDate = figlet.textSync(date, { font: 'Small' });
+
+  const simplePaddingX = calcPaddingX(cols, widestLine(date));
+  const fancyPaddingX = calcPaddingX(cols, widestLine(fancyDate));
+
+  const content = fancyPaddingX < 0 ? date : fancyDate;
+  const paddingX = fancyPaddingX < 0 ? simplePaddingX : fancyPaddingX;
+  const output = boxen(content, { padding: { left: paddingX, right: paddingX }})
+
+  console.log('');
+  console.log(output);
+  console.log('');
 }
 
 /**

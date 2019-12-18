@@ -21,7 +21,7 @@ const showHelp = require('../helpers/showHelp');
 const { columns: cols, rows } = termSize();
 
 /**
- * Define helper
+ * Define helpers
  */
 
 function createScene(content, options = {}) {
