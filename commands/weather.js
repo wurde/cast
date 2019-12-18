@@ -63,7 +63,7 @@ function fetchWeather(location, scale) {
   });
 }
 
-function generate_icon(code) {
+function generateIcon(code) {
   let icon;
 
   if (['0', '1', '2', '3', '4', '11', '12', '17', '18', '35', '37', '38', '39', '40', '45', '47'].includes(code)) {
@@ -100,12 +100,20 @@ function renderScale(scale) {
   return scale == 'fahrenheit' ? '°F' : '°C';
 }
 
-function printCurrentWeather(res, scale) {
-  console.log(`\nLocation: ${res.location.name}\n`);
-  console.log(`${generate_icon(res.current.skycode)}  ${res.current.skytext}`);
-  console.log(`   Today ${res.current.temperature} ${renderScale(scale)}`);
-  console.log(`   ${res.current.winddisplay}`);
-  console.log('');
+function buildOutput(res, scale) {
+  return `
+Location: ${res.location.name}
+
+${generateIcon(res.current.skycode)}  ${res.current.skytext}
+   Today ${res.current.temperature} ${renderScale(scale)}
+   ${res.current.winddisplay}
+
+`
+  // console.log(`\nLocation: ${res.location.name}\n`);
+  // console.log(`${generateIcon(res.current.skycode)}  ${res.current.skytext}`);
+  // console.log(`   Today ${res.current.temperature} ${renderScale(scale)}`);
+  // console.log(`   ${res.current.winddisplay}`);
+  // console.log('');
 }
 
 function setScale(options, cli, config) {
@@ -150,16 +158,20 @@ async function weather(location = null, options = {}) {
 
     // Format daily forecasts.
     const res_array = res.forecast.map(daily_forecast => {
-      let icon = generate_icon(daily_forecast.skycodeday)
+      let icon = generateIcon(daily_forecast.skycodeday)
       return `${icon}  ${daily_forecast.skytextday}\n   ${daily_forecast.shortday} ${chalk.green.bold(daily_forecast.high)} - ${chalk.green.bold(daily_forecast.low)} ${renderScale(scale)}\n   Precipitation ${daily_forecast.precip}%`
-    })
+    });
+
+    // Build weather output.
+    let output = '';
+    output += buildOutput(res, scale);
+    output += table([res_array]);
 
     if (isMainCommand(module)) {
-      printCurrentWeather(res, scale);
-      console.log(table([res_array]));
+      console.log(output);
       console.log('');
     } else {
-      return res;
+      return output;
     }
   } catch(err) {
     console.error(err);
