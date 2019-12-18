@@ -12,6 +12,7 @@ const widestLine = require('widest-line');
 const figlet = require('figlet');
 const termSize = require('term-size');
 const moment = require('moment');
+const datetime = require('./datetime');
 const showHelp = require('../helpers/showHelp');
 
 /**
@@ -85,24 +86,27 @@ async function dashboard() {
   // Then calculate the maximum width of the content divided by 2.
   const maxTextLength = widestLine(date);
   const paddingX = calcPaddingX(Math.floor(cols / 3), maxTextLength);
-  const panel = createPanel(date, {
-    padding: { left: paddingX, right: paddingX }
-  });
+  // const panel = createPanel(date, {
+  //   padding: { left: paddingX, right: paddingX }
+  // });
 
-  // TODO render dateTime app.
   // const output = joinPanels([panel, panel])
-  const output = joinPanels([panel, panel, panel])
+  // const output = joinPanels([panel, panel, panel])
+
+  // Render dateTime app.
+  datetime();
 
   // TODO render weather app.
-  // TODO render tasks app.
-  // TODO render qotd app.
-  // TODO render os app.
+  // weather();
 
-  console.log('');
-  console.log(output);
-  console.log({ cols, rows });
-  console.log({ maxTextLength, paddingX });
-  console.log('');
+  // TODO render tasks app.
+  // tasks();
+
+  // TODO render qotd app.
+  // qotd();
+
+  // TODO render os app.
+  // os();
 }
 
 /**

@@ -13,6 +13,7 @@ const figlet = require('figlet');
 const termSize = require('term-size');
 const moment = require('moment');
 const showHelp = require('../helpers/showHelp');
+const isMainCommand = require('../helpers/isMainCommand');
 
 /**
  * Constants
@@ -56,9 +57,13 @@ function datetime() {
   const paddingX = fancyPaddingX < 0 ? simplePaddingX : fancyPaddingX;
   const output = boxen(content, { padding: { left: paddingX, right: paddingX }})
 
-  console.log('');
-  console.log(output);
-  console.log('');
+  if (isMainCommand(module)) {
+    console.log('');
+    console.log(output);
+    console.log('');
+  } else {
+    return output;
+  }
 }
 
 /**
