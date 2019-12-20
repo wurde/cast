@@ -87,23 +87,16 @@ function downloadVideo(link, outputPath) {
 
 const cli = meow(`
   Usage
-    $ cast yt-download LINK_OR_ID
+    $ cast yt-download [options] LINK_OR_ID
   
   Options:
-    -o, --output FILE   Output file (Default '$ID.flv').
-    -d, --dir DIR       Set the output directory (Default '.').
+    --output FILE   Output file (Default '$ID.flv').
+    --dir DIR       Set the output directory (Default '.').
 `, {
   description: 'Download videos on YouTube.',
   flags: {
-    output: {
-      type: 'string',
-      alias: 'o'
-    },
-    dir: {
-      type: 'string',
-      alias: 'd',
-      default: '.'
-    }
+    output: { type: 'string' },
+    dir: { type: 'string' }
   }
 });
 
@@ -112,13 +105,17 @@ const cli = meow(`
  */
 
 async function yt_download(link_or_id = null, options = {}) {
+  if (process.argv.length === 4) {
+    link_or_id = process.argv[3];
+  }
+
   showHelp(cli, [(!link_or_id && cli.input.length < 2)]);
 
   link_or_id = link_or_id || cli.input[1];
 
   const link = buildLink(link_or_id);
   const output = options.output || cli.flags.output || buildOutput(link);
-  const dir = options.dir || cli.flags.dir;
+  const dir = options.dir || cli.flags.dir || '.';
   const outputPath = path.join(dir, output);
 
   await downloadVideo(link, outputPath);
