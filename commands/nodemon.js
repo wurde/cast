@@ -16,6 +16,14 @@ const showHelp = require('../helpers/showHelp');
 const CONFIG_DIR = path.join(process.env.HOME, '.nodemon');
 
 /**
+ * Define helpers
+ */
+
+function requireFile(file) {
+  if (!fse.pathExistsSync(file)) throw new Error(`Missing file: ${file}`);
+}
+
+/**
  * Parse args
  */
 
@@ -30,7 +38,7 @@ const cli = meow(`
   description: 'Filesystem monitoring scripts.',
   flags: {
     add: { type: 'string', alias: 'a' },
-    list: { type: 'string' },
+    remove: { type: 'string' },
   }
 });
 
@@ -45,6 +53,18 @@ function nodemon(command = null) {
   command = command || flags.pop() || 'list';
 
   fse.mkdirpSync(CONFIG_DIR);
+
+  if (command === 'list' || command === 'l') {
+    console.log('list');
+  } else if (command === 'add' || command === 'a') {
+    const file = cli.flags.add;
+    console.log('add', file, fse.pathExistsSync(file));
+    requireFile(file);
+  } else if (command === 'remove') {
+    const file = cli.flags.remove;
+    console.log('remove', file, fse.pathExistsSync(file));
+    requireFile(file);
+  }
 
   // TODO use chokidar to recognize changes to files
   // located in ~/.nodemon and restart their respective
