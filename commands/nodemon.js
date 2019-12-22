@@ -15,7 +15,7 @@ const cli = meow(`
   Usage
     $ cast nodemon
 `, {
-  description: 'Manage filesystem monitoring scripts.'
+  description: 'Filesystem monitoring scripts.'
 });
 
 /**
