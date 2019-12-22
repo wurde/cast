@@ -4,8 +4,16 @@
  * Dependencies
  */
 
+const fs = require('fs');
+const path = require('path');
 const meow = require('meow');
 const showHelp = require('../helpers/showHelp');
+
+/**
+ * Constants
+ */
+
+const CONFIG_DIR = path.join(__dirname, '.nodemon');
 
 /**
  * Parse args
@@ -30,6 +38,7 @@ const cli = meow(`
 function nodemon() {
   showHelp(cli);
 
+  mkdir(CONFIG_DIR);
   // TODO use chokidar to recognize changes to files
   // located in ~/.nodemon and restart their respective
   // processes automatically.
