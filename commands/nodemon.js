@@ -4,8 +4,10 @@
  * Dependencies
  */
 
+const fs = require('fs');
 const path = require('path');
 const meow = require('meow');
+const chalk = require('chalk');
 const fse = require('fs-extra');
 const showHelp = require('../helpers/showHelp');
 
@@ -55,20 +57,24 @@ function nodemon(command = null) {
   fse.mkdirpSync(CONFIG_DIR);
 
   if (command === 'list' || command === 'l') {
-    console.log('list');
+    const files = fs.readdirSync(CONFIG_DIR);
+    console.log('list', files);
   } else if (command === 'add' || command === 'a') {
     const file = cli.flags.add;
-    console.log('add', file, fse.pathExistsSync(file));
+    const filename = path.basename(file);
+    const dst = path.join(CONFIG_DIR, filename)
     requireFile(file);
+
+    console.log(chalk.white.bold(`\n  Adding script: ${dst}\n`));
+    fse.ensureSymlinkSync(file, dst);
   } else if (command === 'remove') {
     const file = cli.flags.remove;
-    console.log('remove', file, fse.pathExistsSync(file));
-    requireFile(file);
-  }
+    const dst = path.join(CONFIG_DIR, file)
+    requireFile(dst);
 
-  // TODO use chokidar to recognize changes to files
-  // located in ~/.nodemon and restart their respective
-  // processes automatically.
+    console.log(chalk.white.bold(`\n  Removing script: ${dst}\n`));
+    fs.unlinkSync(dst);
+  }
 }
 
 /**
