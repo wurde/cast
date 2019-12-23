@@ -24,30 +24,54 @@ const CONFIG_DIR = path.join(process.env.HOME, '.nodemon');
  */
 
 function startNodemon() {
-  const pid_file = path.join(CONFIG_DIR, 'watch.pid');
+  const pid_file = path.join(CONFIG_DIR, '.pid');
 
   if (!fs.existsSync(pid_file)) {
-    const p = { pid: 10000 };
-    // Fork this watch script
-    // chokidar.watch(CONFIG_DIR).on('all', (event, path) => {
-    //   console.log(event, path);
-    //   // Send SIGHUP (1) signals to reload the script.
-    //     // lookup target path.pid file
-    //     // send signal to process
-    // });
-
-    // Track pid in a .pid file
-    fs.writeFileSync(pid_file, p.pid);
+    chokidar.watch(`${CONFIG_DIR}/*.js`)
+      .on('add', file => startProcess(file))
+      .on('change', file => restartProcess(file))
+      .on('unlink', file => stopProcess(file))
   }
+}
+
+function startProcess(file) {
+  console.log('Starting process', file);
+}
+
+function restartProcess(file) {
+  console.log('Restarting process', file);
+}
+
+function stopProcess(file) {
+  const basename = path.basename(file, path.extname(file));
+  const pid_file = path.join(CONFIG_DIR, `${basename}.pid`);
+  const pid = fs.readFileSync(pid_file);
+
+  console.log('Stopping process', path);
+  console.log('basename', basename);
+  console.log('pid_file', pid_file);
+  console.log('pid', pid);
 }
 
 function execFiles(files) {
   for (let i = 0; i < files.length; i++) {
-    // TODO kill current process.
+    const file = files[i][0];
+    const basename = path.basename(file, path.extname(file));
+    const pid_file = path.join(CONFIG_DIR, `${basename}.pid`);
 
-    const p = child_process.fork(files[i][1], {
-      execArgv: [`--title=nodemon/${files[i][0]}`]
-    });
+    // TODO kill current process if it exists.
+
+    // console.log(files[i][1], pid_file, basename);
+
+    // const p = child_process.fork(files[i][1], {
+    //   execArgv: [`--title=nodemon/${basename}`]
+    // });
+    // console.log('p', p);
+    // // On exit remove .pid file.
+    // p.on('exit', () => fs.unlinkSync(pid_file));
+
+    // Track pid in a .pid file.
+    fs.writeFileSync(pid_file, p.pid);
   }
 }
 
@@ -118,7 +142,6 @@ function nodemon(command = null) {
       .readdirSync(CONFIG_DIR, { withFileTypes: true })
       .filter(f => f.isSymbolicLink())
       .map(f => [f.name, path.resolve(CONFIG_DIR, fs.readlinkSync(path.join(CONFIG_DIR, f.name)))]);
-    // execFiles(files);
 
     if (files.length > 0) {
       printScripts(files);
