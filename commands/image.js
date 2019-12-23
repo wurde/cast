@@ -17,7 +17,7 @@ const applyToFileOrDirectory = require('../helpers/applyToFileOrDirectory');
 
 async function processImage(image, options = {}) {
   const img = await jimp.read(image);
-  const out = createFilename(image);
+  const out = options.overwrite ? image : createFilename(image);
 
   if (options.rotate) {
     return img.rotate(Number(options.rotate)).write(out);
@@ -91,6 +91,7 @@ const cli = meow(`
     --greyscale        Remove colour from the image.
     --normalize        Normalize the channels in an image.
     --opaque           Set the alpha channel on every pixel to fully opaque.
+    --overwrite        Overwrite the original file.
 `, {
   description: 'Image manipulation.',
   flags: {
@@ -110,6 +111,7 @@ const cli = meow(`
     greyscale: { type: 'boolean' },
     normalize: { type: 'boolean' },
     opaque: { type: 'boolean' },
+    overwrite: { type: 'boolean' },
   }
 });
 
@@ -117,7 +119,7 @@ const cli = meow(`
  * Define script
  */
 
-async function image(image=null, options=null) {
+async function image(image = null, options = null) {
   showHelp(cli, [(!image && cli.input.length < 2)]);
 
   image = image || cli.input[1];

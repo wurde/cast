@@ -52,7 +52,7 @@ const cli = meow(`
  * Define script
  */
 
-async function grayscale(image=null, options={}) {
+async function grayscale(image = null, options = {}) {
   showHelp(cli, [(!image && cli.input.length < 2)]);
 
   image = image || cli.input[1];
