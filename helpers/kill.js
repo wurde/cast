@@ -16,7 +16,12 @@ const hasKill = which('kill');
  */
 
 function kill(pid, signal = '-SIGTERM') {
-  if (hasKill) child_process.spawnSync('kill', [signal, pid]);
+  if (hasKill) {
+    const { status } = child_process.spawnSync('kill', [signal, pid]);
+    return status;
+  } else {
+    return -1;
+  }
 }
 
 /**

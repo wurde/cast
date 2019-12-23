@@ -30,8 +30,8 @@ function startNodemon() {
   if (!fs.existsSync(pid_file)) {
     chokidar.watch(`${CONFIG_DIR}/*.js`)
       .on('add', file => startProcess(file))
-      .on('change', file => restartProcess(file))
       .on('unlink', file => stopProcess(file))
+      .on('change', file => restartProcess(file))
   }
 }
 
@@ -46,18 +46,19 @@ function startProcess(file) {
   fs.writeFileSync(pid_file, p.pid);
 }
 
-function restartProcess(file) {
-  console.log('Restarting process', file);
-}
-
 function stopProcess(file) {
   const basename = path.basename(file, path.extname(file));
   const pid_file = path.join(CONFIG_DIR, `${basename}.pid`);
 
   if (fs.existsSync(pid_file)) {
-    kill(fs.readFileSync(pid_file), 'SIGTERM');
+    const status = kill(fs.readFileSync(pid_file, { encoding: 'utf8' }), '-SIGTERM');
     fs.unlinkSync(pid_file);
   }
+}
+
+function restartProcess(file) {
+  stopProcess(file);
+  startProcess(file);
 }
 
 function printInitialPrompt() {
@@ -117,6 +118,7 @@ const cli = meow(`
 function nodemon(command = null) {
   showHelp(cli);
 
+  process.title = 'nodemon';
   const flags = Object.keys(cli.flags);
   command = command || flags.pop() || 'list';
 
