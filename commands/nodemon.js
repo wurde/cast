@@ -37,19 +37,10 @@ async function bootstrapNodemon() {
 }
 
 function startNodemon() {
-  const pid_file = path.join(CONFIG_DIR, '.pid');
+  const pid = pidof('nodemond');
+  if (pid.length > 0) return;
 
-  if (fs.existsSync(pid_file)) {
-    const pid = fs.readFileSync(pid_file);
-
-    if (ps(pid) !== 0) {
-      fs.writeFileSync(pid_file, process.pid);
-    } else {
-      return;
-    }
-  } else {
-    fs.writeFileSync(pid_file, process.pid);
-  }
+  process.title = 'nodemond';
 
   chokidar
     .watch(`${CONFIG_DIR}/*.js`)
@@ -189,21 +180,21 @@ function nodemon(command = null) {
     case 'list':
     case 'l':
       runListCommand();
+      bootstrapNodemon();
       break;
     case 'add':
     case 'a':
       runAddCommand();
+      bootstrapNodemon();
       break;
     case 'remove':
       runRemoveCommand();
+      bootstrapNodemon();
       break;
     case 'start':
-      // TODO verify 
       startNodemon();
       break;
   }
-
-  // bootstrapNodemon();
 }
 
 /**
