@@ -179,17 +179,24 @@ function nodemon(command = null) {
   showHelp(cli);
 
   process.title = 'nodemon';
+
   const flags = Object.keys(cli.flags);
-  command = command || flags.pop() || 'list';
+  const cmd = command || flags.pop() || 'list';
 
   mkdir(CONFIG_DIR);
 
-  if (command === 'list' || command === 'l') {
-    runListCommand();
-  } else if (command === 'add' || command === 'a') {
-    runAddCommand();
-  } else if (command === 'remove') {
-    runRemoveCommand();
+  switch(cmd) {
+    case 'list':
+    case 'l':
+      runListCommand();
+      break;
+    case 'add':
+    case 'a':
+      runAddCommand();
+      break;
+    case 'remove':
+      runRemoveCommand();
+      break;
   }
 
   bootstrapNodemon();
