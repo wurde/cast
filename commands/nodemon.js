@@ -12,6 +12,7 @@ const fse = require('fs-extra');
 const chokidar = require('chokidar');
 const child_process = require('child_process');
 const showHelp = require('../helpers/showHelp');
+const kill = require('../helpers/kill');
 
 /**
  * Constants
@@ -45,12 +46,11 @@ function restartProcess(file) {
 function stopProcess(file) {
   const basename = path.basename(file, path.extname(file));
   const pid_file = path.join(CONFIG_DIR, `${basename}.pid`);
-  const pid = fs.readFileSync(pid_file);
 
-  console.log('Stopping process', path);
-  console.log('basename', basename);
-  console.log('pid_file', pid_file);
-  console.log('pid', pid);
+  if (fs.existsSync(pid_file)) {
+    kill(fs.readFileSync(pid_file), 'SIGTERM');
+    fs.unlinkSync(pid_file);
+  }
 }
 
 function execFiles(files) {
