@@ -2,14 +2,14 @@
  * Dependencies
  */
 
-const child_process = require('child_process')
-const which = require('../helpers/which')
+const child_process = require('child_process');
+const which = require('../helpers/which');
 
 /**
  * Constants
  */
 
-const hasPidof = which('pidof')
+const hasPidof = which('pidof');
 
 /**
  * Define helper
@@ -17,14 +17,12 @@ const hasPidof = which('pidof')
 
 function pidof(bin) {
   try {
-    if (hasPidof) {
-      const pids = child_process.execSync(`pidof ${bin}`, { encoding: 'utf8' }).trim()
-      return pids.split(' ').map(e => parseInt(e))
-    } else {
-      return []
-    }
+    if (!hasPidof) return [];
+
+    const pids = child_process.execSync(`pidof ${bin}`, { encoding: 'utf8' }).trim();
+    return pids.split(' ').map(e => parseInt(e));
   } catch (e) {
-    return []
+    return [];
   }
 }
 
@@ -32,4 +30,4 @@ function pidof(bin) {
  * Export helper
  */
 
-module.exports = pidof
+module.exports = pidof;
