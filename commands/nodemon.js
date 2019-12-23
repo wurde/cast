@@ -15,6 +15,7 @@ const showHelp = require('../helpers/showHelp');
 const pkill = require('../helpers/pkill');
 const ps = require('../helpers/ps');
 const mkdir = require('../helpers/mkdir');
+const symlink = require('../helpers/symlink');
 
 /**
  * Constants
@@ -26,10 +27,10 @@ const CONFIG_DIR = path.join(process.env.HOME, '.nodemon');
  * Define helpers
  */
 
-async function forkBackgroundProcess() {
+async function bootstrapNodemon() {
   const p = child_process.spawn('cast', ['nodemon', '--start'], {
     detached: true,
-    stdio: 'ignore',
+    stdio: 'ignore'
   });
 
   p.unref();
@@ -72,14 +73,6 @@ function restartProcess(file) {
   startProcess(file);
 }
 
-function printInitialPrompt() {
-  console.log('\n  No monitoring scripts found. Add your first one.');
-}
-
-function printUsageRef() {
-  console.log('\n  To see usage run \`cast nodemon -h\`\n');
-}
-
 function requireFile(file) {
   if (!fse.pathExistsSync(file)) throw new Error(`Missing file ${file}`);
 }
@@ -94,6 +87,16 @@ function requireFileFormat(file) {
   requireExtname(file, '.js');
 }
 
+function buildScriptList() {
+  return fs
+    .readdirSync(CONFIG_DIR, { withFileTypes: true })
+    .filter(f => f.isSymbolicLink())
+    .map(f => [
+      f.name,
+      path.resolve(CONFIG_DIR, fs.readlinkSync(path.join(CONFIG_DIR, f.name)))
+    ]);
+}
+
 function printScripts(files) {
   console.log('\n  Listing active nodemon scripts...\n');
   for (let i = 0; i < files.length; i++) {
@@ -103,22 +106,16 @@ function printScripts(files) {
   }
 }
 
-function runListCommand() {
-  const files = fs
-    .readdirSync(CONFIG_DIR, { withFileTypes: true })
-    .filter(f => f.isSymbolicLink())
-    .map(f => [
-      f.name,
-      path.resolve(CONFIG_DIR, fs.readlinkSync(path.join(CONFIG_DIR, f.name)))
-    ]);
+const printNoScriptsFound = () =>
+  console.log('\n  No monitoring scripts found. Add your first one.');
 
-  if (files.length > 0) {
-    printScripts(files);
-    printUsageRef();
-  } else {
-    printInitialPrompt();
-    printUsageRef();
-  }
+const printUsageRef = () =>
+  console.log('\n  To see usage run "cast nodemon -h"\n');
+
+function runListCommand() {
+  const files = buildScriptList();
+  files.length > 0 ? printScripts(files) : printNoScriptsFound();
+  printUsageRef();
 }
 
 function runAddCommand() {
@@ -127,7 +124,10 @@ function runAddCommand() {
   requireFileFormat(file);
 
   console.log(chalk.white.bold(`\n  Adding script: ${dst}\n`));
-  fse.ensureSymlinkSync(file, dst);
+
+  // Create a symlink from the target monitoring script
+  // to the centralized nodemon directory at ~/.nodemon
+  symlink(file, dst);
 }
 
 function runRemoveCommand() {
@@ -139,17 +139,7 @@ function runRemoveCommand() {
   // fs.unlinkSync(dst);
 
   const basename = path.basename(file, path.extname(file));
-  console.log('Removing', basename);
   const status = pkill(['--exact', `nodemon--${basename}`]);
-  console.log('status', status);
-}
-
-function bootstrapNodemon() {
-  if (command === 'start') {
-    startNodemon();
-  } else {
-    forkBackgroundProcess();
-  }
 }
 
 /**
@@ -196,6 +186,9 @@ function nodemon(command = null) {
       break;
     case 'remove':
       runRemoveCommand();
+      break;
+    case 'start':
+      startNodemon();
       break;
   }
 
