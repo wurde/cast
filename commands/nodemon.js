@@ -24,7 +24,7 @@ const CONFIG_DIR = path.join(process.env.HOME, '.nodemon');
  * Define helpers
  */
 
-async function runInBackground() {
+async function forkBackgroundProcess() {
   const p = child_process.spawn('cast', ['nodemon', '--start'], {
     detached: true,
     stdio: 'ignore',
@@ -171,13 +171,10 @@ function nodemon(command = null) {
     fs.unlinkSync(dst);    
   }
 
-  console.log('command', command, flags);
   if (command === 'start') {
-    console.log('startNodemon');
     startNodemon();
   } else {
-    console.log('runInBackground');
-    runInBackground();
+    forkBackgroundProcess();
   }
 }
 
