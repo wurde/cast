@@ -12,8 +12,8 @@ const fse = require('fs-extra');
 const chokidar = require('chokidar');
 const child_process = require('child_process');
 const showHelp = require('../helpers/showHelp');
-const pkill = require('../helpers/pkill');
 const ps = require('../helpers/ps');
+const pidof = require('../helpers/pidof');
 const mkdir = require('../helpers/mkdir');
 const symlink = require('../helpers/symlink');
 
@@ -65,7 +65,10 @@ function startProcess(file) {
 
 function stopProcess(file) {
   const basename = path.basename(file, path.extname(file));
-  pkill(['--exact', `nodemon--${basename}`]);
+  const title = `nodemon-${basename}`;
+  const pid = pidof(title);
+
+  if (pid) process.kill(pid);
 }
 
 function restartProcess(file) {
@@ -79,7 +82,7 @@ function requireFile(file) {
 
 function requireExtname(file, ext) {
   if (path.extname(file) !== ext)
-    throw new Error('Invalid file missing .js extension.');
+    throw new Error('Invalid file (missing .js extension).');
 }
 
 function requireFileFormat(file) {
@@ -121,6 +124,7 @@ function runListCommand() {
 function runAddCommand() {
   const file = cli.flags.add;
   const dst = path.join(CONFIG_DIR, path.basename(file));
+
   requireFileFormat(file);
 
   console.log(chalk.white.bold(`\n  Adding script: ${dst}\n`));
@@ -132,14 +136,18 @@ function runAddCommand() {
 
 function runRemoveCommand() {
   const file = cli.flags.remove;
-  // const dst = path.join(CONFIG_DIR, file);
-  // requireFileFormat(dst);
+  const dst = path.join(CONFIG_DIR, file);
+  const exists = fse.pathExistsSync(dst);
 
-  // console.log(chalk.white.bold(`\n  Removing script: ${dst}\n`));
-  // fs.unlinkSync(dst);
-
-  const basename = path.basename(file, path.extname(file));
-  const status = pkill(['--exact', `nodemon--${basename}`]);
+  if (exists) {
+    console.log(chalk.white.bold(`\n  Removing script: ${dst}\n`));
+    // Remove symlink link from centralized nodemon directory.
+    fs.unlinkSync(dst);
+    // Stop any active processes.
+    stopProcess(file);
+  } else {
+    console.log(chalk.red.bold(`\n  No script found: ${dst}\n`));
+  }
 }
 
 /**
@@ -190,6 +198,7 @@ function nodemon(command = null) {
       runRemoveCommand();
       break;
     case 'start':
+      // TODO verify 
       startNodemon();
       break;
   }
