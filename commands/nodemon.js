@@ -12,8 +12,9 @@ const fse = require('fs-extra');
 const chokidar = require('chokidar');
 const child_process = require('child_process');
 const showHelp = require('../helpers/showHelp');
-const kill = require('../helpers/kill');
+const pkill = require('../helpers/pkill');
 const ps = require('../helpers/ps');
+const mkdir = require('../helpers/mkdir');
 
 /**
  * Constants
@@ -58,32 +59,17 @@ function startNodemon() {
 
 function startProcess(file) {
   const basename = path.basename(file, path.extname(file));
-  const pid_file = path.join(CONFIG_DIR, `${basename}.pid`);
-
-  const p = child_process.fork(file, {
-    execArgv: [`--title=nodemon/${basename}`]
-  });
-
-  fs.writeFileSync(pid_file, p.pid);
+  child_process.fork(file, { execArgv: [`--title=nodemon--${basename}`] });
 }
 
 function stopProcess(file) {
-  const pid_file = buildPidFile(file);
-
-  if (fs.existsSync(pid_file)) {
-    const status = kill(fs.readFileSync(pid_file, { encoding: 'utf8' }), '-SIGTERM');
-    fs.unlinkSync(pid_file);
-  }
+  const basename = path.basename(file, path.extname(file));
+  pkill(['--exact', `nodemon--${basename}`]);
 }
 
 function restartProcess(file) {
   stopProcess(file);
   startProcess(file);
-}
-
-function buildPidFile(file) {
-  const basename = path.basename(file, path.extname(file));
-  return path.join(CONFIG_DIR, `${basename}.pid`);
 }
 
 function printInitialPrompt() {
@@ -117,6 +103,55 @@ function printScripts(files) {
   }
 }
 
+function runListCommand() {
+  const files = fs
+    .readdirSync(CONFIG_DIR, { withFileTypes: true })
+    .filter(f => f.isSymbolicLink())
+    .map(f => [
+      f.name,
+      path.resolve(CONFIG_DIR, fs.readlinkSync(path.join(CONFIG_DIR, f.name)))
+    ]);
+
+  if (files.length > 0) {
+    printScripts(files);
+    printUsageRef();
+  } else {
+    printInitialPrompt();
+    printUsageRef();
+  }
+}
+
+function runAddCommand() {
+  const file = cli.flags.add;
+  const dst = path.join(CONFIG_DIR, path.basename(file));
+  requireFileFormat(file);
+
+  console.log(chalk.white.bold(`\n  Adding script: ${dst}\n`));
+  fse.ensureSymlinkSync(file, dst);
+}
+
+function runRemoveCommand() {
+  const file = cli.flags.remove;
+  // const dst = path.join(CONFIG_DIR, file);
+  // requireFileFormat(dst);
+
+  // console.log(chalk.white.bold(`\n  Removing script: ${dst}\n`));
+  // fs.unlinkSync(dst);
+
+  const basename = path.basename(file, path.extname(file));
+  console.log('Removing', basename);
+  const status = pkill(['--exact', `nodemon--${basename}`]);
+  console.log('status', status);
+}
+
+function bootstrapNodemon() {
+  if (command === 'start') {
+    startNodemon();
+  } else {
+    forkBackgroundProcess();
+  }
+}
+
 /**
  * Parse args
  */
@@ -147,42 +182,17 @@ function nodemon(command = null) {
   const flags = Object.keys(cli.flags);
   command = command || flags.pop() || 'list';
 
-  fse.mkdirpSync(CONFIG_DIR);
+  mkdir(CONFIG_DIR);
 
   if (command === 'list' || command === 'l') {
-    const files = fs
-      .readdirSync(CONFIG_DIR, { withFileTypes: true })
-      .filter(f => f.isSymbolicLink())
-      .map(f => [f.name, path.resolve(CONFIG_DIR, fs.readlinkSync(path.join(CONFIG_DIR, f.name)))]);
-
-    if (files.length > 0) {
-      printScripts(files);
-      printUsageRef();
-    } else {
-      printInitialPrompt();
-      printUsageRef();
-    }
+    runListCommand();
   } else if (command === 'add' || command === 'a') {
-    const file = cli.flags.add;
-    const dst = path.join(CONFIG_DIR, path.basename(file));
-    requireFileFormat(file);
-
-    console.log(chalk.white.bold(`\n  Adding script: ${dst}\n`));
-    fse.ensureSymlinkSync(file, dst);
+    runAddCommand();
   } else if (command === 'remove') {
-    const file = cli.flags.remove;
-    const dst = path.join(CONFIG_DIR, file);
-    requireFileFormat(dst);
-
-    console.log(chalk.white.bold(`\n  Removing script: ${dst}\n`));
-    fs.unlinkSync(dst);    
+    runRemoveCommand();
   }
 
-  if (command === 'start') {
-    startNodemon();
-  } else {
-    forkBackgroundProcess();
-  }
+  bootstrapNodemon();
 }
 
 /**
