@@ -9,6 +9,8 @@ const path = require('path');
 const meow = require('meow');
 const chalk = require('chalk');
 const fse = require('fs-extra');
+const chokidar = require('chokidar');
+const child_process = require('child_process');
 const showHelp = require('../helpers/showHelp');
 
 /**
@@ -21,6 +23,34 @@ const CONFIG_DIR = path.join(process.env.HOME, '.nodemon');
  * Define helpers
  */
 
+function startNodemon() {
+  const pid_file = path.join(CONFIG_DIR, 'watch.pid');
+
+  if (!fs.existsSync(pid_file)) {
+    const p = { pid: 10000 };
+    // Fork this watch script
+    // chokidar.watch(CONFIG_DIR).on('all', (event, path) => {
+    //   console.log(event, path);
+    //   // Send SIGHUP (1) signals to reload the script.
+    //     // lookup target path.pid file
+    //     // send signal to process
+    // });
+
+    // Track pid in a .pid file
+    fs.writeFileSync(pid_file, p.pid);
+  }
+}
+
+function execFiles(files) {
+  for (let i = 0; i < files.length; i++) {
+    // TODO kill current process.
+
+    const p = child_process.fork(files[i][1], {
+      execArgv: [`--title=nodemon/${files[i][0]}`]
+    });
+  }
+}
+
 function printInitialPrompt() {
   console.log('\n  No monitoring scripts found. Add your first one.');
 }
@@ -30,7 +60,7 @@ function printUsageRef() {
 }
 
 function requireFile(file) {
-  if (!fse.pathExistsSync(file)) throw new Error(`Missing file: ${file}`);
+  if (!fse.pathExistsSync(file)) throw new Error(`Missing file ${file}`);
 }
 
 function requireExtname(file, ext) {
@@ -84,12 +114,16 @@ function nodemon(command = null) {
   fse.mkdirpSync(CONFIG_DIR);
 
   if (command === 'list' || command === 'l') {
-    const files = fs.readdirSync(CONFIG_DIR).map(x => {
-      return [x, path.resolve(fs.readlinkSync(path.join(CONFIG_DIR, x)))]
-    });
+    const files = fs
+      .readdirSync(CONFIG_DIR, { withFileTypes: true })
+      .filter(f => f.isSymbolicLink())
+      .map(f => [f.name, path.resolve(CONFIG_DIR, fs.readlinkSync(path.join(CONFIG_DIR, f.name)))]);
+    // execFiles(files);
+
     if (files.length > 0) {
       printScripts(files);
       printUsageRef();
+      startNodemon();
     } else {
       printInitialPrompt();
       printUsageRef();
