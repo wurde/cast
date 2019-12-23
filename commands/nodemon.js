@@ -36,7 +36,14 @@ function startNodemon() {
 }
 
 function startProcess(file) {
-  console.log('Starting process', file);
+  const basename = path.basename(file, path.extname(file));
+  const pid_file = path.join(CONFIG_DIR, `${basename}.pid`);
+
+  const p = child_process.fork(file, {
+    execArgv: [`--title=nodemon/${basename}`]
+  });
+
+  fs.writeFileSync(pid_file, p.pid);
 }
 
 function restartProcess(file) {
@@ -50,28 +57,6 @@ function stopProcess(file) {
   if (fs.existsSync(pid_file)) {
     kill(fs.readFileSync(pid_file), 'SIGTERM');
     fs.unlinkSync(pid_file);
-  }
-}
-
-function execFiles(files) {
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i][0];
-    const basename = path.basename(file, path.extname(file));
-    const pid_file = path.join(CONFIG_DIR, `${basename}.pid`);
-
-    // TODO kill current process if it exists.
-
-    // console.log(files[i][1], pid_file, basename);
-
-    // const p = child_process.fork(files[i][1], {
-    //   execArgv: [`--title=nodemon/${basename}`]
-    // });
-    // console.log('p', p);
-    // // On exit remove .pid file.
-    // p.on('exit', () => fs.unlinkSync(pid_file));
-
-    // Track pid in a .pid file.
-    fs.writeFileSync(pid_file, p.pid);
   }
 }
 
@@ -146,7 +131,6 @@ function nodemon(command = null) {
     if (files.length > 0) {
       printScripts(files);
       printUsageRef();
-      startNodemon();
     } else {
       printInitialPrompt();
       printUsageRef();
@@ -166,6 +150,8 @@ function nodemon(command = null) {
     console.log(chalk.white.bold(`\n  Removing script: ${dst}\n`));
     fs.unlinkSync(dst);
   }
+
+  startNodemon();
 }
 
 /**
