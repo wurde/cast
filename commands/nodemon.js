@@ -13,6 +13,7 @@ const chokidar = require('chokidar');
 const child_process = require('child_process');
 const showHelp = require('../helpers/showHelp');
 const kill = require('../helpers/kill');
+const ps = require('../helpers/ps');
 
 /**
  * Constants
@@ -36,8 +37,17 @@ async function forkBackgroundProcess() {
 function startNodemon() {
   const pid_file = path.join(CONFIG_DIR, '.pid');
 
-  if (fs.existsSync(pid_file)) return;
-  fs.writeFileSync(pid_file, process.pid);
+  if (fs.existsSync(pid_file)) {
+    const pid = fs.readFileSync(pid_file);
+
+    if (ps(pid) !== 0) {
+      fs.writeFileSync(pid_file, process.pid);
+    } else {
+      return;
+    }
+  } else {
+    fs.writeFileSync(pid_file, process.pid);
+  }
 
   chokidar
     .watch(`${CONFIG_DIR}/*.js`)
@@ -140,7 +150,6 @@ function nodemon(command = null) {
   fse.mkdirpSync(CONFIG_DIR);
 
   if (command === 'list' || command === 'l') {
-    console.log('LIST')
     const files = fs
       .readdirSync(CONFIG_DIR, { withFileTypes: true })
       .filter(f => f.isSymbolicLink())
@@ -154,7 +163,6 @@ function nodemon(command = null) {
       printUsageRef();
     }
   } else if (command === 'add' || command === 'a') {
-    console.log('ADD')
     const file = cli.flags.add;
     const dst = path.join(CONFIG_DIR, path.basename(file));
     requireFileFormat(file);
@@ -162,7 +170,6 @@ function nodemon(command = null) {
     console.log(chalk.white.bold(`\n  Adding script: ${dst}\n`));
     fse.ensureSymlinkSync(file, dst);
   } else if (command === 'remove') {
-    console.log('REMOVE')
     const file = cli.flags.remove;
     const dst = path.join(CONFIG_DIR, file);
     requireFileFormat(dst);
