@@ -21,8 +21,26 @@ const CONFIG_DIR = path.join(process.env.HOME, '.nodemon');
  * Define helpers
  */
 
+function printInitialPrompt() {
+  console.log('\n  No monitoring scripts found. Add your first one.');
+}
+
+function printUsageRef() {
+  console.log('\n  To see usage run \`cast nodemon -h\`\n');
+}
+
 function requireFile(file) {
   if (!fse.pathExistsSync(file)) throw new Error(`Missing file: ${file}`);
+}
+
+function requireExtname(file, ext) {
+  if (path.extname(file) !== ext)
+    throw new Error('Invalid file missing .js extension.');
+}
+
+function requireFileFormat(file) {
+  requireFile(file);
+  requireExtname(file, '.js');
 }
 
 function printScripts(files) {
@@ -69,18 +87,24 @@ function nodemon(command = null) {
     const files = fs.readdirSync(CONFIG_DIR).map(x => {
       return [x, path.resolve(fs.readlinkSync(path.join(CONFIG_DIR, x)))]
     });
-    printScripts(files);
+    if (files.length > 0) {
+      printScripts(files);
+      printUsageRef();
+    } else {
+      printInitialPrompt();
+      printUsageRef();
+    }
   } else if (command === 'add' || command === 'a') {
     const file = cli.flags.add;
     const dst = path.join(CONFIG_DIR, path.basename(file));
-    requireFile(file);
+    requireFileFormat(file);
 
     console.log(chalk.white.bold(`\n  Adding script: ${dst}\n`));
     fse.ensureSymlinkSync(file, dst);
   } else if (command === 'remove') {
     const file = cli.flags.remove;
     const dst = path.join(CONFIG_DIR, file);
-    requireFile(dst);
+    requireFileFormat(dst);
 
     console.log(chalk.white.bold(`\n  Removing script: ${dst}\n`));
     fs.unlinkSync(dst);
