@@ -24,15 +24,26 @@ const CONFIG_DIR = path.join(process.env.HOME, '.nodemon');
  * Define helpers
  */
 
+async function runInBackground() {
+  const p = child_process.spawn('cast', ['nodemon', '--start'], {
+    detached: true,
+    stdio: 'ignore',
+  });
+
+  p.unref();
+}
+
 function startNodemon() {
   const pid_file = path.join(CONFIG_DIR, '.pid');
 
-  if (!fs.existsSync(pid_file)) {
-    chokidar.watch(`${CONFIG_DIR}/*.js`)
-      .on('add', file => startProcess(file))
-      .on('unlink', file => stopProcess(file))
-      .on('change', file => restartProcess(file))
-  }
+  if (fs.existsSync(pid_file)) return;
+  fs.writeFileSync(pid_file, process.pid);
+
+  chokidar
+    .watch(`${CONFIG_DIR}/*.js`)
+    .on('add', file => startProcess(file))
+    .on('unlink', file => stopProcess(file))
+    .on('change', file => restartProcess(file));
 }
 
 function startProcess(file) {
@@ -47,8 +58,7 @@ function startProcess(file) {
 }
 
 function stopProcess(file) {
-  const basename = path.basename(file, path.extname(file));
-  const pid_file = path.join(CONFIG_DIR, `${basename}.pid`);
+  const pid_file = buildPidFile(file);
 
   if (fs.existsSync(pid_file)) {
     const status = kill(fs.readFileSync(pid_file, { encoding: 'utf8' }), '-SIGTERM');
@@ -59,6 +69,11 @@ function stopProcess(file) {
 function restartProcess(file) {
   stopProcess(file);
   startProcess(file);
+}
+
+function buildPidFile(file) {
+  const basename = path.basename(file, path.extname(file));
+  return path.join(CONFIG_DIR, `${basename}.pid`);
 }
 
 function printInitialPrompt() {
@@ -125,6 +140,7 @@ function nodemon(command = null) {
   fse.mkdirpSync(CONFIG_DIR);
 
   if (command === 'list' || command === 'l') {
+    console.log('LIST')
     const files = fs
       .readdirSync(CONFIG_DIR, { withFileTypes: true })
       .filter(f => f.isSymbolicLink())
@@ -138,6 +154,7 @@ function nodemon(command = null) {
       printUsageRef();
     }
   } else if (command === 'add' || command === 'a') {
+    console.log('ADD')
     const file = cli.flags.add;
     const dst = path.join(CONFIG_DIR, path.basename(file));
     requireFileFormat(file);
@@ -145,15 +162,23 @@ function nodemon(command = null) {
     console.log(chalk.white.bold(`\n  Adding script: ${dst}\n`));
     fse.ensureSymlinkSync(file, dst);
   } else if (command === 'remove') {
+    console.log('REMOVE')
     const file = cli.flags.remove;
     const dst = path.join(CONFIG_DIR, file);
     requireFileFormat(dst);
 
     console.log(chalk.white.bold(`\n  Removing script: ${dst}\n`));
-    fs.unlinkSync(dst);
+    fs.unlinkSync(dst);    
   }
 
-  startNodemon();
+  console.log('command', command, flags);
+  if (command === 'start') {
+    console.log('startNodemon');
+    startNodemon();
+  } else {
+    console.log('runInBackground');
+    runInBackground();
+  }
 }
 
 /**
