@@ -151,8 +151,10 @@ const cli = meow(`
     $ cast nodemon
   
   Options:
+    -l, --list       Print all active scripts (Default).
     -a, --add FILE   Add a new monitoring script.
     --remove FILE    Remove a monitoring script.
+    --start          Start the nodemon daemon.
 `, {
   description: 'Filesystem monitoring scripts.',
   flags: {
@@ -192,7 +194,7 @@ function nodemon(command = null) {
       break;
   }
 
-  bootstrapNodemon();
+  // bootstrapNodemon();
 }
 
 /**
