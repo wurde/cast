@@ -6,6 +6,7 @@
 
 const meow = require('meow');
 const chalk = require('chalk');
+// TODO quiet the tfjs-node import.
 const tf = require('@tensorflow/tfjs-node');
 const tfjs_toxicity = require('@tensorflow-models/toxicity');
 const showHelp = require('../helpers/showHelp');
@@ -24,14 +25,16 @@ const THRESHOLD = 0.9;
 
 function prettyPrintResults(results) {
   console.log('');
+
   for (let i = 0; i < results.length; i++) {
     const label = results[i].label;
     const match = results[i].results[0].match;
     const color = match === true ? 'red' : 'white';
+    const spacing = '.'.repeat(18 - label.length);
 
-    // TODO add table
-    console.log(`    ${chalk.white.bold(label)}: ${chalk[color].bold(match)}`);
+    console.log(`    ${label}${spacing}${chalk[color].bold(match)}`);
   }
+
   console.log('');
 }
 
@@ -44,7 +47,7 @@ const cli = meow(`
     $ cast toxicity INPUT
 
   Options:
-    -t, --threshold N   Minimum confidence level 0..1 (Default 0.9)
+    -t, --threshold N    Minimum confidence level 0..1 (Default 0.9)
 `, {
   description: 'Detect whether text contains toxic content.',
   flags: {
