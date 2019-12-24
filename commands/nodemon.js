@@ -43,15 +43,20 @@ function startNodemon() {
   process.title = 'nodemond';
 
   chokidar
-    .watch(`${CONFIG_DIR}/*.js`)
-    .on('add', file => startProcess(file))
+    .watch(`${CONFIG_DIR}/*.js`, {
+      depth: '0'
+    }).on('add', file => startProcess(file))
     .on('unlink', file => stopProcess(file))
     .on('change', file => restartProcess(file));
-}
 
 function startProcess(file) {
   const basename = path.basename(file, path.extname(file));
-  child_process.fork(file, { execArgv: [`--title=nodemon--${basename}`] });
+  const cwd = path.dirname(path.resolve(CONFIG_DIR, fs.readlinkSync(file)));
+
+  child_process.fork(file, {
+    execArgv: [`--title=nodemon-${basename}`],
+    cwd,
+  });
 }
 
 function stopProcess(file) {
