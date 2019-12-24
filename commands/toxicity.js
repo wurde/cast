@@ -5,6 +5,7 @@
  */
 
 const meow = require('meow');
+const chalk = require('chalk');
 const tf = require('@tensorflow/tfjs-node');
 const tfjs_toxicity = require('@tensorflow-models/toxicity');
 const showHelp = require('../helpers/showHelp');
@@ -22,14 +23,16 @@ const THRESHOLD = 0.9;
  */
 
 function prettyPrintResults(results) {
-  // TODO toxicity
-  // TODO identity_attack
-  // TODO insult
-  // TODO severe_toxicity
-  // TODO obscene
-  // TODO sexual_explicit
-  // TODO threat
-  console.log(results);
+  console.log('');
+  for (let i = 0; i < results.length; i++) {
+    const label = results[i].label;
+    const match = results[i].results[0].match;
+    const color = match === true ? 'red' : 'white';
+
+    // TODO add table
+    console.log(`    ${chalk.white.bold(label)}: ${chalk[color].bold(match)}`);
+  }
+  console.log('');
 }
 
 /**
@@ -67,6 +70,7 @@ async function toxicity(input, threshold = null) {
   const predictions = await model.classify([input]);
 
   if (isMainCommand(module)) {
+    console.log(`\n  ${chalk.white.bold(input)}`);
     prettyPrintResults(predictions);
   }
 
