@@ -4,10 +4,9 @@
  * Dependencies
  */
 
+require('@tensorflow/tfjs-node');
 const meow = require('meow');
 const chalk = require('chalk');
-// TODO quiet the tfjs-node import.
-const tf = require('@tensorflow/tfjs-node');
 const tfjs_toxicity = require('@tensorflow-models/toxicity');
 const showHelp = require('../helpers/showHelp');
 const isMainCommand = require('../helpers/isMainCommand');
