@@ -48,6 +48,7 @@ function startNodemon() {
     }).on('add', file => startProcess(file))
     .on('unlink', file => stopProcess(file))
     .on('change', file => restartProcess(file));
+}
 
 function startProcess(file) {
   const basename = path.basename(file, path.extname(file));
