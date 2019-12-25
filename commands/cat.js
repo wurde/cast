@@ -15,7 +15,7 @@ const cli = meow(`
   Usage
     $ cast cat
 `, {
-  description: '.'
+  description: 'Syntax highlighting in your terminal.'
 });
 
 /**
