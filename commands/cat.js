@@ -13,7 +13,7 @@ const showHelp = require('../helpers/showHelp');
 
 const cli = meow(`
   Usage
-    $ cast cat
+    $ cast cat FILE
 `, {
   description: 'Syntax highlighting in your terminal.'
 });
@@ -22,10 +22,12 @@ const cli = meow(`
  * Define script
  */
 
-function cat() {
-  showHelp(cli);
+function cat(file = null) {
+  showHelp(cli, [(!file && cli.input.length < 2)]);
 
-  console.log('cat');
+  file = file || cli.input[1];
+
+  console.log('cat', file);
 }
 
 /**
