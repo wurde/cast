@@ -31,7 +31,7 @@ const cli = meow(`
  * Define script
  */
 
-async function dl(targetUrl=null, fileName=null) {
+async function dl(targetUrl = null, fileName = null) {
   showHelp(cli)
 
   targetUrl = targetUrl || cli.input[1]
