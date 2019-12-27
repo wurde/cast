@@ -10,8 +10,8 @@ const path = require('path');
  */
 
 class Storage {
-  constructor(path) {
-    this.path = path;
+  constructor(file) {
+    this.path = path.resolve(file);
   }
 }
 
