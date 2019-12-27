@@ -13,6 +13,7 @@ const chalk = require('chalk');
 const figlet = require('figlet');
 const showHelp = require('../helpers/showHelp');
 const isMainCommand = require('../helpers/isMainCommand');
+const Storage = require('../helpers/Storage');
 
 /**
  * Constants
@@ -81,21 +82,6 @@ function generateIcon(code) {
   return icon;
 }
 
-function readConfig() {
-  if (fs.existsSync(CONFIG_PATH)) {
-    return JSON.parse(fs.readFileSync(CONFIG_PATH));
-  } else {
-    fs.writeFileSync(CONFIG_PATH, JSON.stringify(CONFIG_DEFAULT));
-    return CONFIG_DEFAULT;
-  }
-}
-
-function writeConfig(key, value) {
-  let options = JSON.parse(fs.readFileSync(CONFIG_PATH));
-  options[key] = value;
-  fs.writeFileSync(CONFIG_PATH, JSON.stringify(options, null, 2));
-}
-
 function renderScale(scale) {
   return scale == 'fahrenheit' ? '°F' : '°C';
 }
@@ -131,16 +117,15 @@ function setScale(options, cli, config) {
 async function weather(location = null, options = {}) {
   showHelp(cli);
 
-  // Read cached values.
-  const config = readConfig();
+  const config = new Storage(CONFIG_PATH);
 
   // Cache location.
   location = location || cli.input.slice(1, cli.input.length).join(' ') || config.location;
-  writeConfig('location', location);
+  config.location = location;
 
   // Cache temperature scale.
   const scale = setScale(options, cli, config);
-  writeConfig('scale', scale);
+  config.scale = scale;
 
   try {
     const result = await fetchWeather(location, scale);

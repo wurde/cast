@@ -1,0 +1,12 @@
+{
+  "top": "top",
+  "bottom": {
+    "next": "next",
+    "prev": "prev"
+  },
+  "all": [
+    1,
+    2,
+    3
+  ]
+}
