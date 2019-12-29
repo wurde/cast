@@ -4,13 +4,21 @@
  * Dependencies
  */
 
-const camelcase = require('camelcase');
 const meow = require('meow');
+const camelcase = require('camelcase');
 const download = require('./dl');
 const scrape = require('./scrape');
 const showHelp = require('../helpers/showHelp');
 const sleep = require('../helpers/sleep');
 const launchBrowser = require('../helpers/launchBrowser');
+
+/**
+ * Constants
+ */
+
+const AGENT =
+  'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36';
+const URL = 'https://www.google.com';
 
 /**
  * Parse args
@@ -21,7 +29,7 @@ const cli = meow(`
     $ cast google-images [OPTIONS] QUERY
   
   Options
-    --min-count COUNT    Minimum number of images to download.
+    -c, --count COUNT    Minimum number of images to download.
     --size SIZE          Filter results by image size.
                            large, medium, icon, 2mp, 8mp, 40mp, 70mp.
     --color COLOR        Filter results by image size.
@@ -36,8 +44,8 @@ const cli = meow(`
 `, {
   description: 'Search and download Google Images.',
   flags: {
-    minCount:  { type: 'integer' },
-    size:   { type: 'string' },
+    count:  { type: 'integer', alias: 'c' },
+    size:   { type: 'string', alias: 's' },
     color:  { type: 'string' },
     time:   { type: 'string' },
     type:   { type: 'string' },
@@ -54,7 +62,7 @@ async function google_images(query = null, options = {}) {
   showHelp(cli, [(!query && cli.input.length < 2)])
 
   query = query || cli.input.slice(1);
-  const minCount = options.minCount || cli.flags.minCount;
+  const count = options.count || cli.flags.count;
   const label = options.label || camelcase(query, { pascalCase: true });
   const size = options.size || cli.flags.size;
   const color = options.color || cli.flags.color;
@@ -75,90 +83,91 @@ async function google_images(query = null, options = {}) {
 
   try {
     let imageUrls = [];
-    let targetUrl = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(query)}&tbs=`;
+    let link = `${URL}/search?tbm=isch&q=${encodeURIComponent(query)}&tbs=`;
 
     if (size) {
       if (size.match(/large/i) || size.match('l')) {
-        targetUrl += 'isz:l,';
+        link += 'isz:l,';
       } else if (size.match(/medium/i) || size.match('m')) {
-        targetUrl += 'isz:m,';
+        link += 'isz:m,';
       } else if (size.match(/icon/i) || size.match('i')) {
-        targetUrl += 'isz:i,';
+        link += 'isz:i,';
       } else {
-        targetUrl += 'isz:l,';
+        link += 'isz:l,';
       }
     }
 
     if (color) {
       if (color.match(/red/i)) {
-        targetUrl += 'ic:specific,isc:red,';
+        link += 'ic:specific,isc:red,';
       } else if (color.match(/blue/i)) {
-        targetUrl += 'ic:specific,isc:blue,';
+        link += 'ic:specific,isc:blue,';
       } else if (color.match(/orange/i)) {
-        targetUrl += 'ic:specific,isc:orange,';
+        link += 'ic:specific,isc:orange,';
       } else if (color.match(/yellow/i)) {
-        targetUrl += 'ic:specific,isc:yellow,';
+        link += 'ic:specific,isc:yellow,';
       } else if (color.match(/green/i)) {
-        targetUrl += 'ic:specific,isc:green,';
+        link += 'ic:specific,isc:green,';
       } else if (color.match(/purple/i)) {
-        targetUrl += 'ic:specific,isc:purple,';
+        link += 'ic:specific,isc:purple,';
       } else if (color.match(/pink/i)) {
-        targetUrl += 'ic:specific,isc:pink,';
+        link += 'ic:specific,isc:pink,';
       } else if (color.match(/grey/i)) {
-        targetUrl += 'ic:specific,isc:grey,';
+        link += 'ic:specific,isc:grey,';
       } else if (color.match(/white/i)) {
-        targetUrl += 'ic:specific,isc:white,';
+        link += 'ic:specific,isc:white,';
       } else if (color.match(/black/i)) {
-        targetUrl += 'ic:specific,isc:black,';
+        link += 'ic:specific,isc:black,';
       }
     }
 
     if (time) {
       if (time.match(/day/i)) {
-        targetUrl += 'qdr:d,';
+        link += 'qdr:d,';
       } else if (time.match(/week/i)) {
-        targetUrl += 'qdr:w,';
+        link += 'qdr:w,';
       } else if (time.match(/month/i)) {
-        targetUrl += 'qdr:m,';
+        link += 'qdr:m,';
       } else if (time.match(/year/i)) {
-        targetUrl += 'qdr:y,';
+        link += 'qdr:y,';
       }
     }
 
     if (type) {
       if (type.match(/face/i)) {
-        targetUrl += 'itp:face,';
+        link += 'itp:face,';
       } else if (type.match(/photo/i)) {
-        targetUrl += 'itp:photo,';
+        link += 'itp:photo,';
       } else if (type.match(/clipart/i)) {
-        targetUrl += 'itp:clipart,';
+        link += 'itp:clipart,';
       } else if (type.match(/lineart/i)) {
-        targetUrl += 'itp:lineart,';
+        link += 'itp:lineart,';
       } else if (type.match(/animated/i)) {
-        targetUrl += 'itp:animated,';
+        link += 'itp:animated,';
       }
     }
 
     if (format) {
       if (format.match(/jpg/i)) {
-        targetUrl += 'ift:jpg,';
+        link += 'ift:jpg,';
       } else if (format.match(/png/i)) {
-        targetUrl += 'ift:png,';
+        link += 'ift:png,';
       } else if (format.match(/gif/i)) {
-        targetUrl += 'ift:gif,';
+        link += 'ift:gif,';
       } else if (format.match(/bmp/i)) {
-        targetUrl += 'ift:bmp,';
+        link += 'ift:bmp,';
       } else if (format.match(/svg/i)) {
-        targetUrl += 'ift:svg,';
+        link += 'ift:svg,';
       } else if (format.match(/ico/i)) {
-        targetUrl += 'ift:ico,';
+        link += 'ift:ico,';
       }
     }
 
-    const result = await scrape(targetUrl, {
+    const result = await scrape(link, {
       selector: 'div#search img',
       infiniteScroll: true,
-      minCount,
+      agent: AGENT,
+      count,
       browser
     });
     browser.close();

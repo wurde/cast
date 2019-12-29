@@ -14,6 +14,13 @@ const launchBrowser = require('../helpers/launchBrowser');
 const handleCaptcha = require('../helpers/handleCaptcha');
 
 /**
+ * Constants
+ */
+
+const AGENT =
+  'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36';
+
+/**
  * Define helpers
  */
 
@@ -112,6 +119,7 @@ async function scrape(url = null, options = {}) {
 
   url = url || cli.input[1];
   const selector = options.selector || cli.flags.selector;
+  const agent = options.agent || AGENT;
   const minCount = options.minCount || cli.flags.minCount;
   const infiniteScroll = options.infiniteScroll || cli.flags.infiniteScroll;
   const browser =
@@ -125,6 +133,7 @@ async function scrape(url = null, options = {}) {
     }));
 
   const page = await browser.newPage();
+  await page.setUserAgent(agent);
   await page.goto(parseUrl(url).href);
 
   await handleCaptcha(page)
