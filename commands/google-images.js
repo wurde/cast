@@ -112,6 +112,50 @@ function buildLink(query, size, color, time, type, format) {
   return link;
 }
 
+async function scrollToPageBottom(page) {
+  try {
+    // Get current scrollHeight.
+    const currentScrollHeight = await page.evaluate(() => {
+      return document.querySelector('html').scrollHeight
+    });
+
+    // Scroll to the bottom of the page.
+    await page.evaluate(() => {
+      window.scrollTo(0, document.querySelector('html').scrollHeight)
+    });
+
+    // Wait for scroll height to increase.
+    await page.waitForFunction(
+      `document.querySelector('html').scrollHeight > ${currentScrollHeight}`,
+      { timeout: 10000 }
+    );
+
+    // Wait for 2 seconds.
+    await page.waitFor(2000);
+
+    // Get current scrollHeight.
+    const totalScrollHeight = await page.evaluate(() => {
+      return document.querySelector('html').scrollHeight;
+    });
+
+    // Return true if page is still scrollable.
+    return totalScrollHeight > currentScrollHeight;
+  } catch (err) {
+    return false;
+  }
+};
+
+async function scrollToPageTop(page) {
+  await page.evaluate(() => {
+    window.scrollTo(0, 0);
+  });
+}
+
+async function loadMoreImages(page) {
+  await scrollToPageBottom(page);
+  await scrollToPageTop(page);
+}
+
 /**
  * Parse args
  */
@@ -122,7 +166,7 @@ const cli = meow(`
   
   Options
     -c, --count COUNT    Minimum number of images to download. (Default 100)
-    --size SIZE          Filter results by image size.
+    -s, --size SIZE      Filter results by image size.
                            large, medium, icon, 2mp, 8mp, 40mp, 70mp.
     --color COLOR        Filter results by image size.
                            red, blue, orange, yellow, green, purple, pink,
@@ -191,12 +235,14 @@ async function google_images(query = null, options = {}) {
     let img;
     let src;
     for (let i = 0; i <= count; i++) {
+      if (i % 50 === 0) await loadMoreImages(page);
+
       div = await page.$(cssThumbnailDiv(i));
       if (!div) continue;
 
       thumb = await div.$(cssThumbnail);
-      await thumb.click({ delay: rand(100, 300) });
-      await page.waitFor(rand(150, 300));
+      await thumb.click({ delay: rand(100, 200) });
+      await page.waitFor(rand(150, 200));
 
       img = await page.$(cssFirstImg);
       src = await img.evaluate(node => node.src);
@@ -204,7 +250,7 @@ async function google_images(query = null, options = {}) {
       const imgUrl = url.parse(src);
       const file = `${camelcase(imgUrl.hostname)}-${path.basename(url.parse(src).pathname)}`;
       const out = path.join(output, file);
-      await download(src, out);
+      // await download(src, out);
 
       await page.keyboard.press('Escape');
       await div.evaluate(node => node.remove());
