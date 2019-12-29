@@ -153,7 +153,9 @@ async function scrollToPageTop(page) {
 
 async function loadMoreImages(page) {
   await scrollToPageBottom(page);
+  await page.waitFor(rand(1300, 2000));
   await scrollToPageTop(page);
+  await page.waitFor(rand(1300, 2000));
 }
 
 /**
@@ -241,6 +243,10 @@ async function google_images(query = null, options = {}) {
       if (!div) continue;
 
       thumb = await div.$(cssThumbnail);
+      if (!await thumb.isIntersectingViewport()) {
+        await div.evaluate(node => node.remove());
+        continue;
+      }
       await thumb.click({ delay: rand(100, 200) });
       await page.waitFor(rand(150, 200));
 
@@ -248,9 +254,13 @@ async function google_images(query = null, options = {}) {
       src = await img.evaluate(node => node.src);
 
       const imgUrl = url.parse(src);
+      if (!imgUrl.hostname) {
+        await div.evaluate(node => node.remove());
+        continue;
+      }
       const file = `${camelcase(imgUrl.hostname)}-${path.basename(url.parse(src).pathname)}`;
       const out = path.join(output, file);
-      // await download(src, out);
+      await download(src, out);
 
       await page.keyboard.press('Escape');
       await div.evaluate(node => node.remove());
