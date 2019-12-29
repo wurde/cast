@@ -4,12 +4,15 @@
  * Dependencies
  */
 
+const url = require('url');
+const path = require('path');
 const meow = require('meow');
 const camelcase = require('camelcase');
 const download = require('./dl');
 const scrape = require('./scrape');
 const showHelp = require('../helpers/showHelp');
 const sleep = require('../helpers/sleep');
+const rand = require('../helpers/rand');
 const launchBrowser = require('../helpers/launchBrowser');
 
 /**
@@ -19,6 +22,95 @@ const launchBrowser = require('../helpers/launchBrowser');
 const AGENT =
   'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36';
 const URL = 'https://www.google.com';
+const IMG_COUNT = 100;
+
+/**
+ * Define helpers
+ */
+
+function buildLink(query, size, color, time, type, format) {
+  let link = `${URL}/search?tbm=isch&q=${encodeURIComponent(query)}&tbs=`;
+
+  if (size) {
+    if (size.match(/large/i) || size.match('l')) {
+      link += 'isz:l,';
+    } else if (size.match(/medium/i) || size.match('m')) {
+      link += 'isz:m,';
+    } else if (size.match(/icon/i) || size.match('i')) {
+      link += 'isz:i,';
+    } else {
+      link += 'isz:l,';
+    }
+  }
+
+  if (color) {
+    if (color.match(/red/i)) {
+      link += 'ic:specific,isc:red,';
+    } else if (color.match(/blue/i)) {
+      link += 'ic:specific,isc:blue,';
+    } else if (color.match(/orange/i)) {
+      link += 'ic:specific,isc:orange,';
+    } else if (color.match(/yellow/i)) {
+      link += 'ic:specific,isc:yellow,';
+    } else if (color.match(/green/i)) {
+      link += 'ic:specific,isc:green,';
+    } else if (color.match(/purple/i)) {
+      link += 'ic:specific,isc:purple,';
+    } else if (color.match(/pink/i)) {
+      link += 'ic:specific,isc:pink,';
+    } else if (color.match(/grey/i)) {
+      link += 'ic:specific,isc:grey,';
+    } else if (color.match(/white/i)) {
+      link += 'ic:specific,isc:white,';
+    } else if (color.match(/black/i)) {
+      link += 'ic:specific,isc:black,';
+    }
+  }
+
+  if (time) {
+    if (time.match(/day/i)) {
+      link += 'qdr:d,';
+    } else if (time.match(/week/i)) {
+      link += 'qdr:w,';
+    } else if (time.match(/month/i)) {
+      link += 'qdr:m,';
+    } else if (time.match(/year/i)) {
+      link += 'qdr:y,';
+    }
+  }
+
+  if (type) {
+    if (type.match(/face/i)) {
+      link += 'itp:face,';
+    } else if (type.match(/photo/i)) {
+      link += 'itp:photo,';
+    } else if (type.match(/clipart/i)) {
+      link += 'itp:clipart,';
+    } else if (type.match(/lineart/i)) {
+      link += 'itp:lineart,';
+    } else if (type.match(/animated/i)) {
+      link += 'itp:animated,';
+    }
+  }
+
+  if (format) {
+    if (format.match(/jpg/i)) {
+      link += 'ift:jpg,';
+    } else if (format.match(/png/i)) {
+      link += 'ift:png,';
+    } else if (format.match(/gif/i)) {
+      link += 'ift:gif,';
+    } else if (format.match(/bmp/i)) {
+      link += 'ift:bmp,';
+    } else if (format.match(/svg/i)) {
+      link += 'ift:svg,';
+    } else if (format.match(/ico/i)) {
+      link += 'ift:ico,';
+    }
+  }
+
+  return link;
+}
 
 /**
  * Parse args
@@ -29,7 +121,7 @@ const cli = meow(`
     $ cast google-images [OPTIONS] QUERY
   
   Options
-    -c, --count COUNT    Minimum number of images to download.
+    -c, --count COUNT    Minimum number of images to download. (Default 100)
     --size SIZE          Filter results by image size.
                            large, medium, icon, 2mp, 8mp, 40mp, 70mp.
     --color COLOR        Filter results by image size.
@@ -61,8 +153,9 @@ const cli = meow(`
 async function google_images(query = null, options = {}) {
   showHelp(cli, [(!query && cli.input.length < 2)])
 
-  query = query || cli.input.slice(1);
-  const count = options.count || cli.flags.count;
+  query = query || cli.input.slice(1).join(' ');
+  const output = options.output || process.cwd();
+  const count = options.count || cli.flags.count || IMG_COUNT;
   const label = options.label || camelcase(query, { pascalCase: true });
   const size = options.size || cli.flags.size;
   const color = options.color || cli.flags.color;
@@ -82,114 +175,44 @@ async function google_images(query = null, options = {}) {
   });
 
   try {
-    let imageUrls = [];
-    let link = `${URL}/search?tbm=isch&q=${encodeURIComponent(query)}&tbs=`;
+    const cssThumbnailDiv = i => `div#search div[data-ri="${i}"]`;
+    const cssThumbnail = 'img';
+    const cssFirstImg = 'a[tabindex="0"] img.irc_mi';
+    const link = buildLink(query, size, color, time, type, region);
 
-    if (size) {
-      if (size.match(/large/i) || size.match('l')) {
-        link += 'isz:l,';
-      } else if (size.match(/medium/i) || size.match('m')) {
-        link += 'isz:m,';
-      } else if (size.match(/icon/i) || size.match('i')) {
-        link += 'isz:i,';
-      } else {
-        link += 'isz:l,';
-      }
-    }
+    const page = await browser.newPage();
+    await page.setUserAgent(AGENT);
 
-    if (color) {
-      if (color.match(/red/i)) {
-        link += 'ic:specific,isc:red,';
-      } else if (color.match(/blue/i)) {
-        link += 'ic:specific,isc:blue,';
-      } else if (color.match(/orange/i)) {
-        link += 'ic:specific,isc:orange,';
-      } else if (color.match(/yellow/i)) {
-        link += 'ic:specific,isc:yellow,';
-      } else if (color.match(/green/i)) {
-        link += 'ic:specific,isc:green,';
-      } else if (color.match(/purple/i)) {
-        link += 'ic:specific,isc:purple,';
-      } else if (color.match(/pink/i)) {
-        link += 'ic:specific,isc:pink,';
-      } else if (color.match(/grey/i)) {
-        link += 'ic:specific,isc:grey,';
-      } else if (color.match(/white/i)) {
-        link += 'ic:specific,isc:white,';
-      } else if (color.match(/black/i)) {
-        link += 'ic:specific,isc:black,';
-      }
-    }
+    await page.goto(link, { waitUntil: 'domcontentloaded' });
+    await page.waitFor(rand(1300, 2000));
 
-    if (time) {
-      if (time.match(/day/i)) {
-        link += 'qdr:d,';
-      } else if (time.match(/week/i)) {
-        link += 'qdr:w,';
-      } else if (time.match(/month/i)) {
-        link += 'qdr:m,';
-      } else if (time.match(/year/i)) {
-        link += 'qdr:y,';
-      }
-    }
+    let div;
+    let thumb;
+    let img;
+    let src;
+    for (let i = 0; i <= count; i++) {
+      div = await page.$(cssThumbnailDiv(i));
+      if (!div) continue;
 
-    if (type) {
-      if (type.match(/face/i)) {
-        link += 'itp:face,';
-      } else if (type.match(/photo/i)) {
-        link += 'itp:photo,';
-      } else if (type.match(/clipart/i)) {
-        link += 'itp:clipart,';
-      } else if (type.match(/lineart/i)) {
-        link += 'itp:lineart,';
-      } else if (type.match(/animated/i)) {
-        link += 'itp:animated,';
-      }
-    }
+      thumb = await div.$(cssThumbnail);
+      await thumb.click({ delay: rand(100, 300) });
+      await page.waitFor(rand(150, 300));
 
-    if (format) {
-      if (format.match(/jpg/i)) {
-        link += 'ift:jpg,';
-      } else if (format.match(/png/i)) {
-        link += 'ift:png,';
-      } else if (format.match(/gif/i)) {
-        link += 'ift:gif,';
-      } else if (format.match(/bmp/i)) {
-        link += 'ift:bmp,';
-      } else if (format.match(/svg/i)) {
-        link += 'ift:svg,';
-      } else if (format.match(/ico/i)) {
-        link += 'ift:ico,';
-      }
-    }
+      img = await page.$(cssFirstImg);
+      src = await img.evaluate(node => node.src);
 
-    const result = await scrape(link, {
-      selector: 'div#search img',
-      infiniteScroll: true,
-      agent: AGENT,
-      count,
-      browser
-    });
-    browser.close();
+      const imgUrl = url.parse(src);
+      const file = `${camelcase(imgUrl.hostname)}-${path.basename(url.parse(src).pathname)}`;
+      const out = path.join(output, file);
+      await download(src, out);
 
-    // Parse all image URLs on page.
-    imageUrls = imageUrls.concat(
-      result.reduce((urls, imageHtml) => {
-        const match = imageHtml.match(/"(https.*?images.*?)"/);
-        if (match) urls.push(match[1]);
-        return urls;
-      }, [])
-    );
-
-    // Download all images.
-    for (let i = 0; i < imageUrls.length; i++) {
-      download(imageUrls[i], `${label}-${i}`)
-      await sleep(200)
+      await page.keyboard.press('Escape');
+      await div.evaluate(node => node.remove());
+      await page.waitFor(rand(300, 600));
     }
   } catch (err) {
     console.error(err);
   } finally {
-    // Ensure browser is closed.
     if (browser) browser.close();
   }
 }
