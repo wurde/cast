@@ -8,6 +8,7 @@ const url = require('url');
 const path = require('path');
 const meow = require('meow');
 const camelcase = require('camelcase');
+const objectHash = require('object-hash');
 const download = require('./dl');
 const scrape = require('./scrape');
 const showHelp = require('../helpers/showHelp');
@@ -237,34 +238,40 @@ async function google_images(query = null, options = {}) {
     let img;
     let src;
     for (let i = 0; i <= count; i++) {
-      if (i % 50 === 0) await loadMoreImages(page);
+      try {
+        if (i % 50 === 0) await loadMoreImages(page);
 
-      div = await page.$(cssThumbnailDiv(i));
-      if (!div) continue;
+        div = await page.$(cssThumbnailDiv(i));
+        if (!div) continue;
 
-      thumb = await div.$(cssThumbnail);
-      if (!await thumb.isIntersectingViewport()) {
+        thumb = await div.$(cssThumbnail);
+        if (!await thumb.isIntersectingViewport()) {
+          await div.evaluate(node => node.remove());
+          continue;
+        }
+        await thumb.click({ delay: rand(100, 200) });
+        await page.waitFor(rand(150, 200));
+
+        img = await page.$(cssFirstImg);
+        src = await img.evaluate(node => node.src);
+
+        const imgUrl = url.parse(src);
+        if (!imgUrl.pathname) {
+          await div.evaluate(node => node.remove());
+          continue;
+        }
+        const hash = objectHash(imgUrl);
+        const ext = path.extname(imgUrl.pathname);
+        const file = `${hash}${ext}`;
+        const out = path.join(output, file);
+        await download(src, out);
+
+        await page.keyboard.press('Escape');
         await div.evaluate(node => node.remove());
-        continue;
+        await page.waitFor(rand(300, 600));
+      } catch (err) {
+        console.error(err);
       }
-      await thumb.click({ delay: rand(100, 200) });
-      await page.waitFor(rand(150, 200));
-
-      img = await page.$(cssFirstImg);
-      src = await img.evaluate(node => node.src);
-
-      const imgUrl = url.parse(src);
-      if (!imgUrl.hostname) {
-        await div.evaluate(node => node.remove());
-        continue;
-      }
-      const file = `${camelcase(imgUrl.hostname)}-${path.basename(url.parse(src).pathname)}`;
-      const out = path.join(output, file);
-      await download(src, out);
-
-      await page.keyboard.press('Escape');
-      await div.evaluate(node => node.remove());
-      await page.waitFor(rand(300, 600));
     }
   } catch (err) {
     console.error(err);
