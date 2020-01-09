@@ -44,8 +44,7 @@ function ticker(message) {
 
   let tick = 0;
   setInterval(() => {
-    console.clear();
-    console.log(display(msg, columns, tick));
+    process.stdout.write(display(msg, columns, tick));
     tick++;
   }, 100);
 }
