@@ -13,7 +13,7 @@ const showHelp = require('../helpers/showHelp');
 
 const cli = meow(`
   Usage
-    $ cast loadtest
+    $ cast loadtest URL
 `, {
   description: 'Performance testing.'
 });
@@ -22,10 +22,10 @@ const cli = meow(`
  * Define script
  */
 
-function loadtest() {
-  showHelp(cli);
+function loadtest(url) {
+  showHelp(cli, [(!url && cli.input.length < 2)]);
 
-  console.log('loadtest');
+  url = url || cli.input[1];
 }
 
 /**
