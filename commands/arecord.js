@@ -4,8 +4,8 @@
  * Dependencies
  */
 
-const fs = require('fs');
 const meow = require('meow');
+const lodash = require('lodash');
 const child_process = require('child_process');
 const showHelp = require('../helpers/showHelp');
 const which = require('../helpers/which');
@@ -22,7 +22,7 @@ const hasArecord = which('arecord');
 
 const cli = meow(`
   Usage
-    $ cast arecord FILE
+    $ cast arecord [options] FILE
 `, {
   description: 'Record sound.',
 });
@@ -31,14 +31,14 @@ const cli = meow(`
  * Define script
  */
 
-function arecord(file=null) {
+function arecord(file, options = null) {
   showHelp(cli, [(!file && cli.input.length < 2)]);
 
-  file = file || cli.input[1];
+  file = file || cli.input.slice(1).join(' ');
+  options = lodash.map((options || cli.flags), (v, k) => `--${k}=${v}`);
 
   if (hasArecord) {
-    const result = child_process.spawnSync('arecord');
-    fs.writeFileSync(file, result.stdout);
+    child_process.spawnSync('arecord', [...options, file]);
   } else {
     throw new Error('Requires ALSA soundcard driver.');
   }

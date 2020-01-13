@@ -27,6 +27,10 @@ function vo(words) {
 
   words = words || cli.input.slice(1).join(' ');
 
+  // TODO record audio
+  // TODO on cancel, save to ~/Audio/VO/YYYY_MM_DD-HH_MM_SS.wav
+  // TODO save words,audio-path in SQLite database
+
   console.log('vo', words);
 }
 
