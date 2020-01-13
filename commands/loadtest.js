@@ -29,9 +29,8 @@ const cli = meow(`
     $ cast loadtest [options] URL
 
   Options:
-    -c, --connections NUM   Number of concurrent connections to use.
-    -d, --duration SEC      Number of seconds to run.
-    -r, --rate NUM          Number of requests per second.
+    -c, --connections NUM   Number of concurrent connections to use (Default 10).
+    -d, --duration SEC      Number of seconds to run (Default 10).
     --config FILE           Set autocannon configuration.
     --soak                  Run a soak test.
     --spike                 Run a spike test.
@@ -39,17 +38,15 @@ const cli = meow(`
 `, {
   description: 'Load performance testing.',
   flags: {
-    connection: {
-      type: 'string',
-      alias: 'c'
+    connections: {
+      type: 'number',
+      alias: 'c',
+      default: 10,
     },
     duration: {
-      type: 'string',
-      alias: 'd'
-    },
-    rate: {
-      type: 'string',
-      alias: 'r'
+      type: 'number',
+      alias: 'd',
+      default: 10,
     },
     config: { type: 'string' },
     soak: { type: 'boolean' },
@@ -62,15 +59,29 @@ const cli = meow(`
  * Define script
  */
 
-async function loadtest(url) {
+async function loadtest(url, options = {}) {
   showHelp(cli, [(!url && cli.input.length < 2)]);
 
   url = url || cli.input[1];
+  const connections = options.connections || cli.flags.connections;
+  const duration = options.duration || cli.flags.duration;
+  const rate = options.rate || cli.flags.rate;
 
   const config = loadConfig(cli.flags.config);
 
-  // const result = await autocannon({ url, ...config });
-  // console.log(result);
+  console.log({ url, connections, duration, rate, ...config })
+  // const result = await autocannon({
+  //   url,
+  //   connections,
+  //   duration,
+  //   ...config
+  // });
+
+  // if (arguments.length === 0) {
+  //   console.log(result);
+  // }
+
+  // return result;
 }
 
 /**
