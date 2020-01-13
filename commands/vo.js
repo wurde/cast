@@ -42,9 +42,6 @@ function vo(words) {
 
   mkdir(AUDIO_DIR);
 
-  console.log({ fullpath });
-  process.exit(0);
-
   arecord(fullpath, {
     channel: 2,
     rate: 44100,
