@@ -5,6 +5,8 @@
  */
 
 const fs = require('fs');
+const ora = require('ora');
+const chalk = require('chalk');
 const meow = require('meow');
 const autocannon = require('autocannon');
 const showHelp = require('../helpers/showHelp');
@@ -89,22 +91,35 @@ async function loadtest(url, options = {}) {
 
   const config = loadConfig(cli.flags.config);
 
-  const result = await autocannon({
-    url,
-    title,
-    connections,
-    duration,
-    amount,
-    bailout,
-    overallRate,
-    ...config
-  });
+  console.log('');
+  const spinner = ora({
+    text: `Sending requests to ${chalk.white.bold(url)}\n`,
+    spinner: 'pong'
+  }).start();
 
-  if (arguments.length === 0) {
-    console.log(result);
+  try {
+    const result = await autocannon({
+      url,
+      title,
+      connections,
+      duration,
+      amount,
+      bailout,
+      overallRate,
+      ...config
+    });
+
+    spinner.succeed('Completed.\n');
+
+    if (arguments.length === 0) {
+      console.log(result);
+    }
+
+    return result;
+  } catch (err) {
+    spinner.fail('  Test failed.\n');
+    console.error(err);
   }
-
-  return result;
 }
 
 /**
