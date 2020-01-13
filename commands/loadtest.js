@@ -29,6 +29,7 @@ const cli = meow(`
     $ cast loadtest [options] URL
 
   Options:
+    -t, --title NAME        An identifier for this test.
     -c, --connections NUM   Number of concurrent connections to use (Default 10).
     -d, --duration SEC      Number of seconds to run (Default 10).
     -a, --amount NUM        Number of requests to make. Overrides duration.
@@ -41,6 +42,10 @@ const cli = meow(`
 `, {
   description: 'Load performance testing.',
   flags: {
+    title: {
+      type: 'string',
+      alias: 't',
+    },
     connections: {
       type: 'number',
       alias: 'c',
@@ -75,6 +80,7 @@ async function loadtest(url, options = {}) {
   showHelp(cli, [(!url && cli.input.length < 2)]);
 
   url = url || cli.input[1];
+  const title = options.title || cli.flags.title;
   const connections = options.connections || cli.flags.connections;
   const duration = options.duration || cli.flags.duration;
   const amount = options.amount || cli.flags.amount;
@@ -85,6 +91,7 @@ async function loadtest(url, options = {}) {
 
   const result = await autocannon({
     url,
+    title,
     connections,
     duration,
     amount,
