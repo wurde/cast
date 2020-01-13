@@ -5,6 +5,7 @@
  */
 
 const meow = require('meow');
+const autocannon = require('autocannon');
 const showHelp = require('../helpers/showHelp');
 
 /**
@@ -27,10 +28,14 @@ const cli = meow(`
  * Define script
  */
 
-function loadtest(url) {
+async function loadtest(url) {
   showHelp(cli, [(!url && cli.input.length < 2)]);
 
   url = url || cli.input[1];
+
+  const result = await autocannon({ url });
+
+  console.log(result);
 }
 
 /**
