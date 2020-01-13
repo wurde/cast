@@ -109,7 +109,7 @@ async function loadtest(url, options = {}) {
       ...config
     });
 
-    spinner.succeed('Completed.\n');
+    spinner.succeed(`Completed tests for ${chalk.white.bold(url)}\n`);
 
     if (arguments.length === 0) {
       console.log(result);
@@ -117,7 +117,7 @@ async function loadtest(url, options = {}) {
 
     return result;
   } catch (err) {
-    spinner.fail('  Test failed.\n');
+    spinner.fail(`Failed to test ${chalk.white.bold(url)}\n`);
     console.error(err);
   }
 }
