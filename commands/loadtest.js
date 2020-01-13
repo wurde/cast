@@ -20,6 +20,9 @@ const cli = meow(`
     -c, --connections NUM   Number of concurrent connections to use.
     -d, --duration SEC      Number of seconds to run.
     -r, --rate NUM          Number of requests per second.
+    --soak                  Run a soak test.
+    --spike                 Run a spike test.
+    --stress                Run a stress test.
 `, {
   description: 'Load performance testing.'
 });
