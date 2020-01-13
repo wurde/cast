@@ -38,9 +38,9 @@ const cli = meow(`
     -b, --bailout NUM       Number of errors before quitting.
     --overallRate NUM       Rate of requests per second. No rate limiting by default.
     --config FILE           Set autocannon configuration.
-    --soak                  Run a soak test.
-    --spike                 Run a spike test.
-    --stress                Run a stress test.
+    --soak                  Run a soak test (3 hours, 100 requests per second).
+    --spike                 Run a spike test. (5 minutes, 10,000 connections).
+    --stress                Run a stress test. (6 hours, 1,000 connections, max 5 errors).
 `, {
   description: 'Load performance testing.',
   flags: {
@@ -82,14 +82,26 @@ async function loadtest(url, options = {}) {
   showHelp(cli, [(!url && cli.input.length < 2)]);
 
   url = url || cli.input[1];
-  const title = options.title || cli.flags.title;
-  const connections = options.connections || cli.flags.connections;
-  const duration = options.duration || cli.flags.duration;
-  const amount = options.amount || cli.flags.amount;
-  const bailout = options.bailout || cli.flags.bailout;
-  const overallRate = options.overallRate || cli.flags.overallRate;
+  let title = options.title || cli.flags.title;
+  let connections = options.connections || cli.flags.connections;
+  let duration = options.duration || cli.flags.duration;
+  let amount = options.amount || cli.flags.amount;
+  let bailout = options.bailout || cli.flags.bailout;
+  let overallRate = options.overallRate || cli.flags.overallRate;
 
   const config = loadConfig(cli.flags.config);
+
+  if (cli.flags.soak) {
+    duration = 60 * 60 * 3 // 3 hours
+    overallRate = 100 // requests per second
+  } else if (cli.flags.spike) {
+    connections = 10000 // 10k connections
+    duration = 60 * 5 // 5 minutes
+  } else if (cli.flags.stress) {
+    connections = 1000 // 1k connections
+    duration = 60 * 60 * 6 // 6 hours
+    bailout = 5; // bail after 5 errors
+  }
 
   console.log('');
   const spinner = ora({
