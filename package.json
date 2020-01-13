@@ -47,6 +47,7 @@
     "connectivity": "^1.0.2",
     "cron": "^1.7.2",
     "electron": "^6.0.10",
+    "faker": "^4.1.0",
     "figlet": "^1.2.3",
     "filesize": "^4.2.0",
     "fs-extra": "^8.1.0",
