@@ -13,7 +13,7 @@ const showHelp = require('../helpers/showHelp');
 
 const cli = meow(`
   Usage
-    $ cast vo
+    $ cast vo WORDS...
 `, {
   description: 'Voiceover recording.'
 });
@@ -22,10 +22,12 @@ const cli = meow(`
  * Define script
  */
 
-function vo() {
-  showHelp(cli);
+function vo(words) {
+  showHelp(cli, [(!words && cli.input.length < 2)]);
 
-  console.log('vo');
+  words = words || cli.input.slice(1).join(' ');
+
+  console.log('vo', words);
 }
 
 /**
