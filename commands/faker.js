@@ -15,14 +15,10 @@ const showHelp = require('../helpers/showHelp');
 
 function generateContact() {
   return {
-    contact: {
+    person: {
       firstName: faker.name.firstName(),
       lastName: faker.name.lastName(),
-      jobArea: faker.name.jobArea(),
-      jobTitle: faker.name.jobTitle(),
-      jobDescriptor: faker.name.jobDescriptor(),
-      jobType: faker.name.jobType(),
-      phone: faker.phone.phoneNumber(),
+      phone: faker.phone.phoneNumberFormat(),
       email: faker.internet.email(),
       username: faker.internet.userName(),
     },
@@ -32,13 +28,28 @@ function generateContact() {
       state: faker.address.state(),
       zipCode: faker.address.zipCode(),
     },
-    company: {},
-    date: {},
-  }
+    work: {
+      jobArea: faker.name.jobArea(),
+      jobTitle: faker.name.jobTitle(),
+      jobDescriptor: faker.name.jobDescriptor(),
+      jobType: faker.name.jobType(),
+      department: faker.commerce.department(),
+      productName: faker.commerce.productName(),
+    },
+    random: {
+      color: faker.commerce.color(),
+      uuid: faker.random.uuid(),
+    }
+  };
 }
 
 function printSample(data) {
-  console.log(chalk.bold.green(`  ${data.contact.firstName} ${data.contact.lastName}`));
+  console.log(chalk.bold.green(`  ${data.person.firstName} ${data.person.lastName}`));
+  console.log(`  ${data.person.phone} ${data.person.email} ${data.person.username}`);
+  console.log(`  ${data.address.streetAddress}, ${data.address.city}, ${data.address.state}, ${data.address.zipCode}`);
+  console.log(`  ${data.work.jobTitle}. ${data.work.jobDescriptor}. ${data.work.jobType}`);
+  console.log(`  ${data.random.color} ${data.random.uuid}`);
+  console.log('');
 }
 
 /**
@@ -57,7 +68,7 @@ const cli = meow(`
     count: {
       type: 'number',
       alias: 'c',
-      default: 10,
+      default: 5,
     }
   }
 });
