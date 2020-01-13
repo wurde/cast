@@ -14,18 +14,31 @@ const showHelp = require('../helpers/showHelp');
 const cli = meow(`
   Usage
     $ cast faker
+
+  Options:
+    -c, --count NUM   Number of samples to return. (Default 10)
 `, {
-  description: 'Fake data.'
+  description: 'Fake data.',
+  flags: {
+    count: {
+      type: 'number',
+      alias: 'c',
+      default: 10,
+    }
+  }
 });
 
 /**
  * Define script
  */
 
-function faker() {
+function faker(count) {
   showHelp(cli);
   
-  console.log('faker');
+  count = Math.abs(count || cli.flags.count);
+
+  console.log('faker', count);
+  // Print 10 sample fake data.
 }
 
 /**
