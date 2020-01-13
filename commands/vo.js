@@ -69,8 +69,6 @@ async function vo(words) {
     rate: 44100,
     format: 'S32_LE'
   });
-
-  // TODO save words,audio-path in SQLite database
 }
 
 /**
