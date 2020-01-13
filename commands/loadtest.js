@@ -13,9 +13,14 @@ const showHelp = require('../helpers/showHelp');
 
 const cli = meow(`
   Usage
-    $ cast loadtest URL
+    $ cast loadtest [options] URL
+
+  Options:
+    -c, --connections NUM   Number of concurrent connections to use.
+    -d, --duration SEC      Number of seconds to run.
+    -r, --rate NUM          Number of requests per second.
 `, {
-  description: 'Performance testing.'
+  description: 'Load performance testing.'
 });
 
 /**
