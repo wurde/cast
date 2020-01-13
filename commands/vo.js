@@ -37,8 +37,8 @@ function vo(words) {
   showHelp(cli, [(!words && cli.input.length < 2)]);
 
   words = words || cli.input.slice(1).join(' ');
-  let filename = moment(new Date()).format('YYYY-MM-DD_hhmmss') + '.wav';
-  let fullpath = path.join(AUDIO_DIR, filename);
+  const filename = moment(new Date()).format('YYYY-MM-DD_hhmmss') + '.wav';
+  const fullpath = path.join(AUDIO_DIR, filename);
 
   mkdir(AUDIO_DIR);
 
