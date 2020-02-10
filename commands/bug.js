@@ -9,6 +9,25 @@ const meow = require('meow');
 const showHelp = require('../helpers/showHelp');
 
 /**
+ * Constants
+ */
+
+const url = "https://github.com/wurde/scripts/issues/new";
+const header =
+  "<!-- Please answer these questions to assist in debugging the issue. Thanks! -->";
+const questions = `
+
+<!--
+If possible, provide steps to reproduce the error.
+-->
+
+### What did you expect to see?
+
+### What did you see instead?
+
+`;
+
+/**
  * Parse args
  */
 
@@ -26,7 +45,11 @@ const cli = meow(`
 async function bug() {
   showHelp(cli);
 
-  await open("https://github.com/wurde/scripts/issues/new");
+  let body = "";
+  body += header;
+  body += questions;
+
+  await open(url + "?body=" + encodeURIComponent(body));
 }
 
 /**
