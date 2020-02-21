@@ -24,6 +24,12 @@ const app = express();
 app.use(express.static(path.join(__dirname, "public")));
 
 /**
+ * Mount routes.
+ */
+
+app.get("/", (req, res) => res.sendStatus(200));
+
+/**
  * Mount the error handlers.
  */
 
