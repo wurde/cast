@@ -143,7 +143,7 @@ async function mobilenet(dirPath='.') {
         return false
       }
     })
-  
+
   const height = imageClassifier.model.inputs[0].shape[1];
   const width = imageClassifier.model.inputs[0].shape[2];
   const imageTensors = [];

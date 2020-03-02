@@ -14,7 +14,7 @@ const printError = require('../helpers/printError')
  * Constants
  */
 
-const DATA_DIR = path.join(__dirname, '..', 'data')
+const TEMPLATE_DIR = path.join(__dirname, '..', 'templates')
 
 /**
  * Parse args
@@ -35,7 +35,7 @@ function template() {
   showHelp(cli, [cli.input.length < 2])
 
   const file = cli.input[1]
-  const template = path.join(DATA_DIR, file)
+  const template = path.join(TEMPLATE_DIR, file)
 
   if (fs.existsSync(file)) printError(`File already exists: ${path.resolve(file)}`)
   if (!fs.existsSync(template)) printError(`Missing file: ${template}`)
