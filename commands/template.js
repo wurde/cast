@@ -7,7 +7,7 @@
 const fs = require('fs')
 const path = require('path')
 const meow = require('meow')
-const showHelp = require('../helpers/showHelp')
+const printDir = require('../helpers/printDir')
 const printError = require('../helpers/printError')
 
 /**
@@ -32,7 +32,11 @@ const cli = meow(`
  */
 
 function template() {
-  showHelp(cli, [cli.input.length < 2])
+  if (cli.input.length < 2) {
+    console.log("\nTemplates:\n");
+    printDir(TEMPLATE_DIR);
+    process.exit(1);
+  }
 
   const file = cli.input[1]
   const template = path.join(TEMPLATE_DIR, file)
