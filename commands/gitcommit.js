@@ -9,17 +9,7 @@ const prompt = require('prompt');
 const chalk = require('chalk');
 const meow = require('meow');
 const showHelp = require('../helpers/showHelp');
-
-/**
- * Define helpers
- */
-
-function git(args) {
-  return child_process.spawnSync('git', args, {
-    cwd: process.cwd(),
-    stdio: [null, 'inherit', 'inherit']
-  });
-}
+const git = require('../helpers/git');
 
 /**
  * Parse args

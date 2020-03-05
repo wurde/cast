@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const chalk = require('chalk');
 const mkdir = require("../helpers/mkdir");
+const git = require("../helpers/git");
 
 const templates = [
   "LICENSE",
@@ -27,6 +28,7 @@ function main() {
 
   // Copying templates.
   for (const template of templates) {
+    console.log(`    Copying ${chalk.white.bold(template)} .`);
     fs.copyFileSync(path.join(__dirname, "../templates", template), template);
   }
 
@@ -97,6 +99,7 @@ export class FooBar extends LitElement {
   // Npm install.
 
   // Git init commit.
+  git(["init", "--quiet"]);
 }
 
 module.exports = main();
