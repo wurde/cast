@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const chalk = require('chalk');
 const mkdir = require("../helpers/mkdir");
+const npm = require("../helpers/npm");
 const git = require("../helpers/git");
 
 const templates = [
@@ -97,6 +98,7 @@ export class FooBar extends LitElement {
   `);
 
   // Npm install.
+  npm(["install"]);
 
   // Git init commit.
   git(["init", "--quiet"]);

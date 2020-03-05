@@ -30,7 +30,7 @@ function npm_offline() {
   const res = child_process.spawnSync('npm', ['config', 'get', 'prefer-offline'], { encoding: 'utf8' })
 
   const toggle = (res.stdout.trim() === 'true') ? 'false' : 'true'
-  
+
   child_process.spawnSync('npm', ['config', 'set', 'prefer-offline', toggle], { stdio: 'inherit' })
 
   console.log(`\nnpm config set prefer-offline ${chalk.green.bold(toggle)}`)
