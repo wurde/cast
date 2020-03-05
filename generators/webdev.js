@@ -14,6 +14,34 @@ const templates = [
   "tsconfig.json",
   "webpack.config.js"
 ];
+const devDependencies = [
+  "concurrently",
+  "express",
+  "lit-element",
+  "nodemon",
+  "rimraf",
+  "ts-loader",
+  "typescript",
+  "webpack",
+  "webpack-cli",
+];
+const package_json = {
+  name: "my-app",
+  version: "0.0.0",
+  description: "My app description.",
+  private: true,
+  scripts: {
+    prebuild: "rimraf dist",
+    build: "tsc --project tsconfig.json && npm run webpack",
+    "build:dev": "nodemon --exec 'npm run build' --watch src --ext ts,js",
+    webpack: "webpack-cli --config webpack.config.js --mode production --entry ./dist/index.js --output ./public/index.js",
+    start: "node server.js",
+    "start:dev": "nodemon server.js",
+    dev: "concurrently 'npm run build:dev' 'npm run start:dev'"
+  },
+  author: "Andy Bettisworth",
+  license: "MIT"
+};
 
 function main() {
   console.log(chalk.white.bold(`
@@ -33,9 +61,11 @@ function main() {
     fs.copyFileSync(path.join(__dirname, "../templates", template), template);
   }
 
-  // Write files:
-  //   package.json
-  //   Dockerfile
+  // Write package.json
+  console.log(`    Copying ${chalk.white.bold("package.json")} .`);
+  fs.writeFileSync("package.json", JSON.stringify(package_json));
+
+  // Write file Dockerfile.
 
   // Write public index.html file.
   mkdir("public");
@@ -56,49 +86,41 @@ function main() {
   // Write source index.ts file.
   mkdir("src");
   fs.writeFileSync("src/index.ts", `
-import { html, css, LitElement } from 'lit-element';
+import { LitElement, html, css, property, customElement } from 'lit-element';
 
-export class FooBar extends LitElement {
-  static get styles() {
-    return css\`
-      :host {
-        --foo-bar-text-color: #000;
+@customElement('my-app')
+export class MyApp extends LitElement {
+  @property({ type: Number }) counter = 5
+  @property({ type: String }) title = "Hey there"
 
-        display: block;
-        padding: 25px;
-        color: var(--foo-bar-text-color);
-      }
-    \`;
-  }
+  static styles = css\`
+    :host {
+      --foo-bar-text-color: #000;
 
-  static get properties() {
-    return {
-      title: { type: String },
-      counter: { type: Number },
-    };
-  }
+      display: block;
+      padding: 25px;
+      color: var(--foo-bar-text-color);
+    }
+  \`;
 
-  constructor() {
-    super();
-    this.title = 'Hey there';
-    this.counter = 5;
-  }
-
-  __increment() {
+  increment() {
     this.counter += 1;
   }
 
   render() {
     return html\`
       <h2>$\{this.title} Nr. $\{this.counter}!</h2>
-      <button @click=$\{this.__increment}>increment</button>
+      <button @click=$\{this.increment}>increment</button>
     \`;
   }
 }
   `);
 
-  // Npm install.
-  npm(["install"]);
+  // Npm install development dependencies.
+  for (const pkg of devDependencies) {
+    console.log(`\n    Install development dependencies...\n`);
+    npm(["install", "--silent", "--save-dev", pkg]);
+  }
 
   // Git init commit.
   git(["init", "--quiet"]);
