@@ -1,5 +1,7 @@
 'use strict'
 
+const fs = require('fs');
+const path = require('path');
 const chalk = require('chalk');
 
 function main() {
@@ -9,6 +11,10 @@ function main() {
   ));
 
   // Check if .git/ already exists.
+  if (fs.existsSync(path.join(process.cwd(), '.git'))) {
+    console.error(chalk.red.bold('Project already exists. Found a .git/ directory.'))
+    process.exit(1);
+  }
 
   // Copy files:
   //   LICENSE
