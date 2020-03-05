@@ -126,7 +126,7 @@ export class MyApp extends LitElement {
 
   // Npm install development dependencies.
   for (const pkg of devDependencies) {
-    console.log(`\n    Install development dependencies...\n`);
+    console.log(`\n    Installing development dependencies...\n`);
     npm(["install", "--silent", "--save-dev", pkg]);
   }
 
