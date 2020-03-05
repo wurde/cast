@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const child_process = require("child_process");
 const chalk = require('chalk');
 const mkdir = require("../helpers/mkdir");
 const npm = require("../helpers/npm");
@@ -45,6 +46,8 @@ const package_json = {
 };
 
 function main() {
+  const name = child_process.execSync("git config --get user.name", { encoding: 'utf8' });
+
   console.log(chalk.white.bold(`
     /////////////////
     Generator:`, chalk.green.bold('webdev\n')
@@ -61,6 +64,13 @@ function main() {
     console.log(`    Copying ${chalk.white.bold(template)} .`);
     fs.copyFileSync(path.join(__dirname, "../templates", template), template);
   }
+
+  // Insert date and name for LICENSE.
+  let license = fs.readFileSync("LICENSE", "utf8");
+  license = license.replace(/YYYY/, new Date().getFullYear());
+  if (name) { license = license.replace(/COPYRIGHT_HOLDER/, name); }
+  fs.writeFileSync("LICENSE", license, "utf8")
+  process.exit(1)
 
   // Write package.json
   console.log(`    Copying ${chalk.white.bold("package.json")} .`);
