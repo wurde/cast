@@ -132,6 +132,8 @@ export class MyApp extends LitElement {
 
   // Git init commit.
   git(["init", "--quiet"]);
+  git(["add", "--all"]);
+  git(["commit", "-m", "init"]);
 }
 
 module.exports = main();
