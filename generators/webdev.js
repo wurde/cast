@@ -10,6 +10,7 @@ const git = require("../helpers/git");
 
 const templates = [
   "LICENSE",
+  "README.md",
   ".editorconfig",
   ".gitignore",
   "server.js",
