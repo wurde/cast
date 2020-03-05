@@ -70,13 +70,10 @@ function main() {
   license = license.replace(/YYYY/, new Date().getFullYear());
   if (name) { license = license.replace(/COPYRIGHT_HOLDER/, name); }
   fs.writeFileSync("LICENSE", license, "utf8")
-  process.exit(1)
 
   // Write package.json
   console.log(`    Copying ${chalk.white.bold("package.json")} .`);
   fs.writeFileSync("package.json", JSON.stringify(package_json));
-
-  // Write file Dockerfile.
 
   // Write public index.html file.
   mkdir("public");
