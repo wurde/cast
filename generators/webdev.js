@@ -10,6 +10,7 @@ const git = require("../helpers/git");
 const templates = [
   "LICENSE",
   ".editorconfig",
+  ".gitignore",
   "server.js",
   "tsconfig.json",
   "webpack.config.js"
