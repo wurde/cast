@@ -47,6 +47,7 @@ const package_json = {
 };
 
 function main() {
+  const dirPath = path.join(process.cwd(), process.argv[4] || "client");
   const name = child_process.execSync("git config --get user.name", { encoding: 'utf8' });
 
   console.log(chalk.white.bold(`
@@ -54,11 +55,13 @@ function main() {
     Generator:`, chalk.green.bold('webdev\n')
   ));
 
-  // Check if .git/ already exists.
-  if (fs.existsSync(path.join(process.cwd(), '.git'))) {
-    console.error(chalk.red.bold('Project already exists. Found a .git/ directory.'))
+  // Make client directory
+  if (fs.existsSync(dirPath)) {
+    console.error(chalk.red.bold(`Project already exists. Found a ${path.basename(dirPath)}/ directory.`))
     process.exit(1);
   }
+  fs.mkdirSync(dirPath);
+  process.chdir(dirPath);
 
   // Copying templates.
   for (const template of templates) {
