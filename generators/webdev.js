@@ -88,7 +88,7 @@ function main() {
     <meta charset="utf-8" />
     <title>My App</title>
   </head>
-  <body>
+  <body style="margin:0px;">
     <my-app></my-app>
     <script src="./index.js" type="module"></script>
   </body>
