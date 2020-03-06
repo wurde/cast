@@ -42,7 +42,7 @@ function generator() {
   }
 
   const file = cli.input[1];
-  const generator = path.join(GENERATOR_DIR, file);
+  const generator = path.join(GENERATOR_DIR, file + ".js");
   if (!fs.existsSync(generator)) printError(`Missing file: ${generator}`);
 
   require(generator);
