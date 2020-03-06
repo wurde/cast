@@ -7,7 +7,7 @@
 const fs = require("fs");
 const path = require("path");
 const meow = require("meow");
-const printDir = require("../helpers/printDir");
+const chalk = require("chalk");
 const printError = require("../helpers/printError");
 
 /**
@@ -34,7 +34,10 @@ const cli = meow(`
 function generator() {
   if (cli.input.length < 2) {
     console.log("\nGenerators:\n");
-    printDir(GENERATOR_DIR);
+    const files = fs.readdirSync(GENERATOR_DIR);
+    for (const file of files) {
+      console.log(`  ${chalk.white.bold(path.basename(file, '.js'))}`);
+    }
     process.exit(1);
   }
 
