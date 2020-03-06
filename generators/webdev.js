@@ -34,7 +34,7 @@ const package_json = {
   description: "My app description.",
   private: true,
   scripts: {
-    prebuild: "rimraf dist",
+    prebuild: "rimraf dist/*",
     build: "tsc --project tsconfig.json && npm run webpack",
     "build:dev": "nodemon --exec 'npm run build' --watch src --ext ts,js",
     webpack: "webpack-cli --config webpack.config.js --mode production --entry ./dist/index.js --output ./public/index.js",
