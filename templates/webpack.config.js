@@ -1,4 +1,5 @@
 const TerserPlugin = require("terser-webpack-plugin");
+const Dotenv = require("dotenv-webpack");
 const path = require("path");
 
 module.exports = {
@@ -20,6 +21,14 @@ module.exports = {
     filename: "index.js",
     path: path.resolve(__dirname, "dist")
   },
+  node: {
+    fs: "empty"
+  },
+  plugins: [
+    new Dotenv({
+      path: "./.env"
+    })
+  ],
   optimization: {
     minimize: true,
     minimizer: [

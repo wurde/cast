@@ -27,6 +27,7 @@ const devDependencies = [
   "typescript",
   "webpack",
   "webpack-cli",
+  "dotenv-webpack",
 ];
 const package_json = {
   name: "my-app",
