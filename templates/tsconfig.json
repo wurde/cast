@@ -9,9 +9,17 @@
       "DOM"
     ],
     "moduleResolution": "node",
+    "strict": true,
     "noUnusedLocals": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "experimentalDecorators": true
-  }
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules"
+  ]
 }
