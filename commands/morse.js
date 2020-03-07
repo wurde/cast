@@ -103,20 +103,6 @@ async function morse(msg) {
     console.log('  ', chalk.green.bold(morse), '\n');
   }
 
-  // Play morse code.
-  for (let i = 0; i < codes.length; i++) {
-    const c = codes[i].split('');
-
-    for (let j = 0; j < c.length; j++) {
-      if (c[j] === '.') {
-        await beep(300);
-      } else if (c[j] === '-') {
-        await beep(600);
-      }
-    }
-    await sleep(1000);
-  }
-
   return codes;
 }
 
