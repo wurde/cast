@@ -24,3 +24,6 @@ env
 
 # Ignore VS Code settings
 .vscode
+
+# Temporary files
+tmp

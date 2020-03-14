@@ -24,3 +24,6 @@ coverage
 
 # Prevent gitsync conflicts
 .gitsync_lock
+
+# Temporary files
+tmp
