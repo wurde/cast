@@ -14,6 +14,8 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "experimentalDecorators": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
     "assumeChangesOnlyAffectDirectDependencies": true
   },
   "include": [
