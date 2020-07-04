@@ -13,6 +13,6 @@ terraform {
   # # https://www.terraform.io/docs/backends/types/gcs.html
   # backend "gcs" {
   #   bucket = "andys-terraform-backend"
-  #   key    = "key/terraform.tfstate"
+  #   prefix = "key/terraform.tfstate"
   # }
 }
