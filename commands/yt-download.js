@@ -88,7 +88,7 @@ function downloadVideo(link, outputPath) {
 const cli = meow(`
   Usage
     $ cast yt-download [options] LINK_OR_ID
-  
+
   Options:
     --output FILE   Output file (Default '$ID.flv').
     --dir DIR       Set the output directory (Default '.').
