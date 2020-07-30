@@ -1,7 +1,7 @@
 # Configure Terraform.
 
 terraform {
-  required_version = "~> 0.12"
+  required_version = "~> 0.13"
 
   # https://www.terraform.io/docs/backends/types/s3.html
   backend "s3" {
