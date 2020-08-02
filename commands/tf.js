@@ -4,11 +4,8 @@
  * Dependencies
  */
 
-const fs = require("fs");
 const path = require("path");
 const meow = require("meow");
-const printDir = require("../helpers/printDir");
-const printError = require("../helpers/printError");
 
 /**
  * Constants
