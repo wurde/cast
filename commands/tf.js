@@ -54,7 +54,7 @@ function terraform() {
   file = path.join(GH_WORKFLOWS, "tf-ci.yaml");
   if (!fs.existsSync(file)) {
     console.log(`\nCopying ${path.basename(file)}`);
-    fs.copyFileSync(TF_CD, file);
+    fs.copyFileSync(TF_CI, file);
   }
 
   file = "terraform.tf";
