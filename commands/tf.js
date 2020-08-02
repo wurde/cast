@@ -15,8 +15,8 @@ const mkdir = require("../helpers/mkdir");
 
 const TEMPLATE_DIR = path.join(__dirname, "..", "templates");
 const GH_WORKFLOWS = ".github/workflows";
-const TF_CD = path.join(TEMPLATE_DIR, "tf-cd.yaml");
-const TF_CI = path.join(TEMPLATE_DIR, "tf-ci.yaml");
+const TF_CD = path.join(TEMPLATE_DIR, "cd.yaml");
+const TF_CI = path.join(TEMPLATE_DIR, "ci.yaml");
 const TF_CONFIG = path.join(TEMPLATE_DIR, "terraform.tf");
 
 /**
