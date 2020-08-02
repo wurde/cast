@@ -1,4 +1,4 @@
-# Continuous Delivery for Terraform.
+# Continuous Delivery via GitHub Actions.
 
 name: Continuous Delivery
 

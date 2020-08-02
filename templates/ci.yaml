@@ -1,8 +1,11 @@
-# Continuous Integration for Terraform.
+# Continuous Integration via GitHub Actions.
 
 name: Continuous Integration
 
-on: push
+on:
+  push:
+    branches-ignore:
+      - master
 
 env:
   GITHUB_TOKEN: ${{ secrets.TF_GITHUB_TOKEN }}
