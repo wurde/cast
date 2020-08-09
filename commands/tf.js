@@ -46,12 +46,12 @@ function terraform() {
 
   mkdir(".github/workflows");
 
-  file = path.join(GH_WORKFLOWS, "tf-cd.yaml");
+  file = path.join(GH_WORKFLOWS, "cd.yaml");
   if (!fs.existsSync(file)) {
     console.log(`\nCopying ${path.basename(file)}`);
     fs.copyFileSync(TF_CD, file);
   }
-  file = path.join(GH_WORKFLOWS, "tf-ci.yaml");
+  file = path.join(GH_WORKFLOWS, "ci.yaml");
   if (!fs.existsSync(file)) {
     console.log(`\nCopying ${path.basename(file)}`);
     fs.copyFileSync(TF_CI, file);
