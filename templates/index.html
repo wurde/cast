@@ -8,9 +8,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="An example description.">
   <link rel="icon" href="/images/favicon-32x32.png" type="image/x-icon">
+
+  <style>
+    .requires-js-format {
+      background-color: #F3E3BB;
+      text-align: center;
+      padding: 10px 0px;
+    }
+
+    .requires-js-format a {
+      color: #6b8eeb;
+    }
+  </style>
 </head>
 
 <body style="margin:0px;">
+  <noscript>
+    <div class="text-center bg-warning py-3">
+      This site requires JavaScript. Please enable it.<br />
+      <a href="https://www.enable-javascript.com" target="_blank"> See instructions to enable JavaScript in your web
+        browser.</a>
+    </div>
+  </noscript>
   <web-app></web-app>
   <script src="./index.js" type="module"></script>
 </body>
