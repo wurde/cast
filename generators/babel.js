@@ -81,7 +81,7 @@ function sequenceSideEffects(...sideEffects) {
 function installBabelPresetToPackageDotJson(stage = "0") {
   switch (stage) {
     case "0":
-      npm(["install", "--save-dev", "babel-preset-stage-0"]);
+      npm(["install", "--save-dev", "@babel/preset-stage-0"]);
       // Include the experimental pipeline operator
       npm([
         "install",
@@ -90,7 +90,7 @@ function installBabelPresetToPackageDotJson(stage = "0") {
       ]);
       break;
     case "1":
-      npm(["install", "--save-dev", "babel-preset-stage-1"]);
+      npm(["install", "--save-dev", "@babel/preset-stage-1"]);
       // Include the experimental pipeline operator (since it's currently a stage-1 proposal)
       npm([
         "install",
@@ -99,13 +99,13 @@ function installBabelPresetToPackageDotJson(stage = "0") {
       ]);
       break;
     case "2":
-      npm(["install", "--save-dev", "babel-preset-stage-2"]);
+      npm(["install", "--save-dev", "@babel/preset-stage-2"]);
       break;
     case "3":
-      npm(["install", "--save-dev", "babel-preset-stage-3"]);
+      npm(["install", "--save-dev", "@babel/preset-stage-3"]);
       break;
     default:
-      npm(["install", "--save-dev", "babel-preset-stage-0"]);
+      npm(["install", "--save-dev", "@babel/preset-stage-0"]);
   }
 }
 
@@ -123,7 +123,7 @@ function addCompileScriptToPackageDotJson() {
 
 function addBabelConfig(stage = "0") {
   const defaultBabelConfig = {
-    presets: ["stage-0"],
+    presets: ["@babel/preset-stage-0"],
 
     plugins: [
       ["@babel/plugin-proposal-pipeline-operator", { proposal: "minimal" }],
@@ -136,7 +136,7 @@ function addBabelConfig(stage = "0") {
 
   const newBabelConfig = ({ stage = "0", plugins = [] }) => ({
     ...defaultBabelConfig,
-    presets: ["stage-" + stage],
+    presets: ["@babel/preset-stage-" + stage],
     plugins: plugins,
   });
 
