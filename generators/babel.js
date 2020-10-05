@@ -9,6 +9,7 @@ const chalk = require("chalk");
 const meow = require("meow");
 const showHelp = require("../helpers/showHelp");
 const npm = require("../helpers/npm");
+const child_process = require("child_process");
 
 /**
  * Parse args
@@ -45,10 +46,18 @@ function babel() {
     () => npm(["init", "-y"]),
 
     () => console.log(chalk.cyan.bold("Installing dependencies...")),
-    () => npm(["install", "--save-dev", "@babel/cli", "@babel/core"]),
+    () =>
+      npm([
+        "install",
+        "--save-dev",
+        "@babel/cli",
+        "@babel/core",
+        "babel-upgrade",
+      ]),
     () => npm(["install", "--save", "@babel/polyfill"]),
 
     () => installBabelPresetToPackageDotJson(cli.flags.stage),
+    () => addRequiredTC39ProposalsToPackageDotJson(),
     () => addCompileScriptToPackageDotJson(),
     // ---------------------------------------
 
@@ -122,44 +131,115 @@ function addCompileScriptToPackageDotJson() {
 }
 
 function addBabelConfig(stage = "0") {
-  const defaultBabelConfig = {
-    presets: ["@babel/preset-stage-0"],
+  const plugins = {
+    stage0: [
+      // Stage 0
+      "@babel/plugin-proposal-function-bind",
 
-    plugins: [
+      // Stage 1
+      "@babel/plugin-proposal-export-default-from",
+      "@babel/plugin-proposal-logical-assignment-operators",
+      ["@babel/plugin-proposal-optional-chaining", { loose: false }],
       ["@babel/plugin-proposal-pipeline-operator", { proposal: "minimal" }],
+      ["@babel/plugin-proposal-nullish-coalescing-operator", { loose: false }],
+      "@babel/plugin-proposal-do-expressions",
+
+      // Stage 2
+      ["@babel/plugin-proposal-decorators", { legacy: true }],
+      "@babel/plugin-proposal-function-sent",
+      "@babel/plugin-proposal-export-namespace-from",
+      "@babel/plugin-proposal-numeric-separator",
+      "@babel/plugin-proposal-throw-expressions",
+
+      // Stage 3
+      "@babel/plugin-syntax-dynamic-import",
+      "@babel/plugin-syntax-import-meta",
+      ["@babel/plugin-proposal-class-properties", { loose: false }],
+      "@babel/plugin-proposal-json-strings",
+    ],
+    stage1: [
+      // Stage 1
+      "@babel/plugin-proposal-export-default-from",
+      "@babel/plugin-proposal-logical-assignment-operators",
+      ["@babel/plugin-proposal-optional-chaining", { loose: false }],
+      ["@babel/plugin-proposal-pipeline-operator", { proposal: "minimal" }],
+      ["@babel/plugin-proposal-nullish-coalescing-operator", { loose: false }],
+      "@babel/plugin-proposal-do-expressions",
+
+      // Stage 2
+      ["@babel/plugin-proposal-decorators", { legacy: true }],
+      "@babel/plugin-proposal-function-sent",
+      "@babel/plugin-proposal-export-namespace-from",
+      "@babel/plugin-proposal-numeric-separator",
+      "@babel/plugin-proposal-throw-expressions",
+
+      // Stage 3
+      "@babel/plugin-syntax-dynamic-import",
+      "@babel/plugin-syntax-import-meta",
+      ["@babel/plugin-proposal-class-properties", { loose: false }],
+      "@babel/plugin-proposal-json-strings",
+    ],
+    stage2: [
+      // Stage 2
+      ["@babel/plugin-proposal-decorators", { legacy: true }],
+      "@babel/plugin-proposal-function-sent",
+      "@babel/plugin-proposal-export-namespace-from",
+      "@babel/plugin-proposal-numeric-separator",
+      "@babel/plugin-proposal-throw-expressions",
+
+      // Stage 3
+      "@babel/plugin-syntax-dynamic-import",
+      "@babel/plugin-syntax-import-meta",
+      ["@babel/plugin-proposal-class-properties", { loose: false }],
+      "@babel/plugin-proposal-json-strings",
+    ],
+    stage3: [
+      // Stage 3
+      "@babel/plugin-syntax-dynamic-import",
+      "@babel/plugin-syntax-import-meta",
+      ["@babel/plugin-proposal-class-properties", { loose: false }],
+      "@babel/plugin-proposal-json-strings",
     ],
   };
 
-  const writeBabelConfig = ({ config = defaultBabelConfig }) => {
-    fs.writeFileSync("babel.config.json", JSON.stringify(config, null, 2));
-  };
-
-  const newBabelConfig = ({ stage = "0", plugins = [] }) => ({
-    ...defaultBabelConfig,
-    presets: ["@babel/preset-stage-" + stage],
-    plugins: plugins,
-  });
-
   switch (stage) {
     case "0":
-      writeBabelConfig({ config: defaultBabelConfig });
+      fs.writeFileSync(
+        "babel.config.json",
+        JSON.stringify({ plugins: plugins.stage0 }, null, 2)
+      );
       break;
     case "1":
-      writeBabelConfig({
-        config: newBabelConfig({
-          stage: "1",
-          plugins: defaultBabelConfig.plugins, // include the pipeline operator as a default plugin (since this operator is a stage-1 prposal)
-        }),
-      });
+      fs.writeFileSync(
+        "babel.config.json",
+        JSON.stringify({ plugins: plugins.stage1 }, null, 2)
+      );
+      break;
     case "2":
-      writeBabelConfig({ config: newBabelConfig({ stage: "2" }) });
+      fs.writeFileSync(
+        "babel.config.json",
+        JSON.stringify({ plugins: plugins.stage2 }, null, 2)
+      );
+      break;
     case "3":
-      writeBabelConfig({ config: newBabelConfig({ stage: "3" }) });
+      fs.writeFileSync(
+        "babel.config.json",
+        JSON.stringify({ plugins: plugins.stage3 }, null, 2)
+      );
       break;
     default:
-      // default to stage-0
-      writeBabelConfig({ config: defaultBabelConfig });
+      fs.writeFileSync(
+        "babel.config.json",
+        JSON.stringify({ plugins: plugins.stage0 }, null, 2)
+      );
   }
+}
+
+// Upgrade the babel config to include an exhaustive list of all the proposals.
+// This is the new standard for Babel 7.0 and above (babel-preset-x no longer suffices).
+function addRequiredTC39ProposalsToPackageDotJson() {
+  child_process.execSync("npx babel-upgrade --write");
+  npm(["install"]);
 }
 
 /**
