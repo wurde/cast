@@ -8,8 +8,7 @@
     "boot": "./bin/boot.js",
     "cast": "./bin/cast.js",
     "gc": "./bin/gc.js",
-    "gp": "./bin/gp.js",
-    "todo": "./bin/todo.js"
+    "gp": "./bin/gp.js"
   },
   "scripts": {
     "bashsetup": "sudo node ./bin/bash-completion-setup.js",
