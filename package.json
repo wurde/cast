@@ -5,7 +5,6 @@
   "main": "bin/cast.js",
   "private": true,
   "bin": {
-    "boot": "./bin/boot.js",
     "cast": "./bin/cast.js",
     "gc": "./bin/gc.js",
     "gp": "./bin/gp.js"
