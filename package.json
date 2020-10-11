@@ -1,7 +1,7 @@
 {
   "name": "scripts",
   "version": "1.13.0",
-  "description": "Your command-line applications.",
+  "description": "Command-line applications.",
   "main": "bin/cast.js",
   "private": true,
   "bin": {
