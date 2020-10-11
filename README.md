@@ -1,6 +1,6 @@
 # Scripts
 
-Command-line interface applications written using **Node.js**. This project is setup in a way for easy extension. After setup add a new custom script by adding a new file to the `commands/` directory. Then reference that command from the terminal by the unique filename you gave it. (`cast customscript`)
+Command-line interface (CLI) applications written using **Node.js**.
 
 ## Getting started
 
@@ -20,14 +20,6 @@ This project is in active development, so new scripts are routinely added. To re
 git remote add upstream https://github.com/wurde/scripts.git
 git pull upstream master
 ```
-
-## Vision
-
-There is a vision that guides development. Learn more in [VISION.md](VISION.md).
-
-## Roadmap
-
-For details on planned features and progress refer to the [Trello Board](https://trello.com/b/M8OvJPMb).
 
 ## License
 
