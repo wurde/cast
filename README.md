@@ -1,6 +1,6 @@
 # Scripts
 
-Command-line interface (CLI) applications written using **Node.js**.
+Useful and semi-useful utilities written in **Node.js**.
 
 ## Getting started
 
