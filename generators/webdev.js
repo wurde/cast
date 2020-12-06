@@ -11,10 +11,6 @@ function main() {
   ));
 
   npm(["init", "@open-wc"]);
-
-  git(["init", "--quiet"]);
-  git(["add", "--all"]);
-  git(["commit", "-m", "init"]);
 }
 
 module.exports = main();
