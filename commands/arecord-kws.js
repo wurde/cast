@@ -28,10 +28,11 @@ const cli = meow(`
 });
 
 // TODO ensure using correct device (arecord --list-devices).
-// TODO record consecutive clips.
 
 async function arecord_kws() {
-  showHelp(cli);
+  showHelp(cli, [cli.input.length < 2]);
+
+  const label = cli.input[1];
 
   const id = uuid.v4().split('-')[0];
 
@@ -40,7 +41,7 @@ async function arecord_kws() {
     "--rate=16000",
     "--format=S16_LE",
     "--file-type", "wav",
-    `${id}.wav`
+    `${label}-${id}.wav`
   ]
 
   if (hasArecord) {
