@@ -27,8 +27,6 @@ const cli = meow(`
   description: 'Record sound.',
 });
 
-// TODO ensure using correct device (arecord --list-devices).
-
 async function arecord_kws() {
   showHelp(cli, [cli.input.length < 2]);
 
