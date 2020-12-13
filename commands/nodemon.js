@@ -154,7 +154,7 @@ function runRemoveCommand() {
 const cli = meow(`
   Usage
     $ cast nodemon
-  
+
   Options:
     -l, --list       Print all active scripts (Default).
     -a, --add FILE   Add a new monitoring script.
