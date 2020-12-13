@@ -59,14 +59,14 @@ const cli = meow(`
 async function schedule() {
   showHelp(cli, [cli.input.length < 2])
   let job
-  
+
   const file = path.resolve(cli.input[1])
   if (!fs.existsSync(file)) printError(`File doesn't exist: ${file}`)
-  
+
   const execFile = () => {
     child_process.spawnSync('node', [file], config)
   }
-  
+
   if (cli.flags.cron || cli.flags.c) {
     job = cron.job(cli.flags.cron, execFile)
   } else {

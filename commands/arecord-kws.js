@@ -24,7 +24,7 @@ const cli = meow(`
   Usage
     $ cast arecord-kws [options] LABEL
 `, {
-  description: 'Record sound.',
+  description: 'Record 1 second audio clips for wake word datasets.',
 });
 
 async function arecord_kws() {
