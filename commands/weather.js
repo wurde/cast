@@ -4,13 +4,11 @@
  * Dependencies
  */
 
-const fs = require('fs');
 const path = require('path');
 const meow = require('meow');
 const weather_js2 = require('weather-js2');
 const {table} = require('table');
 const chalk = require('chalk');
-const figlet = require('figlet');
 const showHelp = require('../helpers/showHelp');
 const isMainCommand = require('../helpers/isMainCommand');
 const Storage = require('../helpers/Storage');
@@ -20,10 +18,6 @@ const Storage = require('../helpers/Storage');
  */
 
 const CONFIG_PATH = path.join(process.env.HOME, '.weather.json');
-const CONFIG_DEFAULT = {
-  location: 'Houston, TX',
-  scale: 'fahrenheit'
-};
 
 /**
  * Parse args
