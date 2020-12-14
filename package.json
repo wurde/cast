@@ -10,8 +10,7 @@
     "gp": "./bin/gp.js"
   },
   "scripts": {
-    "bashsetup": "sudo node ./bin/bash-completion-setup.js",
-    "bootsetup": "sudo node ./bin/boot-setup.js"
+    "bashsetup": "sudo node ./bin/bash-completion-setup.js"
   },
   "repository": {
     "type": "git",
