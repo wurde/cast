@@ -35,7 +35,7 @@ const cli = meow(`
  * Define script
  */
 
-function count() {
+function unzip() {
   showHelp(cli);
 
   const files = fs
@@ -45,7 +45,7 @@ function count() {
   for (let i = 0; i < files.length; i++) {
     console.log(`\n  Extracting: ${chalk.bold.white(files[i])}\n`);
 
-    child_process.spawnSync("unzip",
+    child_process.spawn("unzip",
       [files[i], "-d", path.basename(files[i], path.extname(files[i]))], config);
   }
 }
@@ -54,4 +54,4 @@ function count() {
  * Export script
  */
 
-module.exports = count;
+module.exports = unzip;
