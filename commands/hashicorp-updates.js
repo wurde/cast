@@ -48,7 +48,7 @@ function update_packer() {
   child_process.spawnSync('rm', ['-rf', '/tmp/packer'])
   console.log("  Cloning GitHub repository...")
   git(['clone', '--quiet', 'https://github.com/hashicorp/packer.git', '/tmp/packer'])
-  child_process.execSync('sed --in-place s/\'const VersionPrerelease = "dev"\'/\'const VersionPrerelease = ""\'/g /tmp/packer/version/version.go')
+  child_process.execSync('sed --in-place s/\'VersionPrerelease = "dev"\'/\'VersionPrerelease = ""\'/g /tmp/packer/version/version.go')
   child_process.execSync('sed --in-place s/\'ALL_XC_ARCH="386 amd64 arm arm64 ppc64le mips mips64 mipsle mipsle64 s390x"\'/\'ALL_XC_ARCH="amd64"\'/g /tmp/packer/scripts/build.sh')
   child_process.execSync('sed --in-place s/\'ALL_XC_OS="linux darwin windows freebsd openbsd solaris"\'/\'ALL_XC_OS="linux"\'/g /tmp/packer/scripts/build.sh')
   console.log("  Building binary...")
@@ -64,11 +64,11 @@ function update_consul() {
   child_process.spawnSync('rm', ['-rf', '/tmp/consul'])
   console.log("  Cloning GitHub repository...")
   git(['clone', '--quiet', 'https://github.com/hashicorp/consul.git', '/tmp/consul'])
-  // git checkout $CONSUL_VERSION
+  child_process.execSync('sed --in-place s/\'VersionPrerelease = "dev"\'/\'VersionPrerelease = ""\'/g /tmp/consul/version/version.go')
   child_process.spawnSync('make', ['tools'], { cwd: '/tmp/consul' })
   console.log("  Building binary...")
   child_process.spawnSync('make', ['linux'], { cwd: '/tmp/consul' })
-  child_process.spawnSync('mv', ['-f', '/tmp/consul/bin/consul', '/usr/local/bin/consul'])
+  child_process.spawnSync('mv', ['-f', '/tmp/consul/pkg/bin/linux_amd64/consul', '/usr/local/bin/consul'])
   console.log(`  Version: ${child_process.spawnSync('consul', ['version']).output[1].toString().split('\n')[0]}`)
 }
 
