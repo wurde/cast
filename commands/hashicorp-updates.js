@@ -111,11 +111,10 @@ function update_terraform() {
   child_process.spawnSync('rm', ['-rf', '/tmp/terraform'])
   console.log("  Cloning GitHub repository...")
   git(['clone', '--quiet', 'https://github.com/hashicorp/terraform.git', '/tmp/terraform'])
-  // git checkout v1.0.0
+  child_process.execSync('sed --in-place s/\'Prerelease = "dev"\'/\'Prerelease = ""\'/g /tmp/terraform/version/version.go')
   console.log("  Building binary...")
   child_process.spawnSync('go', ['install'], { cwd: '/tmp/terraform' })
-  // child_process.spawnSync('mv', ['-f', '~/go/bin/terraform', '/usr/local/bin/terraform'])
-  // terraform -install-autocomplete
+  child_process.spawnSync('mv', ['-f', '~/go/bin/terraform', '/usr/local/bin/terraform'])
   console.log(`  Version: ${child_process.spawnSync('terraform', ['version']).output[1].toString().split('\n')[0]}`)
 }
 
@@ -128,9 +127,9 @@ async function hashicorp_updates() {
 
   // update_packer();
   // update_consul();
-  // update_vault(); TODO
+  update_vault();
   // update_nomad();
-  // update_terraform(); TODO
+  // update_terraform();
 }
 
 /**
