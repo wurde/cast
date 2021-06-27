@@ -93,14 +93,14 @@ function update_nomad() {
   if (hasNomad) console.log(`  Found binary: ${hasNomad}`)
   child_process.spawnSync('rm', ['-rf', '/tmp/nomad'])
   console.log("  Cloning GitHub repository...")
-  // git(['clone', '--quiet', 'https://github.com/hashicorp/nomad.git', '/tmp/nomad'])
-  // git checkout v1.0.4
-  // make bootstrap
-  // sudo npm install --global yarn
-  // sudo apt install libc6-dev
+  git(['clone', '--quiet', 'https://github.com/hashicorp/nomad.git', '/tmp/nomad'])
+  child_process.execSync('sed --in-place s/\'VersionPrerelease = "dev"\'/\'VersionPrerelease = ""\'/g /tmp/nomad/version/version.go')
+  child_process.spawnSync('make', ['bootstrap'], { cwd: '/tmp/nomad' })
+  child_process.spawnSync('npm', ['install', '--global', 'yarn'])
+  child_process.spawnSync('apt', ['install', 'libc6-dev'])
   console.log("  Building binary...")
-  // make release
-  child_process.spawnSync('mv', ['-f', '/tmp/vault/pkg/linux_amd64/nomad', '/usr/local/bin/nomad'])
+  child_process.spawnSync('make', ['release', 'ALL_TARGETS=linux_amd64'], { cwd: '/tmp/nomad' })
+  child_process.spawnSync('mv', ['-f', '/tmp/nomad/pkg/linux_amd64/nomad', '/usr/local/bin/nomad'])
   console.log(`  Version: ${child_process.spawnSync('nomad', ['version']).output[1].toString().split('\n')[0]}`)
 }
 
@@ -110,11 +110,11 @@ function update_terraform() {
   if (hasTerraform) console.log(`  Found binary: ${hasTerraform}`)
   child_process.spawnSync('rm', ['-rf', '/tmp/terraform'])
   console.log("  Cloning GitHub repository...")
-  // git(['clone', '--quiet', 'https://github.com/hashicorp/terraform.git', '/tmp/terraform'])
+  git(['clone', '--quiet', 'https://github.com/hashicorp/terraform.git', '/tmp/terraform'])
   // git checkout v1.0.0
   console.log("  Building binary...")
-  // go install
-  child_process.spawnSync('mv', ['-f', '~/go/bin/terraform', '/usr/local/bin/terraform'])
+  child_process.spawnSync('go', ['install'], { cwd: '/tmp/terraform' })
+  // child_process.spawnSync('mv', ['-f', '~/go/bin/terraform', '/usr/local/bin/terraform'])
   // terraform -install-autocomplete
   console.log(`  Version: ${child_process.spawnSync('terraform', ['version']).output[1].toString().split('\n')[0]}`)
 }
@@ -127,10 +127,10 @@ async function hashicorp_updates() {
   showHelp(cli);
 
   // update_packer();
-  update_consul();
-  // update_vault();
+  // update_consul();
+  // update_vault(); TODO
   // update_nomad();
-  // update_terraform();
+  // update_terraform(); TODO
 }
 
 /**
