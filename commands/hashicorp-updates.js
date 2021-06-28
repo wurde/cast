@@ -83,7 +83,7 @@ function update_vault() {
   console.log("  Building binary...")
   child_process.spawnSync('make', ['bootstrap'], { cwd: '/tmp/vault' })
   child_process.spawnSync('npm', ['install', '--global', 'yarn'])
-  child_process.spawnSync('go', ['install'], { cwd: '/tmp/terraform' })
+  child_process.spawnSync('go', ['install'], { cwd: '/tmp/vault' })
   child_process.execSync('sudo mv -f ~/go/bin/vault /usr/local/bin/vault')
   console.log(`  Version: ${child_process.spawnSync('vault', ['version']).output[1].toString().split('\n')[0]}`)
 }
