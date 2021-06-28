@@ -53,7 +53,7 @@ function update_packer() {
   child_process.execSync('sed --in-place s/\'ALL_XC_OS="linux darwin windows freebsd openbsd solaris"\'/\'ALL_XC_OS="linux"\'/g /tmp/packer/scripts/build.sh')
   console.log("  Building binary...")
   child_process.spawnSync('make', ['releasebin'], { cwd: '/tmp/packer' })
-  child_process.spawnSync('mv', ['-f', '/tmp/packer/bin/packer', '/usr/local/bin/packer'])
+  child_process.execSync('sudo mv -f /tmp/packer/bin/packer /usr/local/bin/packer')
   console.log(`  Version: ${child_process.spawnSync('packer', ['version']).output[1].toString().split('\n')[0]}`)
 }
 
@@ -68,7 +68,7 @@ function update_consul() {
   child_process.spawnSync('make', ['tools'], { cwd: '/tmp/consul' })
   console.log("  Building binary...")
   child_process.spawnSync('make', ['linux'], { cwd: '/tmp/consul' })
-  child_process.spawnSync('mv', ['-f', '/tmp/consul/pkg/bin/linux_amd64/consul', '/usr/local/bin/consul'])
+  child_process.execSync('sudo mv -f /tmp/consul/pkg/bin/linux_amd64/consul /usr/local/bin/consul')
   console.log(`  Version: ${child_process.spawnSync('consul', ['version']).output[1].toString().split('\n')[0]}`)
 }
 
@@ -78,12 +78,13 @@ function update_vault() {
   if (hasVault) console.log(`  Found binary: ${hasVault}`)
   child_process.spawnSync('rm', ['-rf', '/tmp/vault'])
   console.log("  Cloning GitHub repository...")
-  // git(['clone', '--quiet', 'https://github.com/hashicorp/vault.git', '/tmp/vault'])
-  // git checkout v1.7.0
-  // make bootstrap
+  git(['clone', '--quiet', 'https://github.com/hashicorp/vault.git', '/tmp/vault'])
+  child_process.execSync('sed --in-place s/\'VersionPrerelease = "dev"\'/\'VersionPrerelease = ""\'/g /tmp/vault/sdk/version/version_base.go')
   console.log("  Building binary...")
-  // make dev
-  child_process.spawnSync('mv', ['-f', '/tmp/vault/bin/vault', '/usr/local/bin/vault'])
+  child_process.spawnSync('make', ['bootstrap'], { cwd: '/tmp/vault' })
+  child_process.spawnSync('npm', ['install', '--global', 'yarn'])
+  child_process.spawnSync('go', ['install'], { cwd: '/tmp/terraform' })
+  child_process.execSync('sudo mv -f ~/go/bin/vault /usr/local/bin/vault')
   console.log(`  Version: ${child_process.spawnSync('vault', ['version']).output[1].toString().split('\n')[0]}`)
 }
 
@@ -95,12 +96,12 @@ function update_nomad() {
   console.log("  Cloning GitHub repository...")
   git(['clone', '--quiet', 'https://github.com/hashicorp/nomad.git', '/tmp/nomad'])
   child_process.execSync('sed --in-place s/\'VersionPrerelease = "dev"\'/\'VersionPrerelease = ""\'/g /tmp/nomad/version/version.go')
+  console.log("  Building binary...")
   child_process.spawnSync('make', ['bootstrap'], { cwd: '/tmp/nomad' })
   child_process.spawnSync('npm', ['install', '--global', 'yarn'])
   child_process.spawnSync('apt', ['install', 'libc6-dev'])
-  console.log("  Building binary...")
   child_process.spawnSync('make', ['release', 'ALL_TARGETS=linux_amd64'], { cwd: '/tmp/nomad' })
-  child_process.spawnSync('mv', ['-f', '/tmp/nomad/pkg/linux_amd64/nomad', '/usr/local/bin/nomad'])
+  child_process.execSync('sudo mv -f /tmp/nomad/pkg/linux_amd64/nomad /usr/local/bin/nomad')
   console.log(`  Version: ${child_process.spawnSync('nomad', ['version']).output[1].toString().split('\n')[0]}`)
 }
 
@@ -114,7 +115,7 @@ function update_terraform() {
   child_process.execSync('sed --in-place s/\'Prerelease = "dev"\'/\'Prerelease = ""\'/g /tmp/terraform/version/version.go')
   console.log("  Building binary...")
   child_process.spawnSync('go', ['install'], { cwd: '/tmp/terraform' })
-  child_process.spawnSync('mv', ['-f', '~/go/bin/terraform', '/usr/local/bin/terraform'])
+  child_process.execSync('sudo mv -f ~/go/bin/terraform /usr/local/bin/terraform')
   console.log(`  Version: ${child_process.spawnSync('terraform', ['version']).output[1].toString().split('\n')[0]}`)
 }
 
@@ -125,11 +126,11 @@ function update_terraform() {
 async function hashicorp_updates() {
   showHelp(cli);
 
-  // update_packer();
-  // update_consul();
+  update_packer();
+  update_consul();
   update_vault();
-  // update_nomad();
-  // update_terraform();
+  update_nomad();
+  update_terraform();
 }
 
 /**
