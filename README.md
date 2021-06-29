@@ -1,6 +1,6 @@
 # Scripts
 
-Useful and semi-useful utilities written in **Node.js**.
+My personal command-line applications.
 
 ## Getting started
 
