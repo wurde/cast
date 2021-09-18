@@ -1,6 +1,6 @@
 # Scripts
 
-My personal command-line applications.
+Command-line applications written in Node.
 
 ## Getting started
 
