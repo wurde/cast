@@ -8,7 +8,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const didYouMean = require('../helpers/didYouMean');
+const didYouMean = require('../helpers/didYouMean.js');
 
 /**
  * Constants
@@ -16,8 +16,7 @@ const didYouMean = require('../helpers/didYouMean');
 
 const command = process.argv[2];
 const script_path = path.join(__dirname, '..', 'commands', command + '.js');
-const commands = fs.readdirSync(path.join(__dirname, '..', 'commands'))
-  .map(file => path.basename(file, path.extname(file)));
+const commands = fs.readdirSync(path.join(__dirname, '..', 'commands')).map(file => path.basename(file, path.extname(file)));
 
 /**
  * Check command argument exists

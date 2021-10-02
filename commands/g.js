@@ -4,11 +4,11 @@
  * Dependencies
  */
 
-const fs = require("fs");
-const path = require("path");
-const meow = require("meow");
-const chalk = require("chalk");
-const printError = require("../helpers/printError");
+import fs from "fs";
+import path from "path";
+import meow from "meow";
+import chalk from "chalk";
+import printError from "../helpers/printError";
 
 /**
  * Constants

@@ -4,9 +4,9 @@
  * Dependencies
  */
 
-const child_process = require('child_process')
-const meow = require('meow')
-const showHelp = require('../helpers/showHelp')
+const child_process = require('child_process');
+import meow from 'meow';
+const showHelp = require('../helpers/showHelp');
 
 /**
  * Constants
