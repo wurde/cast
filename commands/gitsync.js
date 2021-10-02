@@ -5,7 +5,7 @@
  */
 
 const child_process = require('child_process');
-import meow from 'meow';
+const meow = require('meow');
 const showHelp = require('../helpers/showHelp');
 
 /**
