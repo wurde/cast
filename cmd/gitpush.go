@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"log"
+	"os"
+	"os/exec"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/spf13/cobra"
@@ -31,12 +33,21 @@ var gitpushCmd = &cobra.Command{
 			log.Fatal("Unstaged changes found, commit first")
 		}
 
-		w.Pull(&git.PullOptions{
-			RemoteName: "origin",
-		})
-		repo.Push(&git.PushOptions{
-			RemoteName: "origin",
-		})
+		log.Println("Pulling down latest changes")
+		gitPullCmd := exec.Command("git", "pull")
+		gitPullCmd.Stdout = os.Stdout
+		gitPullCmd.Stderr = os.Stderr
+		if err := gitPullCmd.Run(); err != nil {
+			os.Exit(1)
+		}
+
+		log.Println("\nPushing up latest changes")
+		gitPushCmd := exec.Command("git", "push")
+		gitPushCmd.Stdout = os.Stdout
+		gitPushCmd.Stderr = os.Stderr
+		if err := gitPushCmd.Run(); err != nil {
+			os.Exit(1)
+		}
 	},
 }
 
