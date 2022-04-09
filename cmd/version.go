@@ -14,6 +14,6 @@ var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Print script suite version",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("github.com/wurde/cast v2.0")
+		fmt.Println("github.com/wurde/cast v2.3")
 	},
 }

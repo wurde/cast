@@ -3,35 +3,41 @@ package cmd
 import (
 	"fmt"
 	"log"
+	"os"
+	"os/exec"
 
-	"github.com/go-git/go-git/v5"
-	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/spf13/cobra"
 )
 
-func Gitcommit(repo *git.Repository, msg string) *object.Commit {
-	w, err := repo.Worktree()
-	if err != nil {
-		log.Fatal(err)
+func promptForMessage(args []string) string {
+	var msg string
+
+	if len(args) > 0 {
+		msg = args[0]
+	} else {
+		log.Println("Enter commit message: ")
+		fmt.Scanln(&msg)
 	}
 
-	w.AddWithOptions(&git.AddOptions{
-		All:  true,
-		Path: ".",
-	})
+	return msg
+}
 
-	hash, err := w.Commit(msg, &git.CommitOptions{
-		All: true,
-	})
-	if err != nil {
-		log.Fatal(err)
+func GitAdd() {
+	gitAddCmd := exec.Command("git", "add", "-A")
+	gitAddCmd.Stdout = os.Stdout
+	gitAddCmd.Stderr = os.Stderr
+	if err := gitAddCmd.Run(); err != nil {
+		os.Exit(1)
 	}
+}
 
-	commit, err := repo.CommitObject(hash)
-	if err != nil {
-		log.Fatal(err)
+func GitCommit(msg string) {
+	gitCommitCmd := exec.Command("git", "commit", "-m", msg)
+	gitCommitCmd.Stdout = os.Stdout
+	gitCommitCmd.Stderr = os.Stderr
+	if err := gitCommitCmd.Run(); err != nil {
+		os.Exit(1)
 	}
-	return commit
 }
 
 var gitcommitCmd = &cobra.Command{
@@ -40,21 +46,9 @@ var gitcommitCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		log.SetFlags(0)
 
-		var msg string
-		if len(args) > 0 {
-			msg = args[0]
-		} else {
-			log.Println("Enter commit message: ")
-			fmt.Scanln(&msg)
-		}
-
-		repo, err := git.PlainOpen(".")
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		commit := Gitcommit(repo, msg)
-		log.Println(commit)
+		msg := promptForMessage(args)
+		GitAdd()
+		GitCommit(msg)
 	},
 }
 
