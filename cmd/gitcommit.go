@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"fmt"
+	"bufio"
 	"log"
 	"os"
 	"os/exec"
@@ -16,7 +16,9 @@ func promptForMessage(args []string) string {
 		msg = args[0]
 	} else {
 		log.Println("Enter commit message: ")
-		fmt.Scanln(&msg)
+		scanner := bufio.NewScanner(os.Stdin)
+		scanner.Scan()
+		msg = scanner.Text()
 	}
 
 	return msg
